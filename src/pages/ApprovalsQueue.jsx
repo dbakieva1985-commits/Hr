@@ -2,7 +2,7 @@ import { C, CAND_STATUS, MANAGEMENT_BLOCKS, COMPANIES, USERS } from "../data";
 
 export default function ApprovalsQueue({ currentUser, candidates, onOpenDetail }) {
   // Filter based on role: HR sees all, deputies see their step
-  const isDeputy = ["deputy_msb","deputy_rb","chairman","deputy_corp"].includes(currentUser.role);
+  const isDeputy = ["deputy_msb","deputy_rb","chairman"].includes(currentUser.role);
   const isHRDirector = currentUser.role === "hr_director";
 
   const visible = candidates.filter(c => {

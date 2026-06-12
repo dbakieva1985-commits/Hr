@@ -28,7 +28,7 @@ export default function CandidateForm({ currentUser, candidates, onSubmit, onBac
       status: "pending_hr",
       approvals: [
         { step: "hr",     label: "HR ГБ",        assigneeId: "u3",         status: "pending", comment: "", date: null },
-        { step: "deputy", label: block?.label ? `Зампред ${block.label === "МСБ" ? "МСБ" : block.label === "РБ" ? "РБ" : block.label}` : "Зампред", assigneeId: block?.approver_id, status: "pending", comment: "", date: null },
+        { step: "deputy", label: block?.approver_label || "Зампред", assigneeId: block?.approver_id, status: "pending", comment: "", date: null },
         { step: "hrd",    label: "HRD ГБ",       assigneeId: "u6",         status: "pending", comment: "", date: null },
       ],
       messages: [],
@@ -61,9 +61,9 @@ export default function CandidateForm({ currentUser, candidates, onSubmit, onBac
             <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, marginBottom: 14,
               textTransform: "uppercase", letterSpacing: 1 }}>Цепочка согласования</div>
             {[
-              { n: 1, label: "HR ГБ", desc: "Проверка документов и соответствия" },
-              { n: 2, label: block ? (block.label === "МСБ" ? "Зампред МСБ" : block.label === "РБ" ? "Зампред РБ" : block.label === "Блок Председателя" ? "Председатель" : "Зампред") : "Зампред", desc: "Согласование по блоку" },
-              { n: 3, label: "HRD ГБ", desc: "Финальное согласование" },
+              { n: 1, label: "HR ГБ",                       desc: "Проверка документов и соответствия" },
+              { n: 2, label: block?.approver_label || "Зампред", desc: "Согласование по блоку" },
+              { n: 3, label: "HRD ГБ",                      desc: "Финальное согласование" },
             ].map((step, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: i < 2 ? 12 : 0 }}>
                 <div style={{ width: 28, height: 28, borderRadius: "50%",
@@ -185,7 +185,7 @@ export default function CandidateForm({ currentUser, candidates, onSubmit, onBac
             {form.block && (
               <div style={{ padding: "10px 14px", borderRadius: 8, background: C.greenPale,
                 border: `1px solid ${C.green}30`, fontSize: 12, color: C.green, marginTop: 8 }}>
-                ✓ Заявка пройдёт: HR ГБ → {block?.label === "МСБ" ? "Зампред МСБ" : block?.label === "РБ" ? "Зампред РБ" : block?.label === "Блок Председателя" ? "Председатель" : "Зампред"} → HRD ГБ
+                ✓ Цепочка: HR ГБ → {block?.approver_label} → HRD ГБ → возврат в вашу компанию
               </div>
             )}
           </Section>

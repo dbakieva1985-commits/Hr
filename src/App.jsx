@@ -76,7 +76,7 @@ export default function App() {
   const isAnalytics = ["hr_analyst", "hr_director"].includes(role);
   const isEmployee = ["employee", "manager"].includes(role);
   const isSubsidiary = role === "hr_subsidiary";
-  const isDeputy = ["deputy_msb","deputy_rb","chairman","deputy_corp"].includes(role);
+  const isDeputy = ["deputy_msb","deputy_rb","chairman"].includes(role);
 
   const myRequests = requests.filter(r => r.submitterId === currentUser.id);
   const detailReq  = detailId    ? requests.find(r => r.id === detailId)       : null;

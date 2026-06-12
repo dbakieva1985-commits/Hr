@@ -17,7 +17,7 @@ function getNav(role, company) {
       { id: "analytics", icon: "📊", label: "Аналитика" },
     ];
   }
-  if (["deputy_msb","deputy_rb","chairman","deputy_corp"].includes(role)) {
+  if (["deputy_msb","deputy_rb","chairman"].includes(role)) {
     return [
       { id: "approvals", icon: "🤝", label: "Согласование найма" },
     ];

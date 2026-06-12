@@ -44,7 +44,6 @@ export const USERS = [
   { id: "u10", name: "Серик Байтасов",      initials: "СБ", role: "deputy_msb",     company: "halyk",         dept: "Зампред МСБ" },
   { id: "u11", name: "Мария Колесникова",   initials: "МК", role: "deputy_rb",      company: "halyk",         dept: "Зампред РБ" },
   { id: "u12", name: "Тимур Кулибаев",      initials: "ТК", role: "chairman",       company: "halyk",         dept: "Блок Председателя" },
-  { id: "u13", name: "Нурлан Сейткали",     initials: "НС", role: "deputy_corp",    company: "halyk",         dept: "Корпоративный блок" },
 ];
 
 export const ROLE_LABELS = {
@@ -57,14 +56,12 @@ export const ROLE_LABELS = {
   deputy_msb:    "Зампред МСБ",
   deputy_rb:     "Зампред РБ",
   chairman:      "Председатель",
-  deputy_corp:   "Зампред (Корп. блок)",
 };
 
 export const MANAGEMENT_BLOCKS = [
-  { id: "msb",       label: "МСБ",              approver_role: "deputy_msb",   approver_id: "u10" },
-  { id: "rb",        label: "РБ",               approver_role: "deputy_rb",    approver_id: "u11" },
-  { id: "chairman",  label: "Блок Председателя",approver_role: "chairman",     approver_id: "u12" },
-  { id: "corp",      label: "Корпоративный",    approver_role: "deputy_corp",  approver_id: "u13" },
+  { id: "msb",      label: "МСБ",              approver_role: "deputy_msb", approver_id: "u10", approver_label: "Зампред МСБ" },
+  { id: "rb",       label: "РБ",               approver_role: "deputy_rb",  approver_id: "u11", approver_label: "Зампред РБ"  },
+  { id: "chairman", label: "Блок Председателя",approver_role: "chairman",   approver_id: "u12", approver_label: "Председатель" },
 ];
 
 export const CATEGORIES = [
