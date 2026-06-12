@@ -155,6 +155,11 @@ export default function App() {
       );
     }
     if (page === "catalog" && !selectedSvc) return wrap(<Catalog currentUser={currentUser} onSelectService={s => { setSelectedSvc(s); setPage("form"); }} />);
+    if (page === "form" && selectedSvc?.id === "s18") return wrap(
+      <CandidateForm currentUser={currentUser} candidates={candidates}
+        onSubmit={c => { setCandidates(p => [c, ...p]); nav("candidates"); }}
+        onBack={() => { setSelectedSvc(null); setPage("catalog"); }} />
+    );
     if (page === "form" && selectedSvc) return wrap(
       <ServiceForm service={selectedSvc} currentUser={currentUser} requests={requests}
         onSubmit={r => { setRequests(p => [r, ...p]); nav("my"); }}
