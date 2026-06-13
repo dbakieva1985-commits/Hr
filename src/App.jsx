@@ -27,7 +27,8 @@ const SERVICES = [
   { id: 6, cat: "Обучение и развитие",        icon: "📚", title: "Заявка на обучение",       sla: "3 раб. дня",   desc: "Запись на внутренний или внешний курс, тренинг или сертификацию.", who: "Любой сотрудник / руководитель", docs: "Название курса, провайдер" },
   { id: 7, cat: "HR Analytics",               icon: "📊", title: "Запрос HR-отчёта",         sla: "2 раб. дня",   desc: "Любой аналитический отчёт: текучесть, headcount, ФОТ, SLA.", who: "Руководитель / HR", docs: "Описание нужных данных и периода" },
   { id: 8, cat: "Оценка и Performance",       icon: "🎯", title: "Запуск оценки 360",        sla: "5 раб. дней",  desc: "Организация цикла оценки для сотрудника или команды.", who: "Руководитель / HR", docs: "Список участников оценки" },
-  { id: 9, cat: "Подбор персонала",           icon: "✅", title: "Согласование кандидата",    sla: "2 раб. дня",   desc: "Согласование финального кандидата на вакансию: руководитель → HR → директор. Фиксация оффера и старта.", who: "Руководитель подразделения", docs: "Резюме кандидата, условия оффера", isApproval: true },
+  { id: 9, cat: "Подбор персонала",  icon: "✅", title: "Согласование кандидата",       sla: "2 раб. дня",  desc: "Согласование финального кандидата на вакансию: руководитель → HR → директор. Фиксация оффера и старта.", who: "Руководитель подразделения", docs: "Резюме кандидата, условия оффера", isApproval: true },
+  { id: 10, cat: "Подбор персонала", icon: "🎉", title: "Онбординг нового сотрудника",   sla: "1 раб. день", desc: "Запуск персонального трека адаптации: Pre-boarding → День 1 → Месяц 1 → Месяц 3. Задачи, документы, цели на ИС.", who: "HR-менеджер", docs: "Не требуются", isOnboarding: true },
 ];
 
 const STATUSES = { draft:"Черновик", sent:"Отправлена", review:"Проверка", assigned:"Назначен исполнитель", inwork:"В работе", done:"Выполнено", closed:"Закрыто" };
@@ -171,7 +172,55 @@ const NAV = [
   { id: "home",     icon: "⊞", label: "Главная" },
   { id: "catalog",  icon: "☰", label: "Каталог" },
   { id: "my",       icon: "📋", label: "Мои заявки" },
-  { id: "analytics",icon: "📊", label: "Аналитика" },
+  { id: "onboarding",icon: "🎉", label: "Онбординг" },
+  { id: "analytics", icon: "📊", label: "Аналитика" },
+];
+
+// ── Onboarding data ─────────────────────────────────────────────────────────
+const OB_PHASES = [
+  { id: "pre",    label: "Pre-boarding", sub: "До выхода",   icon: "📨" },
+  { id: "week1",  label: "День 1–7",     sub: "Неделя 1",    icon: "🚀" },
+  { id: "month1", label: "Месяц 1",      sub: "День 8–30",   icon: "📚" },
+  { id: "month3", label: "Месяцы 2–3",   sub: "День 31–90",  icon: "🎯" },
+];
+
+const OB_TASKS_INIT = [
+  // Pre-boarding
+  { id:1, phase:"pre",    title:"Получить welcome-письмо",                     who:"Сотрудник", done:true  },
+  { id:2, phase:"pre",    title:"Загрузить фото для пропуска",                 who:"Сотрудник", done:true  },
+  { id:3, phase:"pre",    title:"Загрузить копии документов (уд-ние, ИИН, диплом)", who:"Сотрудник", done:true  },
+  { id:4, phase:"pre",    title:"Заполнить анкету нового сотрудника",          who:"Сотрудник", done:false },
+  { id:5, phase:"pre",    title:"Ознакомиться с welcome-пакетом",              who:"Сотрудник", done:false },
+  { id:6, phase:"pre",    title:"Написать команде в чат (знакомство)",         who:"Сотрудник", done:false },
+  // День 1-7
+  { id:7,  phase:"week1", title:"Подать заявку на IT-доступы",                 who:"HR / ИТ",   done:false },
+  { id:8,  phase:"week1", title:"Подать заявку на рабочее оборудование",       who:"HR / ИТ",   done:false },
+  { id:9,  phase:"week1", title:"Оформить пропуск",                            who:"HR",        done:false },
+  { id:10, phase:"week1", title:"Встреча с руководителем — план на неделю",    who:"Рук-ль",    done:false },
+  { id:11, phase:"week1", title:"Познакомиться с командой (1:1)",              who:"Сотрудник", done:false },
+  { id:12, phase:"week1", title:"Подписать трудовой договор и политики",       who:"Сотрудник + HR", done:false },
+  { id:13, phase:"week1", title:"Пройти инструктаж по безопасности",           who:"Сотрудник", done:false },
+  // Месяц 1
+  { id:14, phase:"month1", title:"Пройти обучение Compliance / AML / ИБ",      who:"Сотрудник", done:false },
+  { id:15, phase:"month1", title:"Ознакомиться с процессами подразделения",    who:"Сотрудник", done:false },
+  { id:16, phase:"month1", title:"Получить цели на испытательный срок",        who:"Рук-ль",    done:false },
+  { id:17, phase:"month1", title:"Check-in встреча с HR на 30-й день",         who:"HR + сотрудник", done:false },
+  { id:18, phase:"month1", title:"Заполнить опрос «Как проходит адаптация?»",  who:"Сотрудник", done:false },
+  // Месяц 2-3
+  { id:19, phase:"month3", title:"Check-in встреча с руководителем (60 дней)", who:"Рук-ль",    done:false },
+  { id:20, phase:"month3", title:"Промежуточная оценка по целям ИС",           who:"Рук-ль",    done:false },
+  { id:21, phase:"month3", title:"Check-in встреча с HR (90 дней)",            who:"HR + сотрудник", done:false },
+  { id:22, phase:"month3", title:"Финальная оценка по итогам ИС",              who:"Рук-ль",    done:false },
+  { id:23, phase:"month3", title:"Решение по ИС: принят / продлён / расстались", who:"Рук-ль + HR", done:false },
+  { id:24, phase:"month3", title:"Опрос удовлетворённости онбордингом",         who:"Сотрудник", done:false },
+];
+
+const OB_DOCS_INIT = [
+  { id:1, name:"Удостоверение личности",  status:"verified" },
+  { id:2, name:"ИИН — свидетельство",     status:"verified" },
+  { id:3, name:"Диплом об образовании",   status:"pending"  },
+  { id:4, name:"Фото для пропуска",       status:"pending"  },
+  { id:5, name:"Трудовой договор",        status:"waiting"  },
 ];
 
 // ── Analytics mock ──────────────────────────────────────────────────────────
@@ -194,6 +243,10 @@ const TOP_SERVICES = [
 // ═══════════════════════════════════════════════════════════════════════════
 export default function App() {
   const [currentRole, setCurrentRole] = useState("recruiter");
+  const [obTasks, setObTasks]   = useState(OB_TASKS_INIT);
+  const [obDocs,  setObDocs]    = useState(OB_DOCS_INIT);
+  const [obPhase, setObPhase]   = useState("pre");
+  const [obView,  setObView]    = useState("employee"); // employee | hr
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -998,6 +1051,159 @@ export default function App() {
             </div>
           </div>
         )}
+
+        {/* ── ONBOARDING ── */}
+        {page === "onboarding" && (() => {
+          const phaseTasks = obTasks.filter(t => t.phase === obPhase);
+          const totalDone  = obTasks.filter(t => t.done).length;
+          const pct = Math.round((totalDone / obTasks.length) * 100);
+          const phaseIdx = OB_PHASES.findIndex(p => p.id === obPhase);
+
+          const docStatusColor = { verified: C.green, pending: C.orange, waiting: C.gray300 };
+          const docStatusLabel = { verified: "✓ Проверено HR", pending: "⏳ На проверке", waiting: "Ожидает загрузки" };
+
+          return (
+            <div>
+              {/* Header */}
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:24 }}>
+                <div>
+                  <h1 style={{ fontSize:24, fontWeight:700, color:C.dark, margin:0 }}>Онбординг</h1>
+                  <p style={{ color:C.gray500, fontSize:14, marginTop:6 }}>Трек адаптации нового сотрудника</p>
+                </div>
+                <div style={{ display:"flex", gap:8 }}>
+                  {["employee","hr"].map(v => (
+                    <button key={v} onClick={() => setObView(v)} style={{
+                      padding:"7px 16px", borderRadius:8, fontSize:12, cursor:"pointer", fontFamily:"inherit",
+                      background: obView===v ? C.green : C.white, color: obView===v ? C.white : C.gray500,
+                      border:`1px solid ${obView===v ? C.green : C.gray300}`, fontWeight: obView===v ? 700 : 400,
+                    }}>{v==="employee" ? "👤 Сотрудник" : "🏢 HR-менеджер"}</button>
+                  ))}
+                </div>
+              </div>
+
+              {obView === "employee" && (
+                <>
+                  {/* Welcome block */}
+                  <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px 24px", marginBottom:20, color:C.white }}>
+                    <div style={{ fontSize:20, fontWeight:800, marginBottom:4 }}>Добро пожаловать в Халык Банк! 🎉</div>
+                    <div style={{ fontSize:13, opacity:0.9, marginBottom:12 }}>Ваш руководитель: <b>Нуржан Касымов</b> · Ментор: <b>Айгерим Бекова</b></div>
+                    <div style={{ background:"rgba(255,255,255,0.15)", borderRadius:10, padding:"10px 14px", fontSize:13 }}>
+                      Первый рабочий день: <b>16 июня 2026</b> · Испытательный срок: 3 месяца
+                    </div>
+                  </div>
+
+                  {/* Phase progress */}
+                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:16 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
+                      <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Общий прогресс</div>
+                      <div style={{ fontSize:13, fontWeight:800, color:C.green }}>{pct}%</div>
+                    </div>
+                    <div style={{ height:8, background:C.gray100, borderRadius:4, marginBottom:20, overflow:"hidden" }}>
+                      <div style={{ height:"100%", width:`${pct}%`, background:C.green, borderRadius:4, transition:"width .4s" }} />
+                    </div>
+                    <div style={{ display:"flex", alignItems:"flex-start" }}>
+                      {OB_PHASES.map((ph, i) => {
+                        const phDone = obTasks.filter(t=>t.phase===ph.id && t.done).length;
+                        const phTotal = obTasks.filter(t=>t.phase===ph.id).length;
+                        const isActive = ph.id === obPhase;
+                        const isDone   = phDone === phTotal;
+                        const col = isDone ? C.green : isActive ? C.orange : C.gray300;
+                        return (
+                          <div key={ph.id} style={{ display:"flex", alignItems:"flex-start", flex: i<OB_PHASES.length-1 ? 1 : "none" }}>
+                            <button onClick={() => setObPhase(ph.id)} style={{ background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", minWidth:80 }}>
+                              <div style={{ width:40, height:40, borderRadius:"50%", background:col, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, color:C.white, border: isActive ? `3px solid ${C.orange}` : "none" }}>{ph.icon}</div>
+                              <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
+                              <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
+                            </button>
+                            {i < OB_PHASES.length-1 && <div style={{ flex:1, height:2, background:isDone?C.green:C.gray300, margin:"19px 2px 0", flexShrink:0 }} />}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Tasks for current phase */}
+                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:16 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+                      <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>
+                        {OB_PHASES.find(p=>p.id===obPhase)?.icon} {OB_PHASES.find(p=>p.id===obPhase)?.label} — задачи
+                      </div>
+                      <div style={{ fontSize:12, color:C.gray500 }}>{phaseTasks.filter(t=>t.done).length} / {phaseTasks.length} выполнено</div>
+                    </div>
+                    {phaseTasks.map(task => (
+                      <div key={task.id} onClick={() => setObTasks(prev => prev.map(t => t.id===task.id ? {...t, done:!t.done} : t))}
+                        style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 12px", borderRadius:8, cursor:"pointer", marginBottom:6,
+                          background: task.done ? C.greenPale : C.gray100, border:`1px solid ${task.done ? C.green+"40" : "transparent"}` }}>
+                        <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${task.done ? C.green : C.gray300}`, background:task.done ? C.green : C.white,
+                          display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:12, fontWeight:700 }}>
+                          {task.done ? "✓" : ""}
+                        </div>
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontSize:13, color:task.done ? C.gray500 : C.dark, textDecoration:task.done?"line-through":"none", fontWeight:task.done?400:500 }}>{task.title}</div>
+                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Ответственный: {task.who}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Documents */}
+                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px" }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>📁 Документы</div>
+                    {obDocs.map(doc => (
+                      <div key={doc.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
+                        padding:"10px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:13 }}>
+                        <span style={{ color:C.dark }}>{doc.name}</span>
+                        <span style={{ fontSize:11, fontWeight:600, color:docStatusColor[doc.status] }}>{docStatusLabel[doc.status]}</span>
+                      </div>
+                    ))}
+                    <div style={{ marginTop:14 }}>
+                      <Btn small variant="ghost">📎 Загрузить документ</Btn>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {obView === "hr" && (
+                <>
+                  <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14, marginBottom:20 }}>
+                    {[
+                      { label:"Активных онбордингов", value:"7",    color:C.green },
+                      { label:"Просроченных задач",   value:"3",    color:C.red   },
+                      { label:"Средний прогресс",      value:"54%",  color:C.blue  },
+                    ].map(k => (
+                      <div key={k.label} style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"18px 20px" }}>
+                        <div style={{ height:3, background:k.color, borderRadius:2, marginBottom:12 }} />
+                        <div style={{ fontSize:28, fontWeight:800, color:k.color }}>{k.value}</div>
+                        <div style={{ fontSize:12, color:C.gray500, marginTop:4 }}>{k.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {[
+                    { name:"Алия Сейткали",   pos:"Senior PM",   phase:"week1",  pct:18, overdue:2 },
+                    { name:"Берик Омаров",    pos:"Аналитик",    phase:"month1", pct:55, overdue:0 },
+                    { name:"Дина Жакупова",   pos:"Юрист",       phase:"month3", pct:80, overdue:1 },
+                  ].map(emp => (
+                    <div key={emp.name} style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"16px 20px", marginBottom:10 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                        <div>
+                          <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>{emp.name}</div>
+                          <div style={{ fontSize:12, color:C.gray500 }}>{emp.pos} · {OB_PHASES.find(p=>p.id===emp.phase)?.label}</div>
+                        </div>
+                        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                          {emp.overdue > 0 && <span style={{ fontSize:11, background:C.red+"15", color:C.red, border:`1px solid ${C.red}40`, borderRadius:6, padding:"2px 8px", fontWeight:700 }}>⚠ {emp.overdue} просрочено</span>}
+                          <span style={{ fontSize:13, fontWeight:800, color:C.green }}>{emp.pct}%</span>
+                        </div>
+                      </div>
+                      <div style={{ height:6, background:C.gray100, borderRadius:3, overflow:"hidden" }}>
+                        <div style={{ height:"100%", width:`${emp.pct}%`, background:C.green, borderRadius:3 }} />
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          );
+        })()}
 
         {/* ── ANALYTICS ── */}
         {page === "analytics" && (
