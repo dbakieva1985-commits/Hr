@@ -27,6 +27,7 @@ const SERVICES = [
   { id: 6, cat: "Обучение и развитие",        icon: "📚", title: "Заявка на обучение",       sla: "3 раб. дня",   desc: "Запись на внутренний или внешний курс, тренинг или сертификацию.", who: "Любой сотрудник / руководитель", docs: "Название курса, провайдер" },
   { id: 7, cat: "HR Analytics",               icon: "📊", title: "Запрос HR-отчёта",         sla: "2 раб. дня",   desc: "Любой аналитический отчёт: текучесть, headcount, ФОТ, SLA.", who: "Руководитель / HR", docs: "Описание нужных данных и периода" },
   { id: 8, cat: "Оценка и Performance",       icon: "🎯", title: "Запуск оценки 360",        sla: "5 раб. дней",  desc: "Организация цикла оценки для сотрудника или команды.", who: "Руководитель / HR", docs: "Список участников оценки" },
+  { id: 9, cat: "Подбор персонала",           icon: "✅", title: "Согласование кандидата",    sla: "2 раб. дня",   desc: "Согласование финального кандидата на вакансию: руководитель → HR → директор. Фиксация оффера и старта.", who: "Руководитель подразделения", docs: "Резюме кандидата, условия оффера", isApproval: true },
 ];
 
 const STATUSES = { draft:"Черновик", sent:"Отправлена", review:"Проверка", assigned:"Назначен исполнитель", inwork:"В работе", done:"Выполнено", closed:"Закрыто" };
@@ -107,6 +108,39 @@ const WorkflowBar = ({ status }) => {
   );
 };
 
+// ── Approval stages ─────────────────────────────────────────────────────────
+const APPROVAL_STAGES = [
+  { id: "hr",  label: "HR проверка",         role: "HR-специалист",         icon: "👤" },
+  { id: "mgr", label: "Руководитель",        role: "Нанимающий менеджер",   icon: "🏢" },
+  { id: "dir", label: "Директор ДУП",        role: "Директор по персоналу", icon: "⭐" },
+];
+
+const ApprovalBar = ({ decisions }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 0, margin: "16px 0" }}>
+    {APPROVAL_STAGES.map((st, i) => {
+      const dec = decisions[st.id];
+      const bg  = dec === "approved" ? C.green : dec === "rejected" ? C.red : C.gray300;
+      const label = dec === "approved" ? "✓ Одобрено" : dec === "rejected" ? "✗ Отклонено" : "Ожидает";
+      return (
+        <div key={st.id} style={{ display: "flex", alignItems: "center", flex: i < APPROVAL_STAGES.length - 1 ? 1 : "none" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 80 }}>
+            <div style={{ width: 36, height: 36, borderRadius: "50%", background: bg,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 16, color: C.white, border: !dec ? `2px dashed ${C.gray300}` : "none" }}>
+              {st.icon}
+            </div>
+            <span style={{ fontSize: 10, fontWeight: 700, color: bg, marginTop: 4, textAlign: "center" }}>{st.label}</span>
+            <span style={{ fontSize: 9, color: C.gray500, textAlign: "center" }}>{label}</span>
+          </div>
+          {i < APPROVAL_STAGES.length - 1 && (
+            <div style={{ flex: 1, height: 2, background: dec === "approved" ? C.green : C.gray300, margin: "0 4px", marginBottom: 20 }} />
+          )}
+        </div>
+      );
+    })}
+  </div>
+);
+
 // ── Sidebar nav ─────────────────────────────────────────────────────────────
 const NAV = [
   { id: "home",     icon: "⊞", label: "Главная" },
@@ -140,10 +174,17 @@ export default function App() {
   const [selected, setSelected] = useState(null);   // service being applied to
   const [form, setForm] = useState({ name: "", dept: "", comment: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [approvalForm, setApprovalForm] = useState({ candidate: "", position: "", dept: "", salary: "", start: "", comment: "" });
   const [requests, setRequests] = useState([
-    { id: "HR-001", title: "Справка с места работы", status: "inwork",  sla: "1 раб. день", date: "09.06.2026", icon: "📄" },
-    { id: "HR-002", title: "Заявка на отпуск",        status: "closed",  sla: "1 раб. день", date: "02.06.2026", icon: "🏖" },
-    { id: "HR-003", title: "Заявка на подбор",        status: "review",  sla: "5 раб. дней", date: "11.06.2026", icon: "🔍" },
+    { id: "HR-001", title: "Справка с места работы", status: "inwork",  sla: "1 раб. день",  date: "09.06.2026", icon: "📄" },
+    { id: "HR-002", title: "Заявка на отпуск",        status: "closed",  sla: "1 раб. день",  date: "02.06.2026", icon: "🏖" },
+    { id: "HR-003", title: "Заявка на подбор",        status: "review",  sla: "5 раб. дней",  date: "11.06.2026", icon: "🔍" },
+    { id: "HR-004", title: "Согласование кандидата",  status: "inwork",  sla: "2 раб. дня",   date: "12.06.2026", icon: "✅",
+      isApproval: true,
+      candidate: "Алия Сейткали", position: "Senior Product Manager", dept: "Цифровой бизнес",
+      salary: "850 000 ₸", start: "01.07.2026",
+      decisions: { hr: "approved", mgr: "approved", dir: null },
+    },
   ]);
   const [detail, setDetail] = useState(null);       // request detail view
 
@@ -157,18 +198,34 @@ export default function App() {
 
   function submitRequest() {
     const svc = selected;
-    const newReq = {
-      id: `HR-00${requests.length + 4}`,
-      title: svc.title, status: "sent",
-      sla: svc.sla, date: new Date().toLocaleDateString("ru-RU"),
-      icon: svc.icon
-    };
+    const newReq = svc.isApproval
+      ? {
+          id: `HR-00${requests.length + 4}`,
+          title: svc.title, status: "sent",
+          sla: svc.sla, date: new Date().toLocaleDateString("ru-RU"),
+          icon: svc.icon, isApproval: true,
+          candidate: approvalForm.candidate,
+          position:  approvalForm.position,
+          dept:      approvalForm.dept,
+          salary:    approvalForm.salary,
+          start:     approvalForm.start,
+          decisions: { hr: null, mgr: null, dir: null },
+        }
+      : {
+          id: `HR-00${requests.length + 4}`,
+          title: svc.title, status: "sent",
+          sla: svc.sla, date: new Date().toLocaleDateString("ru-RU"),
+          icon: svc.icon,
+        };
     setRequests(prev => [newReq, ...prev]);
     setSubmitted(true);
   }
 
   function resetForm() {
-    setSelected(null); setForm({ name: "", dept: "", comment: "" }); setSubmitted(false);
+    setSelected(null);
+    setForm({ name: "", dept: "", comment: "" });
+    setApprovalForm({ candidate: "", position: "", dept: "", salary: "", start: "", comment: "" });
+    setSubmitted(false);
   }
 
   // ── Layout shell ────────────────────────────────────────────────────────
@@ -335,20 +392,64 @@ export default function App() {
               </div>
             </div>
 
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 20px" }}>Заполните заявку</h2>
+            {selected.isApproval ? (
+              <>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 6px" }}>Данные кандидата</h2>
+                <p style={{ fontSize: 13, color: C.gray500, marginBottom: 20 }}>
+                  Заявка пройдёт согласование: HR → Руководитель → Директор ДУП
+                </p>
 
-            <Input label="Ваше имя и фамилия" value={form.name} onChange={v => setForm(p => ({...p, name: v}))} placeholder="Иванов Иван Иванович" />
-            <Input label="Подразделение" value={form.dept} onChange={v => setForm(p => ({...p, dept: v}))} placeholder="Департамент управления персоналом" />
+                {/* Цепочка согласования — превью */}
+                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "16px 20px", marginBottom: 24 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, marginBottom: 12, textTransform: "uppercase", letterSpacing: 1 }}>Маршрут согласования</div>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    {APPROVAL_STAGES.map((st, i) => (
+                      <div key={st.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div style={{ textAlign: "center" }}>
+                          <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.gray100, border: `2px dashed ${C.gray300}`,
+                            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, margin: "0 auto 4px" }}>{st.icon}</div>
+                          <div style={{ fontSize: 10, color: C.gray500, whiteSpace: "nowrap" }}>{st.label}</div>
+                        </div>
+                        {i < APPROVAL_STAGES.length - 1 && <div style={{ width: 24, height: 2, background: C.gray300, flexShrink: 0 }} />}
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-            {selected.docs !== "Не требуются" && (
-              <div style={{ background: C.gray100, border: `1px solid ${C.gray300}`,
-                borderRadius: 8, padding: "12px 14px", marginBottom: 16, fontSize: 12, color: C.gray700 }}>
-                📎 <b>Необходимые документы:</b> {selected.docs}
-              </div>
+                <Input label="ФИО кандидата *" value={approvalForm.candidate}
+                  onChange={v => setApprovalForm(p => ({...p, candidate: v}))} placeholder="Алия Сейткали" />
+                <Input label="Должность / Вакансия *" value={approvalForm.position}
+                  onChange={v => setApprovalForm(p => ({...p, position: v}))} placeholder="Senior Product Manager" />
+                <Input label="Подразделение *" value={approvalForm.dept}
+                  onChange={v => setApprovalForm(p => ({...p, dept: v}))} placeholder="Цифровой бизнес" />
+                <Input label="Предлагаемая зарплата (оффер)" value={approvalForm.salary}
+                  onChange={v => setApprovalForm(p => ({...p, salary: v}))} placeholder="850 000 ₸" />
+                <Input label="Планируемая дата выхода" value={approvalForm.start}
+                  onChange={v => setApprovalForm(p => ({...p, start: v}))} placeholder="01.07.2026" />
+                <Input label="Комментарий к кандидату" value={approvalForm.comment}
+                  onChange={v => setApprovalForm(p => ({...p, comment: v}))}
+                  placeholder="Почему рекомендуем этого кандидата..." multiline />
+
+                <div style={{ background: C.gray100, border: `1px solid ${C.gray300}`,
+                  borderRadius: 8, padding: "12px 14px", marginBottom: 20, fontSize: 12, color: C.gray700 }}>
+                  📎 <b>Необходимые документы:</b> {selected.docs}
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 20px" }}>Заполните заявку</h2>
+                <Input label="Ваше имя и фамилия" value={form.name} onChange={v => setForm(p => ({...p, name: v}))} placeholder="Иванов Иван Иванович" />
+                <Input label="Подразделение" value={form.dept} onChange={v => setForm(p => ({...p, dept: v}))} placeholder="Департамент управления персоналом" />
+                {selected.docs !== "Не требуются" && (
+                  <div style={{ background: C.gray100, border: `1px solid ${C.gray300}`,
+                    borderRadius: 8, padding: "12px 14px", marginBottom: 16, fontSize: 12, color: C.gray700 }}>
+                    📎 <b>Необходимые документы:</b> {selected.docs}
+                  </div>
+                )}
+                <Input label="Комментарий (необязательно)" value={form.comment} onChange={v => setForm(p => ({...p, comment: v}))}
+                  placeholder="Укажите любые дополнительные детали..." multiline />
+              </>
             )}
-
-            <Input label="Комментарий (необязательно)" value={form.comment} onChange={v => setForm(p => ({...p, comment: v}))}
-              placeholder="Укажите любые дополнительные детали..." multiline />
 
             <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
               <Btn onClick={submitRequest} variant="primary">Отправить заявку</Btn>
@@ -437,27 +538,62 @@ export default function App() {
               </div>
             </div>
 
-            <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 12px", textTransform: "uppercase", letterSpacing: 1 }}>Прогресс</h3>
-              <WorkflowBar status={detail.status} />
-            </div>
-
-            <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 14px", textTransform: "uppercase", letterSpacing: 1 }}>Детали</h3>
-              {[
-                ["Номер заявки", detail.id],
-                ["Дата подачи", detail.date],
-                ["SLA", detail.sla],
-                ["Статус", STATUSES[detail.status]],
-                ["Исполнитель", "HR Service Center"],
-              ].map(([k, v]) => (
-                <div key={k} style={{ display: "flex", justifyContent: "space-between",
-                  padding: "8px 0", borderBottom: `1px solid ${C.gray100}`, fontSize: 13 }}>
-                  <span style={{ color: C.gray500 }}>{k}</span>
-                  <span style={{ color: C.dark, fontWeight: 500 }}>{v}</span>
+            {/* Специальный блок для согласования кандидата */}
+            {detail.isApproval && detail.decisions && (
+              <>
+                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 4px", textTransform: "uppercase", letterSpacing: 1 }}>Статус согласования</h3>
+                  <ApprovalBar decisions={detail.decisions} />
                 </div>
-              ))}
-            </div>
+
+                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+                  <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 14px", textTransform: "uppercase", letterSpacing: 1 }}>Кандидат</h3>
+                  {[
+                    ["ФИО кандидата",   detail.candidate],
+                    ["Вакансия",         detail.position],
+                    ["Подразделение",    detail.dept],
+                    ["Оффер",            detail.salary],
+                    ["Дата выхода",      detail.start],
+                    ["Номер заявки",     detail.id],
+                    ["Дата подачи",      detail.date],
+                    ["SLA",              detail.sla],
+                  ].map(([k, v]) => v && (
+                    <div key={k} style={{ display: "flex", justifyContent: "space-between",
+                      padding: "8px 0", borderBottom: `1px solid ${C.gray100}`, fontSize: 13 }}>
+                      <span style={{ color: C.gray500 }}>{k}</span>
+                      <span style={{ color: C.dark, fontWeight: 500 }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Стандартный workflow для остальных заявок */}
+            {!detail.isApproval && (
+              <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 12px", textTransform: "uppercase", letterSpacing: 1 }}>Прогресс</h3>
+                <WorkflowBar status={detail.status} />
+              </div>
+            )}
+
+            {!detail.isApproval && (
+              <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 14px", textTransform: "uppercase", letterSpacing: 1 }}>Детали</h3>
+                {[
+                  ["Номер заявки", detail.id],
+                  ["Дата подачи", detail.date],
+                  ["SLA", detail.sla],
+                  ["Статус", STATUSES[detail.status]],
+                  ["Исполнитель", "HR Service Center"],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ display: "flex", justifyContent: "space-between",
+                    padding: "8px 0", borderBottom: `1px solid ${C.gray100}`, fontSize: 13 }}>
+                    <span style={{ color: C.gray500 }}>{k}</span>
+                    <span style={{ color: C.dark, fontWeight: 500 }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px" }}>
               <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 12px", textTransform: "uppercase", letterSpacing: 1 }}>Комментарии</h3>
@@ -466,7 +602,9 @@ export default function App() {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 12, color: C.white, fontWeight: 700, flexShrink: 0 }}>HR</div>
                 <div style={{ background: C.gray100, borderRadius: 10, padding: "10px 14px", fontSize: 13, color: C.gray700 }}>
-                  Заявка принята в работу. Ожидайте уведомления.
+                  {detail.isApproval
+                    ? "Заявка на согласование принята. Ожидается решение директора ДУП."
+                    : "Заявка принята в работу. Ожидайте уведомления."}
                 </div>
               </div>
             </div>
