@@ -193,6 +193,7 @@ const TOP_SERVICES = [
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════════════════
 export default function App() {
+  const [currentRole, setCurrentRole] = useState("recruiter");
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -319,8 +320,35 @@ export default function App() {
           ))}
         </nav>
 
+        {/* Role switcher */}
+        {(() => {
+          const ROLES = [
+            { id: "recruiter", label: "Рекрутер",          org: "ДО" },
+            { id: "do",        label: "Рук-ль ДО",         org: "ДО" },
+            { id: "business",  label: "Рук. направления",  org: "ГБ" },
+            { id: "usot",      label: "Спец. УСОТ",        org: "ГБ" },
+            { id: "hr_dir",    label: "HRD",               org: "ГБ" },
+            { id: "do_date",   label: "Рук-ль ДО (дата)",  org: "ДО" },
+            { id: "uap",       label: "УАП специалист",    org: "ГБ" },
+          ];
+          const cur = ROLES.find(r => r.id === currentRole) || ROLES[0];
+          return (
+            <div style={{ padding: "12px 16px", borderTop: "1px solid #FFFFFF18" }}>
+              <div style={{ fontSize: 9, color: "#FFFFFF60", fontWeight: 700, letterSpacing: 1, marginBottom: 6, textTransform: "uppercase" }}>Текущая роль</div>
+              <select value={currentRole} onChange={e => setCurrentRole(e.target.value)}
+                style={{ width: "100%", background: "#FFFFFF15", color: C.white, border: "1px solid #FFFFFF30",
+                  borderRadius: 8, padding: "6px 10px", fontSize: 11, fontFamily: "inherit", cursor: "pointer", outline: "none" }}>
+                {ROLES.map(r => <option key={r.id} value={r.id} style={{ background: C.dark }}>{r.org} · {r.label}</option>)}
+              </select>
+              <div style={{ fontSize: 10, color: C.green, marginTop: 6, fontWeight: 600 }}>
+                {cur.org === "ГБ" ? "🏦 Головной банк" : "🏢 Дочерняя организация"}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* User */}
-        <div style={{ padding: "16px 20px", borderTop: "1px solid #FFFFFF18" }}>
+        <div style={{ padding: "12px 20px", borderTop: "1px solid #FFFFFF18" }}>
           <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.green,
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 14, color: C.white, fontWeight: 700, marginBottom: 6 }}>Ф</div>
@@ -806,11 +834,65 @@ export default function App() {
             </div>
 
             {/* Специальный блок для согласования кандидата */}
-            {detail.isApproval && detail.decisions && (
+            {detail.isApproval && detail.decisions && (() => {
+              // Определяем активный шаг — первый без решения
+              const activeStage = APPROVAL_STAGES.find(s => !detail.decisions[s.id]);
+              const isMyTurn = activeStage && activeStage.id === currentRole;
+
+              function makeDecision(decision) {
+                setRequests(prev => prev.map(r => {
+                  if (r.id !== detail.id) return r;
+                  const newDec = { ...r.decisions, [activeStage.id]: decision };
+                  const newStatus = Object.values(newDec).every(v => v === "approved") ? "done"
+                    : Object.values(newDec).some(v => v === "rejected") ? "closed" : "inwork";
+                  const updated = { ...r, decisions: newDec, status: newStatus };
+                  setDetail(updated);
+                  return updated;
+                }));
+              }
+
+              return (
               <>
                 <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
                   <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 4px", textTransform: "uppercase", letterSpacing: 1 }}>Статус согласования</h3>
                   <ApprovalBar decisions={detail.decisions} businessDir={detail.businessDir} />
+
+                  {/* Блок действия для текущего согласующего */}
+                  {isMyTurn && (
+                    <div style={{ background: C.orange + "10", border: `1px solid ${C.orange}40`, borderRadius: 10, padding: "14px 16px", marginTop: 8 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: C.orange, marginBottom: 4 }}>
+                        ● Ваша очередь согласовать
+                      </div>
+                      <div style={{ fontSize: 12, color: C.gray700, marginBottom: 12 }}>
+                        Вы вошли как <b>{activeStage.label}</b>. Ознакомьтесь с анкетой кандидата и примите решение.
+                      </div>
+                      <div style={{ display: "flex", gap: 10 }}>
+                        <button onClick={() => makeDecision("approved")} style={{
+                          background: C.green, color: C.white, border: "none", borderRadius: 8,
+                          padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                          ✓ Одобрить
+                        </button>
+                        <button onClick={() => makeDecision("rejected")} style={{
+                          background: C.white, color: C.red, border: `1px solid ${C.red}`, borderRadius: 8,
+                          padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                          ✗ Отклонить
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {!isMyTurn && activeStage && (
+                    <div style={{ background: C.gray100, borderRadius: 10, padding: "10px 14px", marginTop: 8, fontSize: 12, color: C.gray500 }}>
+                      Сейчас ожидается решение: <b style={{ color: C.dark }}>{activeStage.label}</b>.
+                      Переключите роль в левом меню чтобы согласовать.
+                    </div>
+                  )}
+
+                  {!activeStage && (
+                    <div style={{ background: C.greenPale, borderRadius: 10, padding: "10px 14px", marginTop: 8, fontSize: 12, color: C.green, fontWeight: 600 }}>
+                      ✓ Все этапы пройдены — заявка согласована
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
@@ -834,7 +916,8 @@ export default function App() {
                   ))}
                 </div>
               </>
-            )}
+              );
+            })()}
 
             {/* Стандартный workflow для остальных заявок */}
             {!detail.isApproval && (
