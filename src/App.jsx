@@ -193,7 +193,21 @@ export default function App() {
   const [selected, setSelected] = useState(null);   // service being applied to
   const [form, setForm] = useState({ name: "", dept: "", comment: "" });
   const [submitted, setSubmitted] = useState(false);
-  const [approvalForm, setApprovalForm] = useState({ candidate: "", position: "", dept: "", salary: "", start: "", comment: "" });
+  const [approvalTab, setApprovalTab]   = useState("personal");
+  const [cvLoaded,    setCvLoaded]      = useState(false);
+  const [approvalForm, setApprovalForm] = useState({
+    // Личные данные
+    lastName: "", firstName: "", patronymic: "", dob: "", iin: "",
+    passportNo: "", passportIssued: "", passportExpiry: "",
+    // Вакансия / оффер
+    position: "", dept: "", salary: "", businessDir: "",
+    // Образование (из резюме)
+    education: [{ institution: "", degree: "", year: "" }],
+    // Опыт работы (из резюме)
+    experience: [{ company: "", role: "", period: "", duties: "" }],
+    // Родственники
+    relatives: [{ lastName: "", firstName: "", patronymic: "", relation: "", address: "", workplace: "", iin: "", phone: "" }],
+  });
   const [requests, setRequests] = useState([
     { id: "HR-001", title: "Справка с места работы", status: "inwork",  sla: "1 раб. день",  date: "09.06.2026", icon: "📄" },
     { id: "HR-002", title: "Заявка на отпуск",        status: "closed",  sla: "1 раб. день",  date: "02.06.2026", icon: "🏖" },
@@ -203,6 +217,13 @@ export default function App() {
       candidate: "Алия Сейткали", position: "Senior Product Manager", dept: "Цифровой бизнес",
       salary: "850 000 ₸", start: "", businessDir: "МСБ",
       decisions: { recruiter: "approved", do: "approved", business: "approved", usot: null, hr_dir: null, do_date: null, uap: null },
+      personal: { lastName: "Сейткали", firstName: "Алия", patronymic: "Маратовна", dob: "15.03.1992", iin: "920315401234", passportNo: "N12345678", passportIssued: "10.05.2018", passportExpiry: "10.05.2028" },
+      education: [{ institution: "КазНУ им. аль-Фараби", degree: "Магистр менеджмента", year: "2015" }],
+      experience: [{ company: "Kaspi Bank", role: "Product Manager", period: "2019–2024", duties: "Запуск мобильных продуктов" }],
+      relatives: [
+        { lastName: "Сейткали", firstName: "Марат", patronymic: "Ахметович", relation: "Отец", address: "Алматы, ул. Абая 12", workplace: "АО «Казмунайгаз»", iin: "620510301234", phone: "+7 701 000 0001" },
+        { lastName: "Сейткали", firstName: "Гульнара", patronymic: "Жаксыбековна", relation: "Мать", address: "Алматы, ул. Абая 12", workplace: "СШ №45", iin: "650820401235", phone: "+7 701 000 0002" },
+      ],
     },
   ]);
   const [detail, setDetail] = useState(null);       // request detail view
@@ -223,12 +244,16 @@ export default function App() {
           title: svc.title, status: "sent",
           sla: svc.sla, date: new Date().toLocaleDateString("ru-RU"),
           icon: svc.icon, isApproval: true,
-          candidate:   approvalForm.candidate,
+          candidate:   `${approvalForm.lastName} ${approvalForm.firstName} ${approvalForm.patronymic}`.trim(),
           position:    approvalForm.position,
           dept:        approvalForm.dept,
           salary:      approvalForm.salary,
           businessDir: approvalForm.businessDir,
           start:       "",
+          personal:    { ...approvalForm },
+          education:   approvalForm.education,
+          experience:  approvalForm.experience,
+          relatives:   approvalForm.relatives,
           decisions: { recruiter: "approved", do: null, business: null, usot: null, hr_dir: null, do_date: null, uap: null },
         }
       : {
@@ -244,7 +269,16 @@ export default function App() {
   function resetForm() {
     setSelected(null);
     setForm({ name: "", dept: "", comment: "" });
-    setApprovalForm({ candidate: "", position: "", dept: "", salary: "", start: "", comment: "" });
+    setApprovalTab("personal");
+    setCvLoaded(false);
+    setApprovalForm({
+      lastName: "", firstName: "", patronymic: "", dob: "", iin: "",
+      passportNo: "", passportIssued: "", passportExpiry: "",
+      position: "", dept: "", salary: "", businessDir: "",
+      education:  [{ institution: "", degree: "", year: "" }],
+      experience: [{ company: "", role: "", period: "", duties: "" }],
+      relatives:  [{ lastName: "", firstName: "", patronymic: "", relation: "", address: "", workplace: "", iin: "", phone: "" }],
+    });
     setSubmitted(false);
   }
 
@@ -414,69 +448,245 @@ export default function App() {
 
             {selected.isApproval ? (
               <>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 6px" }}>Данные кандидата</h2>
-                <p style={{ fontSize: 13, color: C.gray500, marginBottom: 20 }}>
-                  Заявка пройдёт согласование: HR → Руководитель → Директор ДУП
-                </p>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 4px" }}>Анкета кандидата</h2>
+                <p style={{ fontSize: 13, color: C.gray500, marginBottom: 16 }}>Маршрут: Рекрутер → ДО → Рук. направления → Спец. УСОТ → Директор HR ГБ → ДО (дата) → УАП ГБ</p>
 
-                {/* Цепочка согласования — превью */}
-                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "16px 20px", marginBottom: 24, overflowX: "auto" }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, marginBottom: 12, textTransform: "uppercase", letterSpacing: 1 }}>Маршрут согласования</div>
-                  <div style={{ display: "flex", gap: 0, alignItems: "flex-start", minWidth: 520 }}>
-                    {APPROVAL_STAGES.map((st, i) => (
-                      <div key={st.id} style={{ display: "flex", alignItems: "flex-start", flex: i < APPROVAL_STAGES.length - 1 ? 1 : "none" }}>
-                        <div style={{ textAlign: "center", minWidth: 72 }}>
-                          <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.gray100, border: `2px dashed ${C.gray300}`,
-                            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, margin: "0 auto 4px" }}>{st.icon}</div>
-                          <div style={{ fontSize: 9, color: C.gray700, fontWeight: 600, lineHeight: 1.3 }}>{st.label}</div>
-                          <div style={{ fontSize: 8, color: C.gray500, lineHeight: 1.3, marginTop: 2 }}>
-                            {st.id === "business" ? (approvalForm.businessDir || "выбрать →") : st.sub}
+                {/* Вкладки */}
+                {(() => {
+                  const TABS = [
+                    { id: "personal",    label: "👤 Личные данные" },
+                    { id: "vacancy",     label: "💼 Вакансия" },
+                    { id: "cv",          label: "📄 Резюме" },
+                    { id: "relatives",   label: "👨‍👩‍👧 Родственники" },
+                  ];
+                  const af = approvalForm;
+                  const setAf = setApprovalForm;
+
+                  const tabStyle = (id) => ({
+                    padding: "8px 14px", fontSize: 12, cursor: "pointer", fontFamily: "inherit",
+                    border: "none", borderBottom: approvalTab === id ? `2px solid ${C.green}` : "2px solid transparent",
+                    background: "transparent", color: approvalTab === id ? C.green : C.gray500,
+                    fontWeight: approvalTab === id ? 700 : 400,
+                  });
+
+                  const fieldRow = (label, value, key, placeholder) => (
+                    <div key={key} style={{ marginBottom: 14 }}>
+                      <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: C.gray500, marginBottom: 3 }}>{label}</label>
+                      <input value={value} onChange={e => setAf(p => ({...p, [key]: e.target.value}))} placeholder={placeholder}
+                        style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 8,
+                          padding: "8px 12px", fontSize: 13, fontFamily: "inherit", color: C.dark, outline: "none" }} />
+                    </div>
+                  );
+
+                  return (
+                    <>
+                      {/* Tab bar */}
+                      <div style={{ display: "flex", borderBottom: `1px solid ${C.gray300}`, marginBottom: 20, overflowX: "auto" }}>
+                        {TABS.map(t => <button key={t.id} style={tabStyle(t.id)} onClick={() => setApprovalTab(t.id)}>{t.label}</button>)}
+                      </div>
+
+                      {/* ── TAB: Личные данные ── */}
+                      {approvalTab === "personal" && (
+                        <div>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 16px" }}>
+                            {fieldRow("Фамилия *",   af.lastName,   "lastName",   "Сейткали")}
+                            {fieldRow("Имя *",        af.firstName,  "firstName",  "Алия")}
+                            {fieldRow("Отчество",     af.patronymic, "patronymic", "Маратовна")}
+                            {fieldRow("Дата рождения", af.dob,       "dob",        "15.03.1992")}
+                            {fieldRow("ИИН *",        af.iin,        "iin",        "920315401234")}
+                            {fieldRow("№ паспорта",   af.passportNo, "passportNo", "N12345678")}
+                            {fieldRow("Дата выдачи",  af.passportIssued, "passportIssued", "10.05.2018")}
+                            {fieldRow("Срок действия", af.passportExpiry, "passportExpiry", "10.05.2028")}
+                          </div>
+                          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+                            <Btn small onClick={() => setApprovalTab("vacancy")}>Далее: Вакансия →</Btn>
                           </div>
                         </div>
-                        {i < APPROVAL_STAGES.length - 1 && <div style={{ flex: 1, height: 2, background: C.gray300, margin: "15px 2px 0", flexShrink: 0 }} />}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                      )}
 
-                <Input label="ФИО кандидата *" value={approvalForm.candidate}
-                  onChange={v => setApprovalForm(p => ({...p, candidate: v}))} placeholder="Алия Сейткали" />
-                <Input label="Должность / Вакансия *" value={approvalForm.position}
-                  onChange={v => setApprovalForm(p => ({...p, position: v}))} placeholder="Senior Product Manager" />
-                <Input label="Подразделение ДО *" value={approvalForm.dept}
-                  onChange={v => setApprovalForm(p => ({...p, dept: v}))} placeholder="Цифровой бизнес" />
-                <Input label="Оффер (зарплата)" value={approvalForm.salary}
-                  onChange={v => setApprovalForm(p => ({...p, salary: v}))} placeholder="850 000 ₸" />
+                      {/* ── TAB: Вакансия ── */}
+                      {approvalTab === "vacancy" && (
+                        <div>
+                          {fieldRow("Должность / Вакансия *", af.position, "position", "Senior Product Manager")}
+                          {fieldRow("Подразделение ДО *",      af.dept,     "dept",     "Цифровой бизнес")}
+                          {fieldRow("Оффер (зарплата)",         af.salary,   "salary",   "850 000 ₸")}
+                          <div style={{ marginBottom: 20 }}>
+                            <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: C.gray500, marginBottom: 6 }}>Направление согласования *</label>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                              {BUSINESS_DIRS.map(d => (
+                                <button key={d} onClick={() => setAf(p => ({...p, businessDir: d}))}
+                                  style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, cursor: "pointer",
+                                    border: `1px solid ${af.businessDir === d ? C.green : C.gray300}`,
+                                    background: af.businessDir === d ? C.green : C.white,
+                                    color: af.businessDir === d ? C.white : C.gray700,
+                                    fontFamily: "inherit", fontWeight: af.businessDir === d ? 700 : 400 }}>{d}</button>
+                              ))}
+                            </div>
+                            <div style={{ fontSize: 11, color: C.gray500, marginTop: 6 }}>Дата выхода устанавливается в ДО после согласования</div>
+                          </div>
+                          <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <Btn small variant="ghost" onClick={() => setApprovalTab("personal")}>← Назад</Btn>
+                            <Btn small onClick={() => setApprovalTab("cv")}>Далее: Резюме →</Btn>
+                          </div>
+                        </div>
+                      )}
 
-                <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: C.gray500, marginBottom: 4 }}>
-                    Направление согласования *
-                  </label>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    {BUSINESS_DIRS.map(d => (
-                      <button key={d} onClick={() => setApprovalForm(p => ({...p, businessDir: d}))}
-                        style={{
-                          padding: "6px 14px", borderRadius: 20, fontSize: 12, cursor: "pointer",
-                          border: `1px solid ${approvalForm.businessDir === d ? C.green : C.gray300}`,
-                          background: approvalForm.businessDir === d ? C.green : C.white,
-                          color: approvalForm.businessDir === d ? C.white : C.gray700,
-                          fontFamily: "inherit", fontWeight: approvalForm.businessDir === d ? 700 : 400,
-                        }}>{d}</button>
-                    ))}
-                  </div>
-                  <div style={{ fontSize: 11, color: C.gray500, marginTop: 6 }}>
-                    Дата выхода будет указана в ДО после согласования
-                  </div>
-                </div>
+                      {/* ── TAB: Резюме ── */}
+                      {approvalTab === "cv" && (
+                        <div>
+                          {/* Загрузка резюме */}
+                          <div style={{ border: `2px dashed ${C.gray300}`, borderRadius: 12, padding: "20px", textAlign: "center", marginBottom: 20,
+                            background: cvLoaded ? C.greenPale : C.white, borderColor: cvLoaded ? C.green : C.gray300 }}>
+                            {cvLoaded ? (
+                              <div>
+                                <div style={{ fontSize: 24, marginBottom: 8 }}>✅</div>
+                                <div style={{ fontSize: 13, fontWeight: 700, color: C.green }}>Резюме загружено — данные заполнены автоматически</div>
+                                <div style={{ fontSize: 11, color: C.gray500, marginTop: 4 }}>Образование и опыт работы подтянуты из файла</div>
+                              </div>
+                            ) : (
+                              <div>
+                                <div style={{ fontSize: 24, marginBottom: 8 }}>📄</div>
+                                <div style={{ fontSize: 13, color: C.gray700, marginBottom: 12 }}>Загрузите резюме — образование и опыт заполнятся автоматически</div>
+                                <Btn small onClick={() => {
+                                  setCvLoaded(true);
+                                  setAf(p => ({...p,
+                                    education: [
+                                      { institution: "КазНУ им. аль-Фараби", degree: "Магистр менеджмента", year: "2015" },
+                                      { institution: "Университет КИМЭП", degree: "Бакалавр экономики", year: "2013" },
+                                    ],
+                                    experience: [
+                                      { company: "Kaspi Bank", role: "Product Manager", period: "2019–2024", duties: "Запуск мобильных продуктов, рост MAU" },
+                                      { company: "Kolesa Group", role: "Analyst", period: "2015–2019", duties: "Аналитика данных, A/B тесты" },
+                                    ],
+                                  }));
+                                }}>📎 Загрузить резюме (PDF/DOCX)</Btn>
+                                <div style={{ fontSize: 11, color: C.gray500, marginTop: 8 }}>В будущем — интеграция с eGov для автозаполнения данных</div>
+                              </div>
+                            )}
+                          </div>
 
-                <Input label="Комментарий к кандидату" value={approvalForm.comment}
-                  onChange={v => setApprovalForm(p => ({...p, comment: v}))}
-                  placeholder="Почему рекомендуем этого кандидата..." multiline />
+                          {/* Образование */}
+                          <div style={{ marginBottom: 20 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>Образование</div>
+                              <Btn small variant="ghost" onClick={() => setAf(p => ({...p, education: [...p.education, { institution: "", degree: "", year: "" }]}))}>+ Добавить</Btn>
+                            </div>
+                            {af.education.map((edu, i) => (
+                              <div key={i} style={{ background: C.gray100, borderRadius: 10, padding: "12px 14px", marginBottom: 8, display: "grid", gridTemplateColumns: "2fr 1fr 80px", gap: 8, alignItems: "end" }}>
+                                <div>
+                                  <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>Учебное заведение</div>
+                                  <input value={edu.institution} onChange={e => setAf(p => { const ed=[...p.education]; ed[i]={...ed[i],institution:e.target.value}; return {...p,education:ed}; })}
+                                    style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit" }} />
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>Степень</div>
+                                  <input value={edu.degree} onChange={e => setAf(p => { const ed=[...p.education]; ed[i]={...ed[i],degree:e.target.value}; return {...p,education:ed}; })}
+                                    style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit" }} />
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>Год</div>
+                                  <input value={edu.year} onChange={e => setAf(p => { const ed=[...p.education]; ed[i]={...ed[i],year:e.target.value}; return {...p,education:ed}; })}
+                                    style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit" }} />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
 
-                <div style={{ background: C.gray100, border: `1px solid ${C.gray300}`,
-                  borderRadius: 8, padding: "12px 14px", marginBottom: 20, fontSize: 12, color: C.gray700 }}>
-                  📎 <b>Необходимые документы:</b> {selected.docs}
-                </div>
+                          {/* Опыт работы */}
+                          <div style={{ marginBottom: 20 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>Опыт работы</div>
+                              <Btn small variant="ghost" onClick={() => setAf(p => ({...p, experience: [...p.experience, { company: "", role: "", period: "", duties: "" }]}))}>+ Добавить</Btn>
+                            </div>
+                            {af.experience.map((exp, i) => (
+                              <div key={i} style={{ background: C.gray100, borderRadius: 10, padding: "12px 14px", marginBottom: 8 }}>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 8 }}>
+                                  {[["Компания","company","Kaspi Bank"],["Должность","role","Product Manager"],["Период","period","2019–2024"]].map(([lbl,key,ph]) => (
+                                    <div key={key}>
+                                      <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>{lbl}</div>
+                                      <input value={exp[key]} onChange={e => setAf(p => { const ex=[...p.experience]; ex[i]={...ex[i],[key]:e.target.value}; return {...p,experience:ex}; })}
+                                        placeholder={ph} style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit" }} />
+                                    </div>
+                                  ))}
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>Обязанности</div>
+                                  <input value={exp.duties} onChange={e => setAf(p => { const ex=[...p.experience]; ex[i]={...ex[i],duties:e.target.value}; return {...p,experience:ex}; })}
+                                    placeholder="Основные задачи и достижения" style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit" }} />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <Btn small variant="ghost" onClick={() => setApprovalTab("vacancy")}>← Назад</Btn>
+                            <Btn small onClick={() => setApprovalTab("relatives")}>Далее: Родственники →</Btn>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* ── TAB: Родственники ── */}
+                      {approvalTab === "relatives" && (
+                        <div>
+                          <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 10, padding: "10px 14px", marginBottom: 16, fontSize: 12, color: "#1E40AF" }}>
+                            🔮 <b>В разработке:</b> интеграция с eGov API — данные родственников будут подтягиваться по ИИН кандидата автоматически. Сейчас заполняется вручную.
+                          </div>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>Сведения о родственниках</div>
+                            <Btn small variant="ghost" onClick={() => setAf(p => ({...p, relatives: [...p.relatives, { lastName: "", firstName: "", patronymic: "", relation: "", address: "", workplace: "", iin: "", phone: "" }]}))}>+ Добавить</Btn>
+                          </div>
+                          {af.relatives.map((rel, i) => (
+                            <div key={i} style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "14px 16px", marginBottom: 12 }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                                <div style={{ fontSize: 12, fontWeight: 700, color: C.dark }}>Родственник {i + 1}</div>
+                                {af.relatives.length > 1 && (
+                                  <button onClick={() => setAf(p => ({...p, relatives: p.relatives.filter((_,j)=>j!==i)}))}
+                                    style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: 12, fontFamily: "inherit" }}>✕ Удалить</button>
+                                )}
+                              </div>
+                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 8 }}>
+                                {[["Фамилия","lastName","Иванов"],["Имя","firstName","Иван"],["Отчество","patronymic","Иванович"]].map(([lbl,key,ph]) => (
+                                  <div key={key}>
+                                    <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>{lbl}</div>
+                                    <input value={rel[key]} onChange={e => setAf(p => { const r=[...p.relatives]; r[i]={...r[i],[key]:e.target.value}; return {...p,relatives:r}; })}
+                                      placeholder={ph} style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit" }} />
+                                  </div>
+                                ))}
+                              </div>
+                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
+                                <div>
+                                  <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>Степень родства</div>
+                                  <select value={rel.relation} onChange={e => setAf(p => { const r=[...p.relatives]; r[i]={...r[i],relation:e.target.value}; return {...p,relatives:r}; })}
+                                    style={{ width: "100%", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit", background: C.white }}>
+                                    <option value="">Выберите...</option>
+                                    {["Отец","Мать","Брат","Сестра","Сын","Дочь","Супруг","Супруга","Дедушка","Бабушка"].map(r=><option key={r} value={r}>{r}</option>)}
+                                  </select>
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>ИИН родственника</div>
+                                  <input value={rel.iin} onChange={e => setAf(p => { const r=[...p.relatives]; r[i]={...r[i],iin:e.target.value}; return {...p,relatives:r}; })}
+                                    placeholder="620510301234" style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit" }} />
+                                </div>
+                              </div>
+                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                                {[["Место проживания","address","г. Алматы, ул. Абая 12"],["Место работы","workplace","АО Казмунайгаз"],["Телефон","phone","+7 701 000 0001"]].map(([lbl,key,ph]) => (
+                                  <div key={key} style={key==="address"?{gridColumn:"1/-1"}:{}}>
+                                    <div style={{ fontSize: 10, color: C.gray500, marginBottom: 3 }}>{lbl}</div>
+                                    <input value={rel[key]} onChange={e => setAf(p => { const r=[...p.relatives]; r[i]={...r[i],[key]:e.target.value}; return {...p,relatives:r}; })}
+                                      placeholder={ph} style={{ width: "100%", boxSizing: "border-box", border: `1px solid ${C.gray300}`, borderRadius: 6, padding: "6px 10px", fontSize: 12, fontFamily: "inherit" }} />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
+                            <Btn small variant="ghost" onClick={() => setApprovalTab("cv")}>← Назад</Btn>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </>
             ) : (
               <>
