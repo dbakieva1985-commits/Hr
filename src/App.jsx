@@ -108,36 +108,54 @@ const WorkflowBar = ({ status }) => {
   );
 };
 
-// ── Approval stages ─────────────────────────────────────────────────────────
+// ── Approval stages (реальный маршрут) ──────────────────────────────────────
 const APPROVAL_STAGES = [
-  { id: "hr",  label: "HR проверка",         role: "HR-специалист",         icon: "👤" },
-  { id: "mgr", label: "Руководитель",        role: "Нанимающий менеджер",   icon: "🏢" },
-  { id: "dir", label: "Директор ДУП",        role: "Директор по персоналу", icon: "⭐" },
+  { id: "recruiter", label: "Рекрутер",            sub: "Запускает процесс",              icon: "🚀" },
+  { id: "do",        label: "ДО",                  sub: "Дочерняя организация",           icon: "🏛" },
+  { id: "business",  label: "Рук. направления",    sub: "Зампред / МСБ / РБ / Без-ть",   icon: "⭐" },
+  { id: "hr_gb",     label: "HR ГБ",               sub: "Спец. УСОТ / Директор HR",       icon: "👔" },
+  { id: "do_date",   label: "ДО: дата выхода",     sub: "Подтверждение даты",             icon: "📅" },
+  { id: "uap",       label: "УАП ГБ",              sub: "Приказ о приёме",                icon: "📋" },
 ];
 
-const ApprovalBar = ({ decisions }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 0, margin: "16px 0" }}>
-    {APPROVAL_STAGES.map((st, i) => {
-      const dec = decisions[st.id];
-      const bg  = dec === "approved" ? C.green : dec === "rejected" ? C.red : C.gray300;
-      const label = dec === "approved" ? "✓ Одобрено" : dec === "rejected" ? "✗ Отклонено" : "Ожидает";
-      return (
-        <div key={st.id} style={{ display: "flex", alignItems: "center", flex: i < APPROVAL_STAGES.length - 1 ? 1 : "none" }}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 80 }}>
-            <div style={{ width: 36, height: 36, borderRadius: "50%", background: bg,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 16, color: C.white, border: !dec ? `2px dashed ${C.gray300}` : "none" }}>
-              {st.icon}
+const BUSINESS_DIRS = [
+  "Зампред ГБ",
+  "МСБ",
+  "РБ (Розничный бизнес)",
+  "Безопасность",
+  "Председатель",
+];
+
+const ApprovalBar = ({ decisions, businessDir }) => (
+  <div style={{ overflowX: "auto", paddingBottom: 8 }}>
+    <div style={{ display: "flex", alignItems: "flex-start", minWidth: 600, margin: "16px 0" }}>
+      {APPROVAL_STAGES.map((st, i) => {
+        const dec = decisions[st.id];
+        const isActive = !dec && APPROVAL_STAGES.slice(0, i).every(s => decisions[s.id] === "approved");
+        const bg = dec === "approved" ? C.green : dec === "rejected" ? C.red : isActive ? C.orange : C.gray300;
+        const statusLabel = dec === "approved" ? "✓ Одобрено" : dec === "rejected" ? "✗ Отклонено" : isActive ? "● Активно" : "Ожидает";
+        const subLabel = st.id === "business" && businessDir ? businessDir : st.sub;
+        return (
+          <div key={st.id} style={{ display: "flex", alignItems: "flex-start", flex: i < APPROVAL_STAGES.length - 1 ? 1 : "none" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 82 }}>
+              <div style={{
+                width: 38, height: 38, borderRadius: "50%", background: bg,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 16, color: C.white,
+                border: isActive ? `3px solid ${C.orange}` : !dec ? `2px dashed ${C.gray300}` : "none",
+                boxShadow: isActive ? `0 0 0 4px ${C.orange}22` : "none",
+              }}>{st.icon}</div>
+              <span style={{ fontSize: 10, fontWeight: 700, color: bg, marginTop: 5, textAlign: "center", lineHeight: 1.3 }}>{st.label}</span>
+              <span style={{ fontSize: 9, color: C.gray500, textAlign: "center", marginTop: 2, lineHeight: 1.3 }}>{subLabel}</span>
+              <span style={{ fontSize: 9, color: bg, fontWeight: 600, marginTop: 3 }}>{statusLabel}</span>
             </div>
-            <span style={{ fontSize: 10, fontWeight: 700, color: bg, marginTop: 4, textAlign: "center" }}>{st.label}</span>
-            <span style={{ fontSize: 9, color: C.gray500, textAlign: "center" }}>{label}</span>
+            {i < APPROVAL_STAGES.length - 1 && (
+              <div style={{ flex: 1, height: 2, background: dec === "approved" ? C.green : C.gray300, margin: "19px 2px 0", flexShrink: 0 }} />
+            )}
           </div>
-          {i < APPROVAL_STAGES.length - 1 && (
-            <div style={{ flex: 1, height: 2, background: dec === "approved" ? C.green : C.gray300, margin: "0 4px", marginBottom: 20 }} />
-          )}
-        </div>
-      );
-    })}
+        );
+      })}
+    </div>
   </div>
 );
 
@@ -182,8 +200,8 @@ export default function App() {
     { id: "HR-004", title: "Согласование кандидата",  status: "inwork",  sla: "2 раб. дня",   date: "12.06.2026", icon: "✅",
       isApproval: true,
       candidate: "Алия Сейткали", position: "Senior Product Manager", dept: "Цифровой бизнес",
-      salary: "850 000 ₸", start: "01.07.2026",
-      decisions: { hr: "approved", mgr: "approved", dir: null },
+      salary: "850 000 ₸", start: "", businessDir: "МСБ",
+      decisions: { recruiter: "approved", do: "approved", business: "approved", hr_gb: null, do_date: null, uap: null },
     },
   ]);
   const [detail, setDetail] = useState(null);       // request detail view
@@ -204,12 +222,13 @@ export default function App() {
           title: svc.title, status: "sent",
           sla: svc.sla, date: new Date().toLocaleDateString("ru-RU"),
           icon: svc.icon, isApproval: true,
-          candidate: approvalForm.candidate,
-          position:  approvalForm.position,
-          dept:      approvalForm.dept,
-          salary:    approvalForm.salary,
-          start:     approvalForm.start,
-          decisions: { hr: null, mgr: null, dir: null },
+          candidate:   approvalForm.candidate,
+          position:    approvalForm.position,
+          dept:        approvalForm.dept,
+          salary:      approvalForm.salary,
+          businessDir: approvalForm.businessDir,
+          start:       "",
+          decisions: { recruiter: "approved", do: null, business: null, hr_gb: null, do_date: null, uap: null },
         }
       : {
           id: `HR-00${requests.length + 4}`,
@@ -400,17 +419,20 @@ export default function App() {
                 </p>
 
                 {/* Цепочка согласования — превью */}
-                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "16px 20px", marginBottom: 24 }}>
+                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "16px 20px", marginBottom: 24, overflowX: "auto" }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, marginBottom: 12, textTransform: "uppercase", letterSpacing: 1 }}>Маршрут согласования</div>
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <div style={{ display: "flex", gap: 0, alignItems: "flex-start", minWidth: 520 }}>
                     {APPROVAL_STAGES.map((st, i) => (
-                      <div key={st.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <div style={{ textAlign: "center" }}>
+                      <div key={st.id} style={{ display: "flex", alignItems: "flex-start", flex: i < APPROVAL_STAGES.length - 1 ? 1 : "none" }}>
+                        <div style={{ textAlign: "center", minWidth: 72 }}>
                           <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.gray100, border: `2px dashed ${C.gray300}`,
                             display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, margin: "0 auto 4px" }}>{st.icon}</div>
-                          <div style={{ fontSize: 10, color: C.gray500, whiteSpace: "nowrap" }}>{st.label}</div>
+                          <div style={{ fontSize: 9, color: C.gray700, fontWeight: 600, lineHeight: 1.3 }}>{st.label}</div>
+                          <div style={{ fontSize: 8, color: C.gray500, lineHeight: 1.3, marginTop: 2 }}>
+                            {st.id === "business" ? (approvalForm.businessDir || "выбрать →") : st.sub}
+                          </div>
                         </div>
-                        {i < APPROVAL_STAGES.length - 1 && <div style={{ width: 24, height: 2, background: C.gray300, flexShrink: 0 }} />}
+                        {i < APPROVAL_STAGES.length - 1 && <div style={{ flex: 1, height: 2, background: C.gray300, margin: "15px 2px 0", flexShrink: 0 }} />}
                       </div>
                     ))}
                   </div>
@@ -420,12 +442,32 @@ export default function App() {
                   onChange={v => setApprovalForm(p => ({...p, candidate: v}))} placeholder="Алия Сейткали" />
                 <Input label="Должность / Вакансия *" value={approvalForm.position}
                   onChange={v => setApprovalForm(p => ({...p, position: v}))} placeholder="Senior Product Manager" />
-                <Input label="Подразделение *" value={approvalForm.dept}
+                <Input label="Подразделение ДО *" value={approvalForm.dept}
                   onChange={v => setApprovalForm(p => ({...p, dept: v}))} placeholder="Цифровой бизнес" />
-                <Input label="Предлагаемая зарплата (оффер)" value={approvalForm.salary}
+                <Input label="Оффер (зарплата)" value={approvalForm.salary}
                   onChange={v => setApprovalForm(p => ({...p, salary: v}))} placeholder="850 000 ₸" />
-                <Input label="Планируемая дата выхода" value={approvalForm.start}
-                  onChange={v => setApprovalForm(p => ({...p, start: v}))} placeholder="01.07.2026" />
+
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: C.gray500, marginBottom: 4 }}>
+                    Направление согласования *
+                  </label>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {BUSINESS_DIRS.map(d => (
+                      <button key={d} onClick={() => setApprovalForm(p => ({...p, businessDir: d}))}
+                        style={{
+                          padding: "6px 14px", borderRadius: 20, fontSize: 12, cursor: "pointer",
+                          border: `1px solid ${approvalForm.businessDir === d ? C.green : C.gray300}`,
+                          background: approvalForm.businessDir === d ? C.green : C.white,
+                          color: approvalForm.businessDir === d ? C.white : C.gray700,
+                          fontFamily: "inherit", fontWeight: approvalForm.businessDir === d ? 700 : 400,
+                        }}>{d}</button>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 11, color: C.gray500, marginTop: 6 }}>
+                    Дата выхода будет указана в ДО после согласования
+                  </div>
+                </div>
+
                 <Input label="Комментарий к кандидату" value={approvalForm.comment}
                   onChange={v => setApprovalForm(p => ({...p, comment: v}))}
                   placeholder="Почему рекомендуем этого кандидата..." multiline />
@@ -543,20 +585,21 @@ export default function App() {
               <>
                 <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
                   <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 4px", textTransform: "uppercase", letterSpacing: 1 }}>Статус согласования</h3>
-                  <ApprovalBar decisions={detail.decisions} />
+                  <ApprovalBar decisions={detail.decisions} businessDir={detail.businessDir} />
                 </div>
 
                 <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
                   <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 14px", textTransform: "uppercase", letterSpacing: 1 }}>Кандидат</h3>
                   {[
-                    ["ФИО кандидата",   detail.candidate],
-                    ["Вакансия",         detail.position],
-                    ["Подразделение",    detail.dept],
-                    ["Оффер",            detail.salary],
-                    ["Дата выхода",      detail.start],
-                    ["Номер заявки",     detail.id],
-                    ["Дата подачи",      detail.date],
-                    ["SLA",              detail.sla],
+                    ["ФИО кандидата",        detail.candidate],
+                    ["Вакансия",              detail.position],
+                    ["Подразделение ДО",      detail.dept],
+                    ["Оффер",                 detail.salary],
+                    ["Направление",           detail.businessDir],
+                    ["Дата выхода",           detail.start || "Устанавливается в ДО после согласования"],
+                    ["Номер заявки",          detail.id],
+                    ["Дата подачи",           detail.date],
+                    ["SLA",                   detail.sla],
                   ].map(([k, v]) => v && (
                     <div key={k} style={{ display: "flex", justifyContent: "space-between",
                       padding: "8px 0", borderBottom: `1px solid ${C.gray100}`, fontSize: 13 }}>
@@ -603,7 +646,7 @@ export default function App() {
                   fontSize: 12, color: C.white, fontWeight: 700, flexShrink: 0 }}>HR</div>
                 <div style={{ background: C.gray100, borderRadius: 10, padding: "10px 14px", fontSize: 13, color: C.gray700 }}>
                   {detail.isApproval
-                    ? "Заявка на согласование принята. Ожидается решение директора ДУП."
+                    ? "Заявка передана на согласование в ДО. После прохождения всех этапов УАП создаст приказ о приёме."
                     : "Заявка принята в работу. Ожидайте уведомления."}
                 </div>
               </div>
