@@ -110,13 +110,13 @@ const WorkflowBar = ({ status }) => {
 
 // ── Approval stages (реальный маршрут) ──────────────────────────────────────
 const APPROVAL_STAGES = [
-  { id: "recruiter", label: "Рекрутер",         sub: "Запускает процесс",          icon: "🚀" },
-  { id: "do",        label: "ДО",               sub: "Дочерняя организация",       icon: "🏛" },
-  { id: "business",  label: "Рук. направления", sub: "Зампред / МСБ / РБ / Без-ть", icon: "⭐" },
-  { id: "usot",      label: "Спец. УСОТ",       sub: "Специалист УСОТ",            icon: "👤" },
-  { id: "hr_dir",    label: "Директор HR ГБ",   sub: "Директор по персоналу",      icon: "👔" },
-  { id: "do_date",   label: "ДО: дата выхода",  sub: "Подтверждение даты",         icon: "📅" },
-  { id: "uap",       label: "УАП ГБ",           sub: "Приказ о приёме",            icon: "📋" },
+  { id: "recruiter", label: "Рекрутер",             sub: "ДО → запускает процесс",       icon: "🚀", org: "ДО"  },
+  { id: "do",        label: "Согласование ДО",      sub: "Дочерняя организация",          icon: "🏛", org: "ДО"  },
+  { id: "business",  label: "Рук. направления ГБ",  sub: "Зампред / МСБ / РБ / Без-ть",  icon: "⭐", org: "ГБ"  },
+  { id: "usot",      label: "Спец. УСОТ ГБ",        sub: "Специалист УСОТ ГБ",            icon: "👤", org: "ГБ"  },
+  { id: "hr_dir",    label: "HRD ГБ",               sub: "Директор HR ГБ",                icon: "👔", org: "ГБ"  },
+  { id: "do_date",   label: "ДО: дата выхода",      sub: "Возврат в ДО, ставят дату",     icon: "📅", org: "ДО"  },
+  { id: "uap",       label: "УАП ГБ",               sub: "Приказ о приёме",               icon: "📋", org: "ГБ"  },
 ];
 
 const BUSINESS_DIRS = [
@@ -129,16 +129,22 @@ const BUSINESS_DIRS = [
 
 const ApprovalBar = ({ decisions, businessDir }) => (
   <div style={{ overflowX: "auto", paddingBottom: 8 }}>
-    <div style={{ display: "flex", alignItems: "flex-start", minWidth: 600, margin: "16px 0" }}>
+    <div style={{ display: "flex", alignItems: "flex-start", minWidth: 620, margin: "16px 0" }}>
       {APPROVAL_STAGES.map((st, i) => {
         const dec = decisions[st.id];
         const isActive = !dec && APPROVAL_STAGES.slice(0, i).every(s => decisions[s.id] === "approved");
         const bg = dec === "approved" ? C.green : dec === "rejected" ? C.red : isActive ? C.orange : C.gray300;
         const statusLabel = dec === "approved" ? "✓ Одобрено" : dec === "rejected" ? "✗ Отклонено" : isActive ? "● Активно" : "Ожидает";
         const subLabel = st.id === "business" && businessDir ? businessDir : st.sub;
+        const orgColor = st.org === "ГБ" ? C.blue : C.green;
         return (
           <div key={st.id} style={{ display: "flex", alignItems: "flex-start", flex: i < APPROVAL_STAGES.length - 1 ? 1 : "none" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 82 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 84 }}>
+              {/* Плашка ГБ / ДО */}
+              <div style={{ fontSize: 8, fontWeight: 800, color: orgColor, background: orgColor + "15",
+                border: `1px solid ${orgColor}40`, borderRadius: 4, padding: "1px 6px", marginBottom: 4, letterSpacing: 0.5 }}>
+                {st.org}
+              </div>
               <div style={{
                 width: 38, height: 38, borderRadius: "50%", background: bg,
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -151,7 +157,7 @@ const ApprovalBar = ({ decisions, businessDir }) => (
               <span style={{ fontSize: 9, color: bg, fontWeight: 600, marginTop: 3 }}>{statusLabel}</span>
             </div>
             {i < APPROVAL_STAGES.length - 1 && (
-              <div style={{ flex: 1, height: 2, background: dec === "approved" ? C.green : C.gray300, margin: "19px 2px 0", flexShrink: 0 }} />
+              <div style={{ flex: 1, height: 2, background: dec === "approved" ? C.green : C.gray300, margin: "27px 2px 0", flexShrink: 0 }} />
             )}
           </div>
         );
@@ -449,7 +455,15 @@ export default function App() {
             {selected.isApproval ? (
               <>
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 4px" }}>Анкета кандидата</h2>
-                <p style={{ fontSize: 13, color: C.gray500, marginBottom: 16 }}>Маршрут: Рекрутер → ДО → Рук. направления → Спец. УСОТ → Директор HR ГБ → ДО (дата) → УАП ГБ</p>
+                <p style={{ fontSize: 13, color: C.gray500, marginBottom: 16 }}>
+                  Маршрут: <span style={{color:C.green,fontWeight:600}}>ДО</span> Рекрутер →{" "}
+                  <span style={{color:C.green,fontWeight:600}}>ДО</span> →{" "}
+                  <span style={{color:C.blue,fontWeight:600}}>ГБ</span> Рук. направления →{" "}
+                  <span style={{color:C.blue,fontWeight:600}}>ГБ</span> Спец. УСОТ →{" "}
+                  <span style={{color:C.blue,fontWeight:600}}>ГБ</span> HRD →{" "}
+                  <span style={{color:C.green,fontWeight:600}}>ДО</span> дата выхода →{" "}
+                  <span style={{color:C.blue,fontWeight:600}}>ГБ</span> УАП
+                </p>
 
                 {/* Вкладки */}
                 {(() => {
