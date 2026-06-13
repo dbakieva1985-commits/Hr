@@ -110,12 +110,13 @@ const WorkflowBar = ({ status }) => {
 
 // ── Approval stages (реальный маршрут) ──────────────────────────────────────
 const APPROVAL_STAGES = [
-  { id: "recruiter", label: "Рекрутер",            sub: "Запускает процесс",              icon: "🚀" },
-  { id: "do",        label: "ДО",                  sub: "Дочерняя организация",           icon: "🏛" },
-  { id: "business",  label: "Рук. направления",    sub: "Зампред / МСБ / РБ / Без-ть",   icon: "⭐" },
-  { id: "hr_gb",     label: "HR ГБ",               sub: "Спец. УСОТ / Директор HR",       icon: "👔" },
-  { id: "do_date",   label: "ДО: дата выхода",     sub: "Подтверждение даты",             icon: "📅" },
-  { id: "uap",       label: "УАП ГБ",              sub: "Приказ о приёме",                icon: "📋" },
+  { id: "recruiter", label: "Рекрутер",         sub: "Запускает процесс",          icon: "🚀" },
+  { id: "do",        label: "ДО",               sub: "Дочерняя организация",       icon: "🏛" },
+  { id: "business",  label: "Рук. направления", sub: "Зампред / МСБ / РБ / Без-ть", icon: "⭐" },
+  { id: "usot",      label: "Спец. УСОТ",       sub: "Специалист УСОТ",            icon: "👤" },
+  { id: "hr_dir",    label: "Директор HR ГБ",   sub: "Директор по персоналу",      icon: "👔" },
+  { id: "do_date",   label: "ДО: дата выхода",  sub: "Подтверждение даты",         icon: "📅" },
+  { id: "uap",       label: "УАП ГБ",           sub: "Приказ о приёме",            icon: "📋" },
 ];
 
 const BUSINESS_DIRS = [
@@ -201,7 +202,7 @@ export default function App() {
       isApproval: true,
       candidate: "Алия Сейткали", position: "Senior Product Manager", dept: "Цифровой бизнес",
       salary: "850 000 ₸", start: "", businessDir: "МСБ",
-      decisions: { recruiter: "approved", do: "approved", business: "approved", hr_gb: null, do_date: null, uap: null },
+      decisions: { recruiter: "approved", do: "approved", business: "approved", usot: null, hr_dir: null, do_date: null, uap: null },
     },
   ]);
   const [detail, setDetail] = useState(null);       // request detail view
@@ -228,7 +229,7 @@ export default function App() {
           salary:      approvalForm.salary,
           businessDir: approvalForm.businessDir,
           start:       "",
-          decisions: { recruiter: "approved", do: null, business: null, hr_gb: null, do_date: null, uap: null },
+          decisions: { recruiter: "approved", do: null, business: null, usot: null, hr_dir: null, do_date: null, uap: null },
         }
       : {
           id: `HR-00${requests.length + 4}`,
