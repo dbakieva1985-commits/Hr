@@ -200,8 +200,12 @@ export default function App() {
   const [selected, setSelected] = useState(null);   // service being applied to
   const [form, setForm] = useState({ name: "", dept: "", comment: "" });
   const [submitted, setSubmitted] = useState(false);
-  const [approvalTab, setApprovalTab]   = useState("personal");
   const [cvLoaded,    setCvLoaded]      = useState(false);
+  const [approvalTab, setApprovalTab]   = useState("personal");
+  const [recruitForm, setRecruitForm]   = useState({
+    position: "", management: "", department: "",
+    education: "", experience: "", skills: "", comment: "",
+  });
   const [approvalForm, setApprovalForm] = useState({
     // Личные данные
     lastName: "", firstName: "", patronymic: "", dob: "", iin: "",
@@ -286,6 +290,7 @@ export default function App() {
       experience: [{ company: "", role: "", period: "", duties: "" }],
       relatives:  [{ lastName: "", firstName: "", patronymic: "", relation: "", address: "", workplace: "", iin: "", phone: "" }],
     });
+    setRecruitForm({ position: "", management: "", department: "", education: "", experience: "", skills: "", comment: "" });
     setSubmitted(false);
   }
 
@@ -730,10 +735,42 @@ export default function App() {
                   );
                 })()}
               </>
+            ) : selected.id === 4 ? (
+              <>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 6px" }}>Заявка на подбор персонала</h2>
+                <p style={{ fontSize: 13, color: C.gray500, marginBottom: 20 }}>Заполните требования — HR сформирует job description на основе ваших данных</p>
+
+                {/* Позиция */}
+                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px", marginBottom: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Позиция</div>
+                  <Input label="Должность *" value={recruitForm.position} onChange={v => setRecruitForm(p => ({...p, position: v}))} placeholder="Senior Product Manager" />
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <Input label="Управление" value={recruitForm.management} onChange={v => setRecruitForm(p => ({...p, management: v}))} placeholder="Управление цифровых продуктов" />
+                    <Input label="Департамент" value={recruitForm.department} onChange={v => setRecruitForm(p => ({...p, department: v}))} placeholder="Цифровой бизнес" />
+                  </div>
+                </div>
+
+                {/* Требования */}
+                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px", marginBottom: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Требования к кандидату</div>
+                  <Input label="Образование" value={recruitForm.education} onChange={v => setRecruitForm(p => ({...p, education: v}))}
+                    placeholder="Высшее, финансы / IT / менеджмент" multiline />
+                  <Input label="Опыт работы" value={recruitForm.experience} onChange={v => setRecruitForm(p => ({...p, experience: v}))}
+                    placeholder="От 3 лет в банке или fintech. Опыт запуска продуктов..." multiline />
+                  <Input label="Навыки и компетенции" value={recruitForm.skills} onChange={v => setRecruitForm(p => ({...p, skills: v}))}
+                    placeholder="Product roadmap, Jira, работа с данными, английский B2..." multiline />
+                </div>
+
+                {/* Комментарий */}
+                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px", marginBottom: 16 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Дополнительно</div>
+                  <Input label="Комментарий для рекрутера" value={recruitForm.comment} onChange={v => setRecruitForm(p => ({...p, comment: v}))}
+                    placeholder="Пожелания по личным качествам, срочность, особые условия..." multiline />
+                </div>
+              </>
             ) : (
               <>
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 20px" }}>Заполните заявку</h2>
-                <Input label="Ваше имя и фамилия" value={form.name} onChange={v => setForm(p => ({...p, name: v}))} placeholder="Иванов Иван Иванович" />
                 <Input label="Подразделение" value={form.dept} onChange={v => setForm(p => ({...p, dept: v}))} placeholder="Департамент управления персоналом" />
                 {selected.docs !== "Не требуются" && (
                   <div style={{ background: C.gray100, border: `1px solid ${C.gray300}`,
