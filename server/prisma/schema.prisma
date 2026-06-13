@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  contour   String    @default("internal") // internal | external
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  users     User[]
+  services  Service[]
+  requests  Request[]
+
+  @@map("companies")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  companyId  String   @map("company_id")
+  email      String   @unique
+  fullName   String   @map("full_name")
+  department String?
+  role       Role     @default(EMPLOYEE)
+  password   String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  company    Company   @relation(fields: [companyId], references: [id])
+  requests   Request[] @relation("Requester")
+  assigned   Request[] @relation("Assignee")
+  comments   Comment[]
+  statusLogs StatusLog[]
+
+  @@map("users")
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+  HR_SPECIALIST
+  HR_DIRECTOR
+  ADMIN
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  companyId   String?  @map("company_id")
+  category    String
+  icon        String?
+  title       String
+  description String?
+  slaDays     Int      @map("sla_days")
+  whoCan      String?  @map("who_can")
+  docsNeeded  String?  @map("docs_needed")
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+
+  company     Company?  @relation(fields: [companyId], references: [id])
+  requests    Request[]
+
+  @@map("services")
+}
+
+model Request {
+  id           String    @id @default(uuid())
+  number       String    @unique
+  companyId    String    @map("company_id")
+  serviceId    String    @map("service_id")
+  requesterId  String    @map("requester_id")
+  assigneeId   String?   @map("assignee_id")
+  status       Status    @default(DRAFT)
+  slaDeadline  DateTime? @map("sla_deadline")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  company      Company     @relation(fields: [companyId], references: [id])
+  service      Service     @relation(fields: [serviceId], references: [id])
+  requester    User        @relation("Requester", fields: [requesterId], references: [id])
+  assignee     User?       @relation("Assignee", fields: [assigneeId], references: [id])
+  fields       RequestField[]
+  comments     Comment[]
+  attachments  Attachment[]
+  statusLogs   StatusLog[]
+
+  @@map("requests")
+}
+
+enum Status {
+  DRAFT
+  SENT
+  REVIEW
+  ASSIGNED
+  INWORK
+  DONE
+  CLOSED
+}
+
+model RequestField {
+  id         String  @id @default(uuid())
+  requestId  String  @map("request_id")
+  fieldName  String  @map("field_name")
+  fieldValue String? @map("field_value")
+
+  request    Request @relation(fields: [requestId], references: [id])
+
+  @@map("request_fields")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  requestId String   @map("request_id")
+  authorId  String   @map("author_id")
+  body      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  request   Request @relation(fields: [requestId], references: [id])
+  author    User    @relation(fields: [authorId], references: [id])
+
+  @@map("comments")
+}
+
+model Attachment {
+  id         String   @id @default(uuid())
+  requestId  String   @map("request_id")
+  filename   String
+  storageKey String   @map("storage_key")
+  sizeBytes  Int?     @map("size_bytes")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  request    Request @relation(fields: [requestId], references: [id])
+
+  @@map("attachments")
+}
+
+model StatusLog {
+  id         String   @id @default(uuid())
+  requestId  String   @map("request_id")
+  fromStatus Status?  @map("from_status")
+  toStatus   Status   @map("to_status")
+  changedBy  String   @map("changed_by")
+  changedAt  DateTime @default(now()) @map("changed_at")
+
+  request    Request @relation(fields: [requestId], references: [id])
+  user       User    @relation(fields: [changedBy], references: [id])
+
+  @@map("status_log")
+}
