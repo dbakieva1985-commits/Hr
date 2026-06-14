@@ -283,7 +283,7 @@ export default function App() {
   const [currentRole, setCurrentRole] = useState("recruiter");
   const [obTasks, setObTasks]   = useState(OB_TASKS_INIT);
   const [obDocs,  setObDocs]    = useState(OB_DOCS_INIT);
-  const [obPhase, setObPhase]   = useState("pre");
+  const [obPhase, setObPhase]   = useState("week1");
   const [obView,  setObView]    = useState("employee"); // employee | manager | mentor | hr
   const [obManagerTasks, setObManagerTasks] = useState(OB_MANAGER_TASKS_INIT);
   const [obMentorTasks,  setObMentorTasks]  = useState(OB_MENTOR_TASKS_INIT);
@@ -1214,70 +1214,64 @@ export default function App() {
               {obView === "employee" && (
                 <>
                   {/* Welcome */}
-                  <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
+                  <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px 24px", marginBottom:14, color:C.white }}>
                     <div style={{ fontSize:20, fontWeight:800, marginBottom:4 }}>Добро пожаловать в Халык Банк! 🎉</div>
-                    <div style={{ fontSize:13, opacity:0.9, marginBottom:12 }}>Руководитель: <b>Нуржан Касымов</b> · Наставник: <b>Айгерим Бекова</b></div>
+                    <div style={{ fontSize:13, opacity:0.9, marginBottom:10 }}>Руководитель: <b>Нуржан Касымов</b> · Наставник: <b>Айгерим Бекова</b></div>
                     <div style={{ background:"rgba(255,255,255,0.15)", borderRadius:10, padding:"10px 14px", fontSize:13 }}>
                       Первый рабочий день: <b>16 июня 2026 в 09:00</b> · Испытательный срок: 3 месяца
                     </div>
                   </div>
 
-                  {/* Pre-boarding info block — docs + address */}
-                  {obPhase === "pre" && (
-                    <>
-                      {/* Documents to bring */}
-                      <div style={{ background:C.white, border:`2px solid ${C.orange}50`, borderRadius:12, padding:"18px 22px", marginBottom:14 }}>
-                        <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4 }}>📋 Документы для оформления в HR</div>
-                        <div style={{ fontSize:12, color:C.orange, fontWeight:600, marginBottom:12 }}>Принесите оригиналы в первый рабочий день в 09:00</div>
-                        {[
-                          "Удостоверение личности (оригинал)",
-                          "ИИН — свидетельство (оригинал)",
-                          "Диплом об образовании (оригинал + нотариальная копия)",
-                          "Трудовая книжка (при наличии, оригинал)",
-                          "Военный билет (для военнообязанных)",
-                          "2 фотографии 3×4 (цветное, белый фон)",
-                        ].map((doc, i) => (
-                          <div key={i} style={{ display:"flex", gap:8, alignItems:"flex-start", padding:"6px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:12, color:C.gray700 }}>
-                            <span style={{ color:C.green, fontWeight:700, flexShrink:0 }}>✓</span>{doc}
-                          </div>
-                        ))}
-                      </div>
+                  {/* ALWAYS VISIBLE: Documents to bring on Day 1 */}
+                  <div style={{ background:C.white, border:`2px solid ${C.orange}60`, borderRadius:12, padding:"16px 20px", marginBottom:12 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:2 }}>📋 Документы для оформления в HR</div>
+                    <div style={{ fontSize:12, color:C.orange, fontWeight:600, marginBottom:10 }}>⚠ Принесите оригиналы в первый день в 09:00 · HR: {hrAddress}</div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+                      {[
+                        "Удостоверение личности (оригинал)",
+                        "ИИН — свидетельство (оригинал)",
+                        "Диплом об образовании (оригинал + нотариальная копия)",
+                        "Трудовая книжка (при наличии, оригинал)",
+                        "Военный билет (для военнообязанных мужчин)",
+                        "2 фотографии 3×4 (цветное, белый фон)",
+                      ].map((doc, i) => (
+                        <div key={i} style={{ display:"flex", gap:8, alignItems:"flex-start", padding:"5px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:12, color:C.gray700 }}>
+                          <span style={{ color:C.green, fontWeight:700, flexShrink:0 }}>✓</span>{doc}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                      {/* Address + directions */}
-                      <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"18px 22px", marginBottom:14 }}>
-                        <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4 }}>📍 Куда прийти в первый день</div>
-                        <div style={{ fontSize:13, color:C.dark, fontWeight:600, marginBottom:6 }}>{hrAddress}</div>
-                        {candidateOrg === "ГБ" && (
-                          <>
-                            <div style={{ display:"flex", gap:8, marginBottom:10 }}>
-                              <div style={{ flex:1, background:C.blue+"0D", border:`1px solid ${C.blue}25`, borderRadius:8, padding:"10px 12px", fontSize:12 }}>
-                                <div style={{ fontWeight:700, color:C.blue, marginBottom:4 }}>🚌 На общественном транспорте</div>
-                                <div style={{ color:C.gray700 }}>Автобусы: 28, 65, 86, 97 — остановка «Нурлы Тау»</div>
-                                <div style={{ color:C.gray700, marginTop:2 }}>Метро: ст. «Аль-Фараби» → 5 мин. пешком</div>
-                              </div>
-                              <div style={{ flex:1, background:C.orange+"0D", border:`1px solid ${C.orange}25`, borderRadius:8, padding:"10px 12px", fontSize:12 }}>
-                                <div style={{ fontWeight:700, color:C.orange, marginBottom:4 }}>🚗 На автомобиле</div>
-                                <div style={{ color:C.gray700 }}>Въезд с ул. Тимирязева, паркинг P2 (подземный) и наземная парковка у главного входа</div>
-                              </div>
-                            </div>
-                            {/* Parking */}
-                            <div style={{ background:"#f8f4ff", border:`1px solid #c4b5fd`, borderRadius:8, padding:"12px 14px", fontSize:12 }}>
-                              <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:6 }}>🅿 Парковка у БЦ «Нурлы Тау»</div>
-                              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, color:C.gray700 }}>
-                                <div>Тариф (общий): <b>100 ₸/час</b></div>
-                                <div>Скидка для сотрудников Halyk: <b>50%</b></div>
-                                <div>Как получить скидку: <b>предъявить корпоративный ID на въезде</b></div>
-                                <div>Оплата: <b>через приложение Halyk или на кассе</b></div>
-                              </div>
-                              <div style={{ marginTop:8, color:"#7c3aed", fontSize:11 }}>
-                                После оформления корпоративная парковочная карта выдаётся в административном отделе (к. 108)
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </>
-                  )}
+                  {/* ALWAYS VISIBLE: Address + directions + parking */}
+                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"16px 20px", marginBottom:14 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4 }}>📍 Куда прийти в первый день</div>
+                    <div style={{ fontSize:13, color:C.dark, fontWeight:600, marginBottom:10 }}>{hrAddress}</div>
+                    {candidateOrg === "ГБ" && (
+                      <>
+                        <div style={{ display:"flex", gap:8, marginBottom:10, flexWrap:"wrap" }}>
+                          <div style={{ flex:1, minWidth:140, background:C.blue+"0D", border:`1px solid ${C.blue}25`, borderRadius:8, padding:"10px 12px", fontSize:12 }}>
+                            <div style={{ fontWeight:700, color:C.blue, marginBottom:4 }}>🚌 Общественный транспорт</div>
+                            <div style={{ color:C.gray700 }}>Автобусы 28, 65, 86, 97 — ост. «Нурлы Тау»</div>
+                            <div style={{ color:C.gray700, marginTop:2 }}>Метро: ст. «Аль-Фараби» → 5 мин. пешком</div>
+                          </div>
+                          <div style={{ flex:1, minWidth:140, background:C.orange+"0D", border:`1px solid ${C.orange}25`, borderRadius:8, padding:"10px 12px", fontSize:12 }}>
+                            <div style={{ fontWeight:700, color:C.orange, marginBottom:4 }}>🚗 На автомобиле</div>
+                            <div style={{ color:C.gray700 }}>Въезд с ул. Тимирязева, паркинг P2 (подземный) и наземная парковка у входа</div>
+                          </div>
+                        </div>
+                        <div style={{ background:"#f8f4ff", border:`1px solid #c4b5fd`, borderRadius:8, padding:"12px 14px", fontSize:12 }}>
+                          <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:6 }}>🅿 Парковка у БЦ «Нурлы Тау»</div>
+                          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, color:C.gray700, marginBottom:6 }}>
+                            <div>Тариф: <b>100 ₸/час</b></div>
+                            <div>Скидка сотруднику Halyk: <b>50%</b></div>
+                            <div>Как получить: <b>корпоративный ID на въезде</b></div>
+                            <div>Оплата: <b>приложение Halyk или касса</b></div>
+                          </div>
+                          <div style={{ color:"#7c3aed", fontSize:11 }}>Корпоративная парковочная карта выдаётся в административном отделе (к. 108) после оформления</div>
+                        </div>
+                      </>
+                    )}
+                  </div>
 
                   {/* Phase progress */}
                   <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:14 }}>
