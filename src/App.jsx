@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "2.1";
+const _v = "2.2";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#F7F8FA",
