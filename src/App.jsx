@@ -280,6 +280,7 @@ const TOP_SERVICES = [
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════════════════
 export default function App() {
+  const [portalRole, setPortalRole] = useState(null); // null = splash | "hr" | "employee"
   const [currentRole, setCurrentRole] = useState("recruiter");
   const [obTasks, setObTasks]   = useState(OB_TASKS_INIT);
   const [obDocs,  setObDocs]    = useState(OB_DOCS_INIT);
@@ -342,7 +343,7 @@ export default function App() {
     return () => window.removeEventListener("resize", h);
   });
 
-  const sideW = isMobile ? 0 : 200;
+  const sideW = (isMobile || portalRole === "employee") ? 0 : 200;
 
   const filteredServices = SERVICES.filter(s => {
     const matchCat  = catFilter === "Все" || s.cat === catFilter;
@@ -398,17 +399,73 @@ export default function App() {
     setSubmitted(false);
   }
 
+  // ── Splash / role selection ──────────────────────────────────────────────
+  if (portalRole === null) {
+    return (
+      <div style={{ minHeight:"100vh", background:`linear-gradient(135deg, ${C.dark} 0%, #0d3d2e 100%)`,
+        fontFamily:"'Inter','Segoe UI',sans-serif", display:"flex", flexDirection:"column",
+        alignItems:"center", justifyContent:"center", padding:"24px 16px" }}>
+        <div style={{ marginBottom:32, textAlign:"center" }}>
+          <div style={{ fontSize:12, fontWeight:700, color:C.green, letterSpacing:3, marginBottom:8 }}>HALYK BANK</div>
+          <div style={{ fontSize:isMobile?26:34, fontWeight:800, color:C.white, lineHeight:1.2 }}>HR Service Portal</div>
+          <div style={{ fontSize:14, color:"#FFFFFF80", marginTop:8 }}>Выберите, как вы входите</div>
+        </div>
+
+        <div style={{ display:"flex", flexDirection: isMobile?"column":"row", gap:16, width:"100%", maxWidth:560 }}>
+          {/* HR / Manager */}
+          <button onClick={() => setPortalRole("hr")} style={{
+            flex:1, background:"#FFFFFF10", border:"1px solid #FFFFFF25", borderRadius:16,
+            padding:"28px 20px", cursor:"pointer", textAlign:"left", fontFamily:"inherit",
+            transition:"all .2s", color:C.white,
+          }}
+            onMouseEnter={e => e.currentTarget.style.background="#FFFFFF1A"}
+            onMouseLeave={e => e.currentTarget.style.background="#FFFFFF10"}>
+            <div style={{ fontSize:36, marginBottom:12 }}>🏢</div>
+            <div style={{ fontSize:17, fontWeight:700, color:C.white, marginBottom:6 }}>HR / Руководитель</div>
+            <div style={{ fontSize:13, color:"#FFFFFF80", lineHeight:1.5 }}>
+              Каталог заявок, согласование кандидатов, аналитика, управление онбордингом
+            </div>
+            <div style={{ marginTop:16, display:"inline-block", background:C.green, color:C.white,
+              borderRadius:8, padding:"8px 18px", fontSize:13, fontWeight:600 }}>Войти →</div>
+          </button>
+
+          {/* New employee */}
+          <button onClick={() => { setPortalRole("employee"); setObView("employee"); setPage("onboarding"); }} style={{
+            flex:1, background:`linear-gradient(135deg, ${C.green}33, ${C.greenMid}22)`,
+            border:`1px solid ${C.green}60`, borderRadius:16,
+            padding:"28px 20px", cursor:"pointer", textAlign:"left", fontFamily:"inherit",
+            transition:"all .2s", color:C.white,
+          }}
+            onMouseEnter={e => e.currentTarget.style.background=`${C.green}44`}
+            onMouseLeave={e => e.currentTarget.style.background=`linear-gradient(135deg, ${C.green}33, ${C.greenMid}22)`}>
+            <div style={{ fontSize:36, marginBottom:12 }}>🎉</div>
+            <div style={{ fontSize:17, fontWeight:700, color:C.white, marginBottom:6 }}>Новый сотрудник</div>
+            <div style={{ fontSize:13, color:"#FFFFFF80", lineHeight:1.5 }}>
+              Мой трек адаптации: задачи, документы, адрес HR, цели на испытательный срок
+            </div>
+            <div style={{ marginTop:16, display:"inline-block", background:C.green, color:C.white,
+              borderRadius:8, padding:"8px 18px", fontSize:13, fontWeight:600 }}>Открыть мой трек →</div>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // ── Layout shell ────────────────────────────────────────────────────────
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', 'Segoe UI', sans-serif", background: C.bg }}>
 
-      {/* Sidebar — desktop only */}
-      <div style={{ width: sideW, background: C.dark, display: isMobile ? "none" : "flex", flexDirection: "column",
+      {/* Sidebar — desktop only, HR only */}
+      <div style={{ width: sideW, background: C.dark, display: (isMobile || portalRole === "employee") ? "none" : "flex", flexDirection: "column",
         position: "fixed", top: 0, left: 0, height: "100vh", zIndex: 100 }}>
-        {/* Logo */}
+        {/* Logo + back */}
         <div style={{ padding: "24px 20px 16px" }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: C.green, letterSpacing: 2, marginBottom: 4 }}>HALYK BANK</div>
           <div style={{ fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.2 }}>HR Service<br/>Portal</div>
+          <button onClick={() => setPortalRole(null)} style={{ marginTop:10, background:"none", border:"1px solid #FFFFFF30",
+            borderRadius:6, padding:"4px 10px", fontSize:10, color:"#FFFFFF80", cursor:"pointer", fontFamily:"inherit" }}>
+            ← Сменить роль
+          </button>
         </div>
         <div style={{ height: 1, background: "#FFFFFF18", margin: "0 16px" }} />
 
@@ -466,8 +523,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* Mobile bottom nav */}
-      {isMobile && (
+      {/* Mobile bottom nav — HR only */}
+      {isMobile && portalRole === "hr" && (
         <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:58, background:C.white,
           borderTop:`1px solid ${C.gray300}`, display:"flex", zIndex:200, boxShadow:"0 -2px 10px #0000000F" }}>
           {NAV.map(n => (
@@ -483,29 +540,52 @@ export default function App() {
         </nav>
       )}
 
+      {/* Employee desktop top bar */}
+      {!isMobile && portalRole === "employee" && (
+        <div style={{ position:"fixed", top:0, left:0, right:0, height:52, background:C.dark,
+          display:"flex", alignItems:"center", justifyContent:"space-between",
+          padding:"0 24px", zIndex:200 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+            <button onClick={() => setPortalRole(null)} style={{ background:"none", border:"1px solid #FFFFFF30",
+              borderRadius:6, padding:"5px 12px", fontSize:12, color:"#FFFFFF80", cursor:"pointer", fontFamily:"inherit" }}>
+              ← Сменить роль
+            </button>
+            <div style={{ fontSize:10, fontWeight:700, color:C.green, letterSpacing:2 }}>HALYK BANK · HR Service Portal</div>
+          </div>
+          <div style={{ width:32, height:32, borderRadius:"50%", background:C.green,
+            display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, color:C.white, fontWeight:700 }}>Ф</div>
+        </div>
+      )}
+
       {/* Mobile top header */}
       {isMobile && (
         <div style={{ position:"fixed", top:0, left:0, right:0, height:52, background:C.dark,
           display:"flex", alignItems:"center", justifyContent:"space-between",
           padding:"0 16px", zIndex:200 }}>
-          <div>
-            <div style={{ fontSize:10, fontWeight:700, color:C.green, letterSpacing:2 }}>HALYK BANK</div>
-            <div style={{ fontSize:12, fontWeight:700, color:C.white }}>HR Service Portal</div>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <button onClick={() => setPortalRole(null)} style={{ background:"none", border:"none", cursor:"pointer",
+              color:"#FFFFFF80", fontSize:20, padding:"0 4px 0 0", lineHeight:1 }}>←</button>
+            <div>
+              <div style={{ fontSize:10, fontWeight:700, color:C.green, letterSpacing:2 }}>HALYK BANK</div>
+              <div style={{ fontSize:12, fontWeight:700, color:C.white }}>HR Service Portal</div>
+            </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <select value={currentRole} onChange={e => setCurrentRole(e.target.value)}
-              style={{ background:"#FFFFFF15", color:C.white, border:"1px solid #FFFFFF30",
-                borderRadius:6, padding:"4px 8px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none" }}>
-              {[
-                { id:"recruiter", label:"Рекрутер ДО" },
-                { id:"do",        label:"Рук-ль ДО" },
-                { id:"business",  label:"Рук. напр. ГБ" },
-                { id:"usot",      label:"УСОТ ГБ" },
-                { id:"hr_dir",    label:"HRD ГБ" },
-                { id:"do_date",   label:"ДО (дата)" },
-                { id:"uap",       label:"УАП ГБ" },
-              ].map(r => <option key={r.id} value={r.id} style={{ background:C.dark }}>{r.label}</option>)}
-            </select>
+            {portalRole === "hr" && (
+              <select value={currentRole} onChange={e => setCurrentRole(e.target.value)}
+                style={{ background:"#FFFFFF15", color:C.white, border:"1px solid #FFFFFF30",
+                  borderRadius:6, padding:"4px 8px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none" }}>
+                {[
+                  { id:"recruiter", label:"Рекрутер ДО" },
+                  { id:"do",        label:"Рук-ль ДО" },
+                  { id:"business",  label:"Рук. напр. ГБ" },
+                  { id:"usot",      label:"УСОТ ГБ" },
+                  { id:"hr_dir",    label:"HRD ГБ" },
+                  { id:"do_date",   label:"ДО (дата)" },
+                  { id:"uap",       label:"УАП ГБ" },
+                ].map(r => <option key={r.id} value={r.id} style={{ background:C.dark }}>{r.label}</option>)}
+              </select>
+            )}
             <div style={{ width:30, height:30, borderRadius:"50%", background:C.green,
               display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:C.white, fontWeight:700 }}>Ф</div>
           </div>
@@ -514,7 +594,9 @@ export default function App() {
 
       {/* Main */}
       <div style={{ marginLeft: sideW, flex: 1,
-        padding: isMobile ? "68px 14px 74px" : "32px 36px",
+        padding: isMobile
+          ? `68px 14px ${portalRole === "employee" ? "20px" : "74px"}`
+          : (portalRole === "employee" ? "68px 36px 32px" : "32px 36px"),
         maxWidth: isMobile ? "100vw" : `calc(100vw - ${sideW}px)`,
         boxSizing: "border-box" }}>
 
