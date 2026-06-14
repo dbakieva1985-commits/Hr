@@ -334,8 +334,15 @@ export default function App() {
     },
   ]);
   const [detail, setDetail] = useState(null);       // request detail view
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
+  useState(() => {
+    if(typeof window === "undefined") return;
+    const h = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", h);
+    return () => window.removeEventListener("resize", h);
+  });
 
-  const sideW = 200;
+  const sideW = isMobile ? 0 : 200;
 
   const filteredServices = SERVICES.filter(s => {
     const matchCat  = catFilter === "Все" || s.cat === catFilter;
@@ -395,8 +402,8 @@ export default function App() {
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', 'Segoe UI', sans-serif", background: C.bg }}>
 
-      {/* Sidebar */}
-      <div style={{ width: sideW, background: C.dark, display: "flex", flexDirection: "column",
+      {/* Sidebar — desktop only */}
+      <div style={{ width: sideW, background: C.dark, display: isMobile ? "none" : "flex", flexDirection: "column",
         position: "fixed", top: 0, left: 0, height: "100vh", zIndex: 100 }}>
         {/* Logo */}
         <div style={{ padding: "24px 20px 16px" }}>
@@ -459,15 +466,64 @@ export default function App() {
         </div>
       </div>
 
+      {/* Mobile bottom nav */}
+      {isMobile && (
+        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:58, background:C.white,
+          borderTop:`1px solid ${C.gray300}`, display:"flex", zIndex:200, boxShadow:"0 -2px 10px #0000000F" }}>
+          {NAV.map(n => (
+            <button key={n.id} onClick={() => { setPage(n.id); setDetail(null); }} style={{
+              flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+              background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
+              color: page===n.id ? C.green : C.gray500, padding:"6px 0",
+            }}>
+              <span style={{ fontSize:20, lineHeight:1 }}>{n.icon}</span>
+              <span style={{ fontSize:9, fontWeight: page===n.id ? 700 : 400, marginTop:3 }}>{n.label}</span>
+            </button>
+          ))}
+        </nav>
+      )}
+
+      {/* Mobile top header */}
+      {isMobile && (
+        <div style={{ position:"fixed", top:0, left:0, right:0, height:52, background:C.dark,
+          display:"flex", alignItems:"center", justifyContent:"space-between",
+          padding:"0 16px", zIndex:200 }}>
+          <div>
+            <div style={{ fontSize:10, fontWeight:700, color:C.green, letterSpacing:2 }}>HALYK BANK</div>
+            <div style={{ fontSize:12, fontWeight:700, color:C.white }}>HR Service Portal</div>
+          </div>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <select value={currentRole} onChange={e => setCurrentRole(e.target.value)}
+              style={{ background:"#FFFFFF15", color:C.white, border:"1px solid #FFFFFF30",
+                borderRadius:6, padding:"4px 8px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none" }}>
+              {[
+                { id:"recruiter", label:"Рекрутер ДО" },
+                { id:"do",        label:"Рук-ль ДО" },
+                { id:"business",  label:"Рук. напр. ГБ" },
+                { id:"usot",      label:"УСОТ ГБ" },
+                { id:"hr_dir",    label:"HRD ГБ" },
+                { id:"do_date",   label:"ДО (дата)" },
+                { id:"uap",       label:"УАП ГБ" },
+              ].map(r => <option key={r.id} value={r.id} style={{ background:C.dark }}>{r.label}</option>)}
+            </select>
+            <div style={{ width:30, height:30, borderRadius:"50%", background:C.green,
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:C.white, fontWeight:700 }}>Ф</div>
+          </div>
+        </div>
+      )}
+
       {/* Main */}
-      <div style={{ marginLeft: sideW, flex: 1, padding: "32px 36px", maxWidth: "calc(100vw - 200px)" }}>
+      <div style={{ marginLeft: sideW, flex: 1,
+        padding: isMobile ? "68px 14px 74px" : "32px 36px",
+        maxWidth: isMobile ? "100vw" : `calc(100vw - ${sideW}px)`,
+        boxSizing: "border-box" }}>
 
         {/* ── HOME ── */}
         {page === "home" && !selected && (
           <div>
             <div style={{ marginBottom: 28 }}>
-              <h1 style={{ fontSize: 26, fontWeight: 700, color: C.dark, margin: 0 }}>Добро пожаловать 👋</h1>
-              <p style={{ color: C.gray500, marginTop: 6, fontSize: 14 }}>Здесь вы можете подать любую HR-заявку и отследить её статус</p>
+              <h1 style={{ fontSize: isMobile ? 20 : 26, fontWeight: 700, color: C.dark, margin: 0 }}>Добро пожаловать 👋</h1>
+              <p style={{ color: C.gray500, marginTop: 4, fontSize: isMobile ? 13 : 14 }}>Здесь вы можете подать любую HR-заявку и отследить её статус</p>
             </div>
 
             {/* Онбординг banner */}
@@ -480,7 +536,7 @@ export default function App() {
             </div>
 
             {/* Quick actions */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 28 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: isMobile ? 10 : 14, marginBottom: 24 }}>
               {SERVICES.slice(0,4).map(s => (
                 <div key={s.id} onClick={() => { setSelected(s); setPage("form"); }}
                   style={{ background: C.white, border: `1px solid ${C.gray300}`,
@@ -543,7 +599,7 @@ export default function App() {
             </div>
 
             {/* Service cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 10 : 14 }}>
               {filteredServices.map(s => (
                 <div key={s.id} style={{
                   background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12,
@@ -571,7 +627,7 @@ export default function App() {
 
         {/* ── FORM ── */}
         {page === "form" && selected && !submitted && (
-          <div style={{ maxWidth: 580 }}>
+          <div style={{ maxWidth: isMobile ? "100%" : 580 }}>
             <button onClick={() => { setSelected(null); setPage("catalog"); }}
               style={{ background: "none", border: "none", color: C.green, fontSize: 13,
                 cursor: "pointer", marginBottom: 20, padding: 0, fontFamily: "inherit" }}>
@@ -1270,10 +1326,9 @@ export default function App() {
                         </div>
                         <div style={{ background:"#f8f4ff", border:`1px solid #c4b5fd`, borderRadius:8, padding:"12px 14px", fontSize:12 }}>
                           <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:6 }}>🅿 Парковка у БЦ «Нурлы Тау»</div>
-                          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6, color:C.gray700, marginBottom:6 }}>
-                            <div>Тариф: <b>100 ₸/час</b></div>
-                            <div>Скидка сотруднику Halyk: <b>50%</b></div>
-                            <div>Как получить: <b>корпоративный ID на въезде</b></div>
+                          <div style={{ display:"flex", flexDirection:"column", gap:4, color:C.gray700, marginBottom:6 }}>
+                            <div>Тариф: <b>100 ₸/час</b> · Скидка сотруднику Halyk: <b>50%</b></div>
+                            <div>Как получить скидку: <b>корпоративный ID на въезде</b></div>
                             <div>Оплата: <b>приложение Halyk или касса</b></div>
                           </div>
                           <div style={{ color:"#7c3aed", fontSize:11 }}>Корпоративная парковочная карта выдаётся в административном отделе (к. 108) после оформления</div>
@@ -1519,7 +1574,7 @@ export default function App() {
               {/* ── HR VIEW ── */}
               {obView === "hr" && (
                 <>
-                  <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:14, marginBottom:20 }}>
+                  <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(1,1fr)":"repeat(3,1fr)", gap:12, marginBottom:16 }}>
                     {[
                       { label:"Активных онбордингов", value:"7",   color:C.green },
                       { label:"Просроченных задач",   value:"3",   color:C.red   },
@@ -1593,7 +1648,7 @@ export default function App() {
             </div>
 
             {/* KPI cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 28 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: isMobile ? 10 : 14, marginBottom: 24 }}>
               {ANALYTICS.map(a => (
                 <div key={a.label} style={{ background: C.white, border: `1px solid ${C.gray300}`,
                   borderRadius: 12, padding: "20px 18px", boxShadow: "0 1px 4px #0000000A" }}>
