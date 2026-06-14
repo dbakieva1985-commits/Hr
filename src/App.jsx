@@ -747,7 +747,7 @@ export default function App() {
                               ))}
                             </div>
                             <div style={{ fontSize: 11, color: C.gray500, marginTop: 6 }}>
-                              {af.org === "ГБ" ? "Головной Банк — адрес приёма: пр. Аль-Фараби 40, БЦ Нурлы Тау" : "Дочерняя организация — адрес будет указан ДО"}
+                              {af.org === "ГБ" ? "Головной Банк — адрес приёма: пр. Аль-Фараби, 40" : "Дочерняя организация — адрес будет указан ДО"}
                             </div>
                           </div>
                           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -1188,7 +1188,7 @@ export default function App() {
           const goalsSet     = obManagerTasks.some(t => t.isGoals && t.done);
           const candidateOrg = "ГБ"; // from approval: HR-004 is ГБ
           const hrAddress    = candidateOrg === "ГБ"
-            ? "пр. Аль-Фараби 40, БЦ «Нурлы Тау», блок 2А, офис HR (1 эт.)"
+            ? "г. Алматы, пр. Аль-Фараби, 40 — офис HR"
             : "Адрес дочерней организации — уточните у вашего HR-координатора";
 
           const docStatusColor = { verified: C.green, pending: C.orange, waiting: C.gray300 };
