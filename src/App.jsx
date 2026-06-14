@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+const _v = "2.1";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#F7F8FA",
@@ -470,6 +470,15 @@ export default function App() {
               <p style={{ color: C.gray500, marginTop: 6, fontSize: 14 }}>Здесь вы можете подать любую HR-заявку и отследить её статус</p>
             </div>
 
+            {/* Онбординг banner */}
+            <div onClick={() => setPage("onboarding")} style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:14, padding:"16px 22px", marginBottom:20, cursor:"pointer", color:C.white, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <div>
+                <div style={{ fontSize:15, fontWeight:800, marginBottom:2 }}>🎉 Трек онбординга нового сотрудника</div>
+                <div style={{ fontSize:12, opacity:0.9 }}>Задачи, документы, адрес HR, схема проезда, парковка, цели ИС</div>
+              </div>
+              <div style={{ fontSize:22, marginLeft:16 }}>→</div>
+            </div>
+
             {/* Quick actions */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 28 }}>
               {SERVICES.slice(0,4).map(s => (
@@ -550,7 +559,9 @@ export default function App() {
                   <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 14 }}>{s.desc}</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</span>
-                    <Btn small onClick={() => { setSelected(s); setPage("form"); }}>Подать заявку</Btn>
+                    <Btn small onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}>
+                      {s.isOnboarding ? "Открыть" : "Подать заявку"}
+                    </Btn>
                   </div>
                 </div>
               ))}
