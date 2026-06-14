@@ -1224,19 +1224,28 @@ export default function App() {
 
                   {/* ALWAYS VISIBLE: Documents to bring on Day 1 */}
                   <div style={{ background:C.white, border:`2px solid ${C.orange}60`, borderRadius:12, padding:"16px 20px", marginBottom:12 }}>
-                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:2 }}>📋 Документы для оформления в HR</div>
-                    <div style={{ fontSize:12, color:C.orange, fontWeight:600, marginBottom:10 }}>⚠ Принесите оригиналы в первый день в 09:00 · HR: {hrAddress}</div>
-                    <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:2 }}>📋 Перечень документов при приёме в Halyk Bank</div>
+                    <div style={{ fontSize:12, color:C.orange, fontWeight:600, marginBottom:4 }}>⚠ В первый рабочий день в 09:00 · {hrAddress}</div>
+                    <div style={{ fontSize:11, color:C.gray500, marginBottom:10 }}>Сканы отправьте рекрутеру заранее. В первый день принесите оригиналы.</div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
                       {[
-                        "Удостоверение личности (оригинал)",
-                        "ИИН — свидетельство (оригинал)",
-                        "Диплом об образовании (оригинал + нотариальная копия)",
-                        "Трудовая книжка (при наличии, оригинал)",
-                        "Военный билет (для военнообязанных мужчин)",
-                        "2 фотографии 3×4 (цветное, белый фон)",
-                      ].map((doc, i) => (
-                        <div key={i} style={{ display:"flex", gap:8, alignItems:"flex-start", padding:"5px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:12, color:C.gray700 }}>
-                          <span style={{ color:C.green, fontWeight:700, flexShrink:0 }}>✓</span>{doc}
+                        { n:"1", text:"Трудовая книжка или документы, подтверждающие трудовую деятельность. Копия приказа об увольнении при отсутствии записей в трудовой книжке с последнего места работы" },
+                        { n:"2", text:"Медосмотр при приёме на работу (форма 075 с печатью флюорографии и подписью главного врача)" },
+                        { n:"3", text:"Справка об инвалидности работника и/или ребёнка (при наличии)" },
+                        { n:"4", text:"Для инвалидов — справка с прежнего места работы за весь период" },
+                        { n:"5", text:"Для совместителей — справка о характере и условиях труда по основному месту работы" },
+                        { n:"6", text:"Уведомление об открытии карточного счёта Halyk Bank (20-значный IBAN счёт)", highlight:true },
+                        { n:"7", text:"Военный билет / приписное свидетельство (военнообязанные должны состоять на учёте в городе работы)" },
+                        { n:"8", text:"Свидетельство о заключении / расторжении брака (при наличии)" },
+                        { n:"9", text:"Свидетельства о рождении детей (при наличии)" },
+                        { n:"10", text:"Цветная фотография 3×4 (если не вложена в онлайн-анкету)" },
+                        { n:"11", text:"Дополнительные сведения к анкете (заполнялись ранее — оригинал из онлайн-анкеты)" },
+                        { n:"12", text:"Согласие субъекта (заполнялось ранее — оригинал из онлайн-анкеты)" },
+                        { n:"13", text:"Согласие на сбор и обработку персональных данных (заполнялось ранее — оригинал из онлайн-анкеты)" },
+                      ].map((doc) => (
+                        <div key={doc.n} style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"7px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:12 }}>
+                          <span style={{ color:C.white, background:doc.highlight ? C.green : C.gray500, borderRadius:"50%", width:18, height:18, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:700, flexShrink:0, marginTop:1 }}>{doc.n}</span>
+                          <span style={{ color: doc.highlight ? C.dark : C.gray700, fontWeight: doc.highlight ? 600 : 400 }}>{doc.text}</span>
                         </div>
                       ))}
                     </div>
