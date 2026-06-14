@@ -205,11 +205,12 @@ const OB_TASKS_INIT = [
   { id:15, phase:"month1", title:"Ознакомиться с процессами подразделения", who:"Сотрудник",     done:false },
   { id:16, phase:"month1", title:"Check-in встреча с HR на 30-й день",      who:"HR + сотрудник", done:false },
   // Месяц 2-3
-  { id:17, phase:"month3", title:"Заполнить опрос адаптации (2 мес.)",      who:"Сотрудник", done:false, isSurvey:true },
-  { id:18, phase:"month3", title:"Check-in встреча с руководителем (60 дн.)",who:"Рук-ль + сотрудник", done:false },
-  { id:19, phase:"month3", title:"Check-in встреча с HR (90 дней)",         who:"HR + сотрудник", done:false },
-  { id:20, phase:"month3", title:"Финальная оценка по итогам ИС",           who:"Рук-ль",    done:false },
-  { id:21, phase:"month3", title:"Решение по ИС: принят / продлён / расстались", who:"Рук-ль + HR", done:false },
+  { id:17, phase:"month3", title:"Заполнить опрос адаптации (2 мес.)",        who:"Сотрудник",          done:false, isSurvey:true },
+  { id:18, phase:"month3", title:"Встреча 1:1 с руководителем (2-й месяц)",   who:"Рук-ль + сотрудник", done:false },
+  { id:19, phase:"month3", title:"Check-in встреча с HR (90 дней)",            who:"HR + сотрудник",     done:false },
+  { id:20, phase:"month3", title:"Встреча 1:1 с руководителем (3-й месяц)",   who:"Рук-ль + сотрудник", done:false },
+  { id:21, phase:"month3", title:"Финальная оценка по итогам ИС",             who:"Рук-ль",             done:false },
+  { id:22, phase:"month3", title:"Решение по ИС: принят / продлён / расстались", who:"Рук-ль + HR",     done:false },
 ];
 
 const OB_MANAGER_TASKS_INIT = [
@@ -218,9 +219,11 @@ const OB_MANAGER_TASKS_INIT = [
   { id:"m3", phase:"week1",  title:"Познакомить с отделом / департаментом",       sub:"День 1",                              done:false },
   { id:"m4", phase:"week1",  title:"Познакомить с наставником",                   sub:"День 1",                              done:false },
   { id:"m5", phase:"week1",  title:"Поставить цели на испытательный срок",        sub:"Открывает редактор целей",            done:false, isGoals:true },
-  { id:"m6", phase:"month3", title:"Заполнить опрос адаптации от HR",             sub:"На 60-й день",                        done:false, isSurvey:true },
-  { id:"m7", phase:"month3", title:"Провести оценку по целям ИС",                 sub:"На 90-й день",                        done:false },
-  { id:"m8", phase:"month3", title:"Принять решение по ИС",                       sub:"Продолжаем / продлеваем / расстаёмся", done:false },
+  { id:"m6", phase:"month3", title:"Встреча 1:1 с сотрудником (2-й месяц)",       sub:"~60-й день",                           done:false },
+  { id:"m7", phase:"month3", title:"Заполнить опрос адаптации от HR",             sub:"На 60-й день",                         done:false, isSurvey:true },
+  { id:"m8", phase:"month3", title:"Встреча 1:1 с сотрудником (3-й месяц)",       sub:"~90-й день",                           done:false },
+  { id:"m9", phase:"month3", title:"Провести оценку по целям ИС",                 sub:"На 90-й день",                         done:false },
+  { id:"m10",phase:"month3", title:"Принять решение по ИС",                       sub:"Продолжаем / продлеваем / расстаёмся", done:false },
 ];
 
 const OB_MENTOR_TASKS_INIT = [
