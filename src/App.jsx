@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "4.8";
+const _v = "5.0";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -396,6 +396,34 @@ const TOP_SERVICES = [
   { title: "Заявка на премирование", count: 11, pct: 29 },
 ];
 
+const LEVELS = [
+  { min:0,  label:"Уровень 1", name:"Новичок" },
+  { min:16, label:"Уровень 2", name:"Исследователь" },
+  { min:36, label:"Уровень 3", name:"Освоился" },
+  { min:56, label:"Уровень 4", name:"Уверенный игрок" },
+  { min:76, label:"Уровень 5", name:"Профессионал" },
+  { min:91, label:"Уровень 6", name:"Легенда Halyk" },
+];
+const OB_MILESTONES = [
+  { cat:"pre",  reward:"Ручка и блокнот",  icon:"✏️" },
+  { cat:"ob",   reward:"Цифровой бейдж",   icon:"⭐" },
+  { cat:"ind",  reward:"Кружка Halyk",     icon:"☕" },
+  { cat:"feed", reward:"Футболка Halyk",   icon:"👕" },
+];
+const SPASIBO_REWARDS = [
+  { n:50,  reward:"Кружка Halyk",    icon:"☕" },
+  { n:100, reward:"Футболка Halyk",  icon:"👕" },
+  { n:150, reward:"Термокружка",     icon:"🍵" },
+  { n:200, reward:"Рюкзак Halyk",    icon:"🎒" },
+  { n:300, reward:"Premium-мерч",    icon:"🎁" },
+];
+const OB_BADGES = [
+  { id:"first", icon:"⭐", name:"Первый шаг",      desc:"Выполнена первая задача" },
+  { id:"half",  icon:"💪", name:"Половина пути",   desc:"Прошёл 50% адаптации" },
+  { id:"allob", icon:"🌟", name:"Команда приняла", desc:"Pre-boarding и ONB завершены" },
+  { id:"done",  icon:"🚀", name:"Адаптирован!",    desc:"Испытательный срок пройден" },
+];
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════════════════
@@ -415,6 +443,10 @@ export default function App() {
   const [obItSec,        setObItSec]        = useState("pre");
   const [obItTab,        setObItTab]        = useState("general"); // "general" | "it"
   const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false, goals:false, survey:false, princ:false, vals:false, health:false });
+  const [obSpasibo,      setObSpasibo]      = useState(12);
+  const [obStreak,       setObStreak]       = useState(3);
+  const [obToast,        setObToast]        = useState(null);
+  const [spasiboSent,    setSpasiboSent]    = useState(false);
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -468,6 +500,22 @@ export default function App() {
   });
 
   const sideW = isMobile ? 0 : 200;
+
+  const handleActivityToggle = (id) => {
+    setObActivities(prev => {
+      const updated = prev.map(a => a.id===id ? {...a, done:!a.done} : a);
+      for (const m of OB_MILESTONES) {
+        const phPrev    = prev.filter(a=>a.cat===m.cat && !a.type);
+        const phUpdated = updated.filter(a=>a.cat===m.cat && !a.type);
+        const wasDone   = phPrev.length > 0 && phPrev.every(a=>a.done);
+        const isDone    = phUpdated.length > 0 && phUpdated.every(a=>a.done);
+        if (isDone && !wasDone) {
+          setTimeout(() => setObToast({ title:"Этап завершён!", reward:`Ваша награда: ${m.reward}`, icon:m.icon }), 300);
+        }
+      }
+      return updated;
+    });
+  };
 
   const filteredServices = SERVICES.filter(s => {
     const matchCat  = catFilter === "Все" || s.cat === catFilter;
@@ -526,6 +574,21 @@ export default function App() {
   // ── Layout shell ────────────────────────────────────────────────────────
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', 'Segoe UI', sans-serif", background: C.bg }}>
+
+      {/* Phase completion toast */}
+      {obToast && (
+        <div onClick={() => setObToast(null)} style={{ position:"fixed", top:0, left:0, right:0, bottom:0, background:"rgba(0,0,0,0.65)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <div onClick={e=>e.stopPropagation()} style={{ background:C.white, borderRadius:24, padding:"32px 24px", textAlign:"center", maxWidth:300, margin:"0 20px", boxShadow:"0 20px 60px rgba(0,0,0,0.3)" }}>
+            <div style={{ fontSize:64, marginBottom:12 }}>{obToast.icon}</div>
+            <div style={{ fontSize:22, fontWeight:800, color:C.dark, marginBottom:8 }}>{obToast.title}</div>
+            <div style={{ fontSize:15, color:C.dark, fontWeight:600, marginBottom:6 }}>{obToast.reward}</div>
+            <div style={{ fontSize:12, color:C.gray500, marginBottom:24 }}>HR-служба вручит награду в ближайшее время</div>
+            <button onClick={() => setObToast(null)} style={{ background:C.green, color:C.white, border:"none", borderRadius:12, padding:"12px 36px", fontSize:14, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+              Отлично!
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Sidebar — desktop only */}
       <div style={{ width: sideW, background: C.dark, display: isMobile ? "none" : "flex", flexDirection: "column",
@@ -1431,6 +1494,98 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* GAMIFICATION HUD */}
+                  {(obView === "employee") && (() => {
+                    const actDone  = obActivities.filter(a=>a.done).length;
+                    const actTotal = obActivities.filter(a=>!a.type).length;
+                    const actPct   = actTotal > 0 ? Math.round(actDone/actTotal*100) : 0;
+                    const lvl      = [...LEVELS].reverse().find(l => actPct >= l.min) || LEVELS[0];
+                    const lvlIdx   = LEVELS.indexOf(lvl);
+                    const nextLvl  = LEVELS[lvlIdx + 1];
+                    const earnedBadges = OB_BADGES.filter(b => {
+                      if (b.id==="first") return actDone >= 1;
+                      if (b.id==="half")  return actPct >= 50;
+                      if (b.id==="allob") {
+                        const pre = obActivities.filter(a=>a.cat==="pre"&&!a.type);
+                        const ob  = obActivities.filter(a=>a.cat==="ob"&&!a.type);
+                        return pre.length>0 && ob.length>0 && pre.every(a=>a.done) && ob.every(a=>a.done);
+                      }
+                      if (b.id==="done")  return actPct === 100;
+                      return false;
+                    });
+                    const nextMilestone = OB_MILESTONES.find(m => {
+                      const ph = obActivities.filter(a=>a.cat===m.cat&&!a.type);
+                      return ph.some(a=>!a.done);
+                    });
+                    return (
+                      <div style={{ background:C.white, borderRadius:16, boxShadow:"0 2px 14px #0000000F", padding:"16px 18px", marginBottom:14 }}>
+                        {/* Row 1: level + streak */}
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                            <div style={{ background:C.green, color:C.white, borderRadius:8, padding:"3px 10px", fontSize:11, fontWeight:800 }}>{lvl.label}</div>
+                            <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>{lvl.name}</div>
+                          </div>
+                          <div style={{ display:"flex", alignItems:"center", gap:4, background:"#FFF3E0", borderRadius:8, padding:"4px 10px" }}>
+                            <span style={{ fontSize:14 }}>🔥</span>
+                            <span style={{ fontSize:12, fontWeight:700, color:"#E65100" }}>{obStreak} дн. подряд</span>
+                          </div>
+                        </div>
+                        {/* XP bar */}
+                        <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
+                          <span style={{ fontSize:11, color:C.gray500 }}>XP: {actDone * 10} / {actTotal * 10}</span>
+                          {nextLvl && <span style={{ fontSize:11, color:C.green, fontWeight:600 }}>до «{nextLvl.name}» ещё {nextLvl.min - actPct}%</span>}
+                        </div>
+                        <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:12, overflow:"hidden" }}>
+                          <div style={{ height:"100%", width:`${actPct}%`, background:`linear-gradient(90deg, ${C.green}, ${C.greenMid})`, borderRadius:4, transition:"width .4s" }} />
+                        </div>
+                        {/* Badges */}
+                        {earnedBadges.length > 0 && (
+                          <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:10 }}>
+                            {earnedBadges.map(b => (
+                              <div key={b.id} title={b.desc} style={{ display:"flex", alignItems:"center", gap:4, background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:20, padding:"3px 10px" }}>
+                                <span style={{ fontSize:12 }}>{b.icon}</span>
+                                <span style={{ fontSize:10, fontWeight:700, color:C.green }}>{b.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {/* Next reward */}
+                        {nextMilestone && (
+                          <div style={{ display:"flex", alignItems:"center", gap:10, background:C.gray100, borderRadius:10, padding:"9px 12px" }}>
+                            <span style={{ fontSize:22 }}>{nextMilestone.icon}</span>
+                            <div>
+                              <div style={{ fontSize:10, color:C.gray500 }}>Следующая награда</div>
+                              <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>{nextMilestone.reward}</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  {/* Спасибо наставнику */}
+                  {obView === "employee" && (
+                    !spasiboSent ? (
+                      <div style={{ background:C.white, borderRadius:14, border:`1px solid ${C.gray300}`, padding:"14px 18px", marginBottom:14, display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
+                        <div>
+                          <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Поблагодарить наставника</div>
+                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Айгерим Бекова · наставник</div>
+                        </div>
+                        <button onClick={() => { setSpasiboSent(true); setObSpasibo(p=>p+1); }} style={{ background:C.green, color:C.white, border:"none", borderRadius:10, padding:"9px 16px", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit", flexShrink:0 }}>
+                          Спасибо
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ background:C.greenPale, borderRadius:14, border:`1px solid ${C.green}40`, padding:"12px 18px", marginBottom:14, display:"flex", alignItems:"center", gap:12 }}>
+                        <span style={{ fontSize:22 }}>⭐</span>
+                        <div>
+                          <div style={{ fontSize:13, fontWeight:700, color:C.green }}>Спасибо отправлено!</div>
+                          <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Айгерим получила +1 Спасибо</div>
+                        </div>
+                      </div>
+                    )
+                  )}
+
                   {/* TOP 3 BLOCKS — Ценности / Льготы / Забота о здоровье */}
 
                   {/* 1 — Ценности */}
@@ -1631,7 +1786,7 @@ export default function App() {
                               </div>
                             );
                             return (
-                              <div key={a.id} onClick={() => setObActivities(prev=>prev.map(x=>x.id===a.id?{...x,done:!x.done}:x))}
+                              <div key={a.id} onClick={() => handleActivityToggle(a.id)}
                                 style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"11px 18px", paddingLeft: a.indent ? 30 : 18, borderBottom:`1px solid ${C.gray100}`, cursor:"pointer",
                                   background: a.done ? C.greenPale : C.white }}>
                                 <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:a.done?C.green:C.white,
@@ -1999,6 +2154,53 @@ export default function App() {
                     <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Вы — наставник нового сотрудника</div>
                     <div style={{ fontSize:13, opacity:0.9 }}>Алия Сейткали · Senior PM · Выход: 16 июня 2026</div>
                   </div>
+                  {/* Спасибо panel for mentor */}
+                  {(() => {
+                    const total = obSpasibo;
+                    const next  = SPASIBO_REWARDS.find(r=>r.n > total);
+                    const prev  = [...SPASIBO_REWARDS].reverse().find(r=>r.n <= total);
+                    const pct   = next ? Math.round((total-(prev?.n||0))/(next.n-(prev?.n||0))*100) : 100;
+                    return (
+                      <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, padding:"20px 24px", marginBottom:16 }}>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                          <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Мои «Спасибо»</div>
+                          <div style={{ fontSize:24, fontWeight:800, color:C.green }}>{total} <span style={{ fontSize:14 }}>⭐</span></div>
+                        </div>
+                        {spasiboSent && (
+                          <div style={{ background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:10, padding:"8px 12px", marginBottom:12 }}>
+                            <div style={{ fontSize:12, fontWeight:700, color:C.green }}>Новое Спасибо от новичка!</div>
+                            <div style={{ fontSize:11, color:C.dark, marginTop:2 }}>«Быстро помогла разобраться с системой»</div>
+                            <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>от Алия Сейткали · только что</div>
+                          </div>
+                        )}
+                        {next && (<>
+                          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                            <span style={{ fontSize:11, color:C.gray500 }}>До следующей награды</span>
+                            <span style={{ fontSize:11, fontWeight:700, color:C.green }}>{next.n - total} Спасибо</span>
+                          </div>
+                          <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:12, overflow:"hidden" }}>
+                            <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:4 }} />
+                          </div>
+                        </>)}
+                        {/* Reward store */}
+                        <div style={{ fontSize:12, fontWeight:700, color:C.dark, marginBottom:8 }}>Магазин наград</div>
+                        <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:4 }}>
+                          {SPASIBO_REWARDS.map(r => {
+                            const unlocked = total >= r.n;
+                            return (
+                              <div key={r.n} style={{ minWidth:74, background:unlocked?C.greenPale:C.gray100, border:`1.5px solid ${unlocked?C.green:C.gray300}`, borderRadius:10, padding:"10px 6px", textAlign:"center", flexShrink:0 }}>
+                                <div style={{ fontSize:20, marginBottom:4 }}>{r.icon}</div>
+                                <div style={{ fontSize:11, fontWeight:800, color:unlocked?C.green:C.dark }}>{r.n} ⭐</div>
+                                <div style={{ fontSize:9, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{r.reward}</div>
+                                {unlocked && <div style={{ fontSize:9, color:C.green, fontWeight:700, marginTop:3 }}>Обменять</div>}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>Ваши задачи</div>
                     {(()=>{
