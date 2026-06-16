@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.4";
+const _v = "3.5";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -179,10 +179,10 @@ const NAV = [
 
 // ── Onboarding data ─────────────────────────────────────────────────────────
 const OB_PHASES = [
-  { id: "pre",    label: "Pre-boarding", sub: "До выхода",   icon: "📨" },
-  { id: "week1",  label: "День 1–7",     sub: "Неделя 1",    icon: "🚀" },
-  { id: "month1", label: "Месяц 1",      sub: "День 8–30",   icon: "📚" },
-  { id: "month3", label: "Месяцы 2–3",   sub: "День 31–90",  icon: "🎯" },
+  { id: "pre",    label: "Pre-board.", sub: "До выхода",   icon: "📨" },
+  { id: "week1",  label: "День 1–7",  sub: "Неделя 1",    icon: "🚀" },
+  { id: "month1", label: "Месяц 1",   sub: "День 8–30",   icon: "📚" },
+  { id: "month3", label: "Мес. 2–3",  sub: "День 31–90",  icon: "🎯" },
 ];
 
 const OB_TASKS_INIT = [
@@ -1607,7 +1607,7 @@ export default function App() {
                         const col = isDone ? C.green : isActive ? C.green : C.gray300;
                         return (
                           <div key={ph.id} style={{ display:"flex", alignItems:"flex-start", flex: i<OB_PHASES.length-1 ? 1 : "none" }}>
-                            <button onClick={() => setObPhase(ph.id)} style={{ background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", minWidth:80 }}>
+                            <button onClick={() => setObPhase(ph.id)} style={{ background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", minWidth:60 }}>
                               <div style={{ width:40, height:40, borderRadius:"50%", background: isDone ? C.green : C.white, border:`2px solid ${isDone ? C.green : isActive ? C.green : C.gray300}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color: isDone ? C.white : isActive ? C.green : C.gray500 }}>{isDone ? "✓" : i+1}</div>
                               <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
                               <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
