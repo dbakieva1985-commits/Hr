@@ -2,19 +2,19 @@ import { useState } from "react";
 const _v = "2.3";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
-  bg:       "#F7F8FA",
+  bg:       "#F5F6F8",
   white:    "#FFFFFF",
-  dark:     "#1C2B2B",
-  green:    "#1F7A5C",
-  greenMid: "#2E9B76",
-  greenPale:"#EBF5F1",
-  gray700:  "#3D4349",
-  gray500:  "#6B7280",
-  gray300:  "#D1D5DB",
-  gray100:  "#F3F4F6",
-  orange:   "#D97706",
-  blue:     "#1D4ED8",
-  red:      "#DC2626",
+  dark:     "#0D2318",
+  green:    "#00A651",
+  greenMid: "#00C060",
+  greenPale:"#E6F8EE",
+  gray700:  "#2D3748",
+  gray500:  "#718096",
+  gray300:  "#CBD5E0",
+  gray100:  "#F7FAFC",
+  orange:   "#DD6B20",
+  blue:     "#2B6CB0",
+  red:      "#C53030",
 };
 
 // ── Data ───────────────────────────────────────────────────────────────────
@@ -219,7 +219,7 @@ const OB_TASKS_INIT = [
 const OB_MANAGER_TASKS_INIT = [
   { id:"m1", phase:"pre",    title:"Заказать орг. технику для нового сотрудника", sub:"За 1–3 дня до выхода",                done:false },
   { id:"m2", phase:"pre",    title:"Запросить IT-доступы для нового сотрудника",  sub:"Через портал ИТ-службы",              done:false },
-  { id:"m3", phase:"week1",  title:"Познакомить с отделом / департаментом",       sub:"День 1",                              done:false },
+  { id:"m3", phase:"week1",  title:"Познакомить с управлением / департаментом",       sub:"День 1",                              done:false },
   { id:"m4", phase:"week1",  title:"Познакомить с наставником",                   sub:"День 1",                              done:false },
   { id:"m5", phase:"week1",  title:"Поставить цели на испытательный срок",        sub:"Открывает редактор целей",            done:false, isGoals:true },
   { id:"m6", phase:"month3", title:"Встреча 1:1 с сотрудником (2-й месяц)",       sub:"~60-й день",                           done:false },
@@ -233,13 +233,13 @@ const OB_MENTOR_TASKS_INIT = [
   { id:"me1", phase:"pre",    title:"Получить briefing от HR о новом сотруднике", done:false },
   { id:"me2", phase:"week1",  title:"Встретиться с новым сотрудником в День 1",   done:false },
   { id:"me3", phase:"week1",  title:"Провести экскурсию по офису",                done:false },
-  { id:"me4", phase:"week1",  title:"Объяснить процессы отдела и договориться о регулярных встречах", done:false },
+  { id:"me4", phase:"week1",  title:"Объяснить процессы управления и договориться о регулярных встречах", done:false },
   { id:"me5", phase:"month3", title:"Заполнить опрос наставника от HR",           done:false, isSurvey:true },
 ];
 
 const OB_GOALS_INIT = [
   { id:1, text:"Изучить внутренние процессы и регламенты подразделения", done:false },
-  { id:2, text:"Наладить коммуникацию с командой и смежными отделами",  done:false },
+  { id:2, text:"Наладить коммуникацию с командой и смежными управлениями",  done:false },
   { id:3, text:"Выполнить первое самостоятельное задание",              done:false },
 ];
 
@@ -655,9 +655,9 @@ export default function App() {
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: isMobile ? 10 : 14, marginBottom: 24 }}>
               {SERVICES.slice(0,4).map(s => (
                 <div key={s.id} onClick={() => { setSelected(s); setPage("form"); }}
-                  style={{ background: C.white, border: `1px solid ${C.gray300}`,
-                    borderRadius: 12, padding: "18px 16px", cursor: "pointer",
-                    transition: "box-shadow .15s", boxShadow: "0 1px 4px #0000000A" }}
+                  style={{ background: C.white, boxShadow:"0 2px 12px #0000000D",
+                    borderRadius: 16, border:"none", padding: "18px 16px", cursor: "pointer",
+                    transition: "box-shadow .15s" }}
                   onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 16px #0000001A"}
                   onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px #0000000A"}>
                   <div style={{ fontSize: 26, marginBottom: 8 }}>{s.icon}</div>
@@ -718,7 +718,7 @@ export default function App() {
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 10 : 14 }}>
               {filteredServices.map(s => (
                 <div key={s.id} style={{
-                  background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12,
+                  background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none",
                   padding: "20px", cursor: "pointer", transition: "box-shadow .15s",
                   boxShadow: "0 1px 4px #0000000A", display: "flex", flexDirection: "column"
                 }}
@@ -978,7 +978,7 @@ export default function App() {
                             <Btn small variant="ghost" onClick={() => setAf(p => ({...p, relatives: [...p.relatives, { lastName: "", firstName: "", patronymic: "", relation: "", address: "", workplace: "", iin: "", phone: "" }]}))}>+ Добавить</Btn>
                           </div>
                           {af.relatives.map((rel, i) => (
-                            <div key={i} style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "14px 16px", marginBottom: 12 }}>
+                            <div key={i} style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "14px 16px", marginBottom: 12 }}>
                               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                                 <div style={{ fontSize: 12, fontWeight: 700, color: C.dark }}>Родственник {i + 1}</div>
                                 {af.relatives.length > 1 && (
@@ -1036,7 +1036,7 @@ export default function App() {
                 <p style={{ fontSize: 13, color: C.gray500, marginBottom: 20 }}>Заполните требования — HR сформирует job description на основе ваших данных</p>
 
                 {/* Позиция */}
-                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px", marginBottom: 16 }}>
+                <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Позиция</div>
                   <Input label="Должность *" value={recruitForm.position} onChange={v => setRecruitForm(p => ({...p, position: v}))} placeholder="Senior Product Manager" />
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
@@ -1046,7 +1046,7 @@ export default function App() {
                 </div>
 
                 {/* Требования */}
-                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px", marginBottom: 16 }}>
+                <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Требования к кандидату</div>
                   <Input label="Образование" value={recruitForm.education} onChange={v => setRecruitForm(p => ({...p, education: v}))}
                     placeholder="Высшее, финансы / IT / менеджмент" multiline />
@@ -1057,7 +1057,7 @@ export default function App() {
                 </div>
 
                 {/* Комментарий */}
-                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px", marginBottom: 16 }}>
+                <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Дополнительно</div>
                   <Input label="Комментарий для рекрутера" value={recruitForm.comment} onChange={v => setRecruitForm(p => ({...p, comment: v}))}
                     placeholder="Пожелания по личным качествам, срочность, особые условия..." multiline />
@@ -1112,9 +1112,9 @@ export default function App() {
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {requests.map(r => (
                 <div key={r.id} onClick={() => setDetail(r)}
-                  style={{ background: C.white, border: `1px solid ${C.gray300}`,
-                    borderRadius: 12, padding: "16px 20px", cursor: "pointer",
-                    boxShadow: "0 1px 4px #0000000A", transition: "box-shadow .15s" }}
+                  style={{ background: C.white, boxShadow:"0 2px 12px #0000000D",
+                    borderRadius: 16, border:"none", padding: "16px 20px", cursor: "pointer",
+                    transition: "box-shadow .15s" }}
                   onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 12px #0000001A"}
                   onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px #0000000A"}>
                   <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -1185,7 +1185,7 @@ export default function App() {
 
               return (
               <>
-                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+                <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px 24px", marginBottom: 16 }}>
                   <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 4px", textTransform: "uppercase", letterSpacing: 1 }}>Статус согласования</h3>
                   <ApprovalBar decisions={detail.decisions} businessDir={detail.businessDir} />
 
@@ -1227,7 +1227,7 @@ export default function App() {
                   )}
                 </div>
 
-                <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+                <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px 24px", marginBottom: 16 }}>
                   <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 14px", textTransform: "uppercase", letterSpacing: 1 }}>Кандидат</h3>
                   {[
                     ["ФИО кандидата",        detail.candidate],
@@ -1254,14 +1254,14 @@ export default function App() {
 
             {/* Стандартный workflow для остальных заявок */}
             {!detail.isApproval && (
-              <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+              <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px 24px", marginBottom: 16 }}>
                 <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 12px", textTransform: "uppercase", letterSpacing: 1 }}>Прогресс</h3>
                 <WorkflowBar status={detail.status} />
               </div>
             )}
 
             {!detail.isApproval && (
-              <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px", marginBottom: 16 }}>
+              <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px 24px", marginBottom: 16 }}>
                 <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 14px", textTransform: "uppercase", letterSpacing: 1 }}>Детали</h3>
                 {[
                   ["Номер заявки", detail.id],
@@ -1279,7 +1279,7 @@ export default function App() {
               </div>
             )}
 
-            <div style={{ background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12, padding: "20px 24px" }}>
+            <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px 24px" }}>
               <h3 style={{ fontSize: 13, fontWeight: 700, color: C.gray500, margin: "0 0 12px", textTransform: "uppercase", letterSpacing: 1 }}>Комментарии</h3>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                 <div style={{ width: 30, height: 30, borderRadius: "50%", background: C.green,
@@ -1544,7 +1544,7 @@ export default function App() {
                                   <div style={{ background:"#f8f4ff", border:`1px solid #c4b5fd`, borderRadius:8, padding:"10px 12px", fontSize:11 }}>
                                     <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:4 }}>🅿 Парковка</div>
                                     <div style={{ color:C.gray700 }}>Тариф: <b>100 ₸/час</b> · Скидка сотруднику Halyk: <b>50%</b> · Оплата: <b>приложение Halyk</b></div>
-                                    <div style={{ color:"#7c3aed", marginTop:4 }}>Корпоративная карта — в административном отделе (к. 108) после оформления</div>
+                                    <div style={{ color:"#7c3aed", marginTop:4 }}>Корпоративная карта — в административном управлении (к. 108) после оформления</div>
                                   </div>
                                 </div>
                               )}
@@ -1556,7 +1556,7 @@ export default function App() {
                   ))}
 
                   {/* Phase progress */}
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:14 }}>
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
                       <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Общий прогресс</div>
                       <div style={{ fontSize:13, fontWeight:800, color:C.green }}>{pct}%</div>
@@ -1586,7 +1586,7 @@ export default function App() {
                   </div>
 
                   {/* Tasks */}
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:14 }}>
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
                       <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>
                         {OB_PHASES.find(p=>p.id===obPhase)?.icon} {OB_PHASES.find(p=>p.id===obPhase)?.label} — задачи
@@ -1602,7 +1602,7 @@ export default function App() {
 
                   {/* Goals — appear after meeting with manager */}
                   {managerMet && obPhase === "week1" && (
-                    <div style={{ background:C.white, border:`2px solid ${C.green}40`, borderRadius:12, padding:"20px 24px", marginBottom:14 }}>
+                    <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
                       <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>🎯 Цели на испытательный срок</div>
                       <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Поставлены руководителем <b>Нуржан Касымов</b></div>
                       {obGoals.map(goal => (
@@ -1618,7 +1618,7 @@ export default function App() {
 
                   {/* Survey — month3 phase */}
                   {obPhase === "month3" && (
-                    <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:14 }}>
+                    <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
                       <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>📋 Опрос адаптации — 2 месяца</div>
                       <div style={{ fontSize:12, color:C.gray500, marginBottom:2 }}>HR собирает обратную связь от вас, руководителя и наставника</div>
                       <SurveyBlock
@@ -1632,7 +1632,7 @@ export default function App() {
                   )}
 
                   {/* Documents */}
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px" }}>
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>📁 Документы</div>
                     {obDocs.map(doc => (
                       <div key={doc.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:13 }}>
@@ -1719,7 +1719,7 @@ export default function App() {
                   </div>
 
                   {/* Pre-boarding manager tasks */}
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:14 }}>
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>📨 Pre-boarding — ваши задачи</div>
                     <div style={{ fontSize:12, color:C.orange, fontWeight:600, marginBottom:12 }}>Выполните за 1–3 дня до первого рабочего дня сотрудника</div>
                     {obManagerTasks.filter(t=>t.phase==="pre").map(task => (
