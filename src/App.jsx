@@ -405,6 +405,7 @@ export default function App() {
   const [newGoalText,    setNewGoalText]    = useState("");
   const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
   const [obItSec,        setObItSec]        = useState("pre");
+  const [obItTab,        setObItTab]        = useState("general"); // "general" | "it"
   const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false });
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
@@ -1407,6 +1408,23 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* IT tab switcher — only shown in IT view */}
+                  {obView === "it" && (
+                    <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+                      {[{id:"general",label:"🎯 Общий трек"},{id:"it",label:"💻 IT-трек"}].map(t => (
+                        <button key={t.id} onClick={() => setObItTab(t.id)} style={{
+                          flex:1, padding:"12px", borderRadius:12, fontFamily:"inherit", fontWeight:700, fontSize:13,
+                          cursor:"pointer", border:"none",
+                          background: obItTab===t.id ? C.green : C.gray100,
+                          color: obItTab===t.id ? C.white : C.gray500,
+                        }}>{t.label}</button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* General track content — shown for employee view or IT view with general tab */}
+                  {(obView === "employee" || (obView === "it" && obItTab === "general")) && (<>
+
                   {/* BENEFITS — collapsible */}
                   <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid #d97706AA` }}>
                     <button onClick={() => setObExpanded(p=>({...p, ben:!p.ben}))} style={{
@@ -1643,8 +1661,10 @@ export default function App() {
                     <div style={{ marginTop:14 }}><Btn small variant="ghost">📎 Загрузить документ</Btn></div>
                   </div>
 
-                  {/* ── IT TECHNICAL TRACK (only for IT view) ── */}
-                  {obView === "it" && (() => {
+                  </>)}
+
+                  {/* ── IT TECHNICAL TRACK — shown when IT tab selected ── */}
+                  {obView === "it" && obItTab === "it" && (() => {
                     const itDone  = obItTasks.filter(t=>t.done).length;
                     const itTotal = obItTasks.length;
                     const itPct   = Math.round((itDone/itTotal)*100);
@@ -1652,16 +1672,14 @@ export default function App() {
                     const curSec   = OB_IT_SECTIONS.find(s=>s.id===obItSec);
                     return (
                       <>
-                        <div style={{ background:`linear-gradient(135deg, #1D4ED8, #7c3aed)`, borderRadius:16, padding:"20px 24px", margin:"16px 0 14px", color:C.white }}>
-                          <div style={{ fontSize:16, fontWeight:800, marginBottom:4 }}>💻 Технический трек IT-онбординга</div>
-                          <div style={{ fontSize:12, opacity:0.9, marginBottom:10 }}>Дополнительно к общему треку — для разработчиков</div>
-                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-                            <span style={{ fontSize:12 }}>Технический прогресс</span>
-                            <span style={{ fontSize:13, fontWeight:800 }}>{itPct}%</span>
-                          </div>
-                          <div style={{ height:6, background:"rgba(255,255,255,0.3)", borderRadius:4, overflow:"hidden" }}>
-                            <div style={{ height:"100%", width:`${itPct}%`, background:"white", borderRadius:4, transition:"width .4s" }}/>
-                          </div>
+                        <div style={{ fontSize:16, fontWeight:800, color:C.dark, marginBottom:14 }}>💻 Технический трек</div>
+
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                          <span style={{ fontSize:12, color:C.gray500 }}>Технический прогресс</span>
+                          <span style={{ fontSize:13, fontWeight:800, color:C.green }}>{itPct}%</span>
+                        </div>
+                        <div style={{ height:6, background:C.gray100, borderRadius:4, overflow:"hidden", marginBottom:14 }}>
+                          <div style={{ height:"100%", width:`${itPct}%`, background:C.green, borderRadius:4, transition:"width .4s" }}/>
                         </div>
 
                         <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)", gap:10, marginBottom:14 }}>
@@ -1684,7 +1702,7 @@ export default function App() {
                           })}
                         </div>
 
-                        <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:14, padding:"18px 20px" }}>
+                        <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"18px 20px" }}>
                           <div style={{ fontSize:14, fontWeight:700, color:curSec?.color||C.dark, marginBottom:14 }}>
                             {curSec?.icon} {curSec?.label} <span style={{ fontSize:12, color:C.gray500, fontWeight:400 }}>— {curSec?.sub}</span>
                           </div>
@@ -1730,7 +1748,7 @@ export default function App() {
                   </div>
 
                   {/* Day 1 manager tasks + goals */}
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:14 }}>
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>🚀 День 1 — ваши задачи</div>
                     <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Выполните в первый рабочий день</div>
                     {obManagerTasks.filter(t=>t.phase==="week1").map(task => (
@@ -1778,7 +1796,7 @@ export default function App() {
                   </div>
 
                   {/* Month 3 manager tasks */}
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px" }}>
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>📊 Месяц 2–3</div>
                     <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Оценка прогресса и финальное решение по ИС</div>
                     {obManagerTasks.filter(t=>t.phase==="month3").map(task => (
@@ -1810,7 +1828,7 @@ export default function App() {
                     <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Вы — наставник нового сотрудника 🤝</div>
                     <div style={{ fontSize:13, opacity:0.9 }}>Алия Сейткали · Senior PM · Выход: 16 июня 2026</div>
                   </div>
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px" }}>
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>📋 Ваши задачи</div>
                     {(()=>{
                       const groups = [
@@ -1859,7 +1877,7 @@ export default function App() {
                       { label:"Просроченных задач",   value:"3",   color:C.red   },
                       { label:"Средний прогресс",      value:"54%", color:C.blue  },
                     ].map(k => (
-                      <div key={k.label} style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"18px 20px" }}>
+                      <div key={k.label} style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"18px 20px" }}>
                         <div style={{ height:3, background:k.color, borderRadius:2, marginBottom:12 }} />
                         <div style={{ fontSize:28, fontWeight:800, color:k.color }}>{k.value}</div>
                         <div style={{ fontSize:12, color:C.gray500, marginTop:4 }}>{k.label}</div>
@@ -1871,7 +1889,7 @@ export default function App() {
                     { name:"Берик Омаров",   pos:"Аналитик",  phase:"month1", pct:55, overdue:0, org:"ДО" },
                     { name:"Дина Жакупова",  pos:"Юрист",     phase:"month3", pct:80, overdue:1, org:"ГБ" },
                   ].map(emp => (
-                    <div key={emp.name} style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"16px 20px", marginBottom:10 }}>
+                    <div key={emp.name} style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"16px 20px", marginBottom:10 }}>
                       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
                         <div>
                           <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>{emp.name}</div>
@@ -1891,7 +1909,7 @@ export default function App() {
                   ))}
 
                   {/* Survey results */}
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginTop:10 }}>
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginTop:10 }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>📋 Опросы адаптации — Алия Сейткали</div>
                     {[
                       { role:"Новичок",      icon:"👤",  submitted:obSurveys.employeeSubmitted, answers:obSurveys.employee, qs:SURVEY_EMPLOYEE },
@@ -1929,8 +1947,8 @@ export default function App() {
             {/* KPI cards */}
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: isMobile ? 10 : 14, marginBottom: 24 }}>
               {ANALYTICS.map(a => (
-                <div key={a.label} style={{ background: C.white, border: `1px solid ${C.gray300}`,
-                  borderRadius: 12, padding: "20px 18px", boxShadow: "0 1px 4px #0000000A" }}>
+                <div key={a.label} style={{ background: C.white, boxShadow:"0 2px 12px #0000000D",
+                  borderRadius: 16, border:"none", padding: "20px 18px" }}>
                   <div style={{ height: 3, background: a.color, borderRadius: 2, marginBottom: 14 }} />
                   <div style={{ fontSize: 28, fontWeight: 800, color: a.color, marginBottom: 4 }}>{a.value}</div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: C.dark, marginBottom: 2 }}>{a.label}</div>
@@ -1940,8 +1958,8 @@ export default function App() {
             </div>
 
             {/* Top services */}
-            <div style={{ background: C.white, border: `1px solid ${C.gray300}`,
-              borderRadius: 12, padding: "20px 24px" }}>
+            <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D",
+              borderRadius: 16, border:"none", padding: "20px 24px" }}>
               <h3 style={{ fontSize: 15, fontWeight: 700, color: C.dark, margin: "0 0 18px" }}>Топ-5 сервисов</h3>
               {TOP_SERVICES.map(t => (
                 <div key={t.title} style={{ marginBottom: 14 }}>
