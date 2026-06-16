@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "4.6";
+const _v = "4.7";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -301,8 +301,6 @@ const OB_DOCS_INIT = [
 
 const BENEFITS = [
   { badge:"ИПО", title:"Ипотека",          desc:"Субсидирование ипотечного займа согласно условиям Банка" },
-  { badge:"ДМС", title:"ДМС",              desc:"Полис ДМС с долевым участием" },
-  { badge:"СЖ",  title:"Страх. жизни",     desc:"Страхование жизни за счёт Банка" },
   { badge:"СВЗ", title:"Связь",            desc:"Оплата мобильной связи" },
   { badge:"ВЛ",  title:"Выслуга лет",      desc:"Поощрения за выслугу лет в Банке" },
   { badge:"ОТП", title:"Отпуск 26 дн",    desc:"24 + 2 календарных дня ежегодного отпуска" },
@@ -1517,6 +1515,13 @@ export default function App() {
                           <div>
                             <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>ДМС</div>
                             <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.3 }}>Полис ДМС с долевым участием Банка</div>
+                          </div>
+                        </div>
+                        <div style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                          <div style={{ width:34, height:34, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>СЖ</div>
+                          <div>
+                            <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Страхование жизни</div>
+                            <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.3 }}>Страхование жизни за счёт Банка</div>
                           </div>
                         </div>
                         <div style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0" }}>
