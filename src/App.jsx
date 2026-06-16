@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.3";
+const _v = "3.4";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1330,7 +1330,7 @@ export default function App() {
             <div onClick={() => onToggle(task.id)}
               style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"11px 12px", borderRadius:8, cursor:"pointer", marginBottom:6,
                 background: task.done ? C.greenPale : C.gray100, border:`1px solid ${task.done ? C.green+"40" : "transparent"}` }}>
-              <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${task.done?C.green:C.gray300}`, background:task.done?C.green:C.white,
+              <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:task.done?C.green:C.white,
                 display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
                 {task.done?"✓":""}
               </div>
@@ -1725,7 +1725,7 @@ export default function App() {
                             <div key={task.id} onClick={() => setObItTasks(prev=>prev.map(t=>t.id===task.id?{...t,done:!t.done}:t))}
                               style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"10px 12px", borderRadius:10, cursor:"pointer", marginBottom:6,
                                 background:task.done?C.greenPale:C.gray100, border:`1px solid ${task.done?C.green+"40":"transparent"}` }}>
-                              <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${task.done?C.green:C.gray300}`, background:task.done?C.green:C.white,
+                              <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:task.done?C.green:C.white,
                                 display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
                                 {task.done?"✓":""}
                               </div>
@@ -1785,7 +1785,7 @@ export default function App() {
                                   <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 10px", borderRadius:6, marginBottom:4,
                                     background:goal.done?C.green+"15":C.white, border:`1px solid ${goal.done?C.green+"30":C.gray300}` }}>
                                     <button onClick={e => { e.stopPropagation(); setObGoals(prev=>prev.map(g=>g.id===goal.id?{...g,done:!g.done}:g)); }} style={{
-                                      width:20, height:20, borderRadius:4, border:`2px solid ${goal.done?C.green:C.gray300}`, background:goal.done?C.green:C.white,
+                                      width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:goal.done?C.green:C.white,
                                       display:"flex", alignItems:"center", justifyContent:"center", color:C.white, fontSize:11, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
                                       {goal.done?"✓":""}
                                     </button>
