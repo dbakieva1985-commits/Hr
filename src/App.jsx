@@ -1,14 +1,14 @@
 import { useState } from "react";
-const _v = "2.5";
+const _v = "2.6";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#F5F5F5",
   white:    "#FFFFFF",
   dark:     "#111827",
-  green:    "#1AAD55",   // Halyk brand green (exact)
-  greenDark:"#138A40",
-  greenMid: "#22C563",
-  greenPale:"#EDF8F2",   // barely visible — used only for subtle tint
+  green:    "#06AE48",   // Halyk brand green — pure emerald, no warm tint
+  greenDark:"#058036",
+  greenMid: "#09C954",
+  greenPale:"#E6F9EE",   // very light mint for subtle backgrounds
   gray700:  "#374151",
   gray500:  "#6B7280",
   gray300:  "#E0E0E0",
@@ -677,8 +677,11 @@ export default function App() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0 }}>
                 {SERVICES.slice(0,8).map(s => (
                   <div key={s.id} onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}
-                    style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: isMobile ? "10px 2px" : "12px 8px", cursor: "pointer" }}>
-                    <div style={{ fontSize: isMobile ? 30 : 34, marginBottom: 6, lineHeight: 1 }}>{s.icon}</div>
+                    style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: isMobile ? "10px 4px" : "14px 8px", cursor: "pointer" }}>
+                    <div style={{ width: isMobile ? 52 : 58, height: isMobile ? 52 : 58, borderRadius: 16,
+                      background: C.greenPale,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: isMobile ? 26 : 30, marginBottom: 7 }}>{s.icon}</div>
                     <div style={{ fontSize: isMobile ? 10 : 11, fontWeight: 500, color: C.dark, textAlign: "center", lineHeight: 1.3 }}>
                       {s.title.length > 12 ? s.title.slice(0,11)+"…" : s.title}
                     </div>
@@ -745,10 +748,11 @@ export default function App() {
                   onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                     <div style={{ width: 44, height: 44, borderRadius: 12, background: C.greenPale,
-                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0,
+                      border: `1px solid ${C.green}22` }}>
                       {s.icon}
                     </div>
-                    <div style={{ fontSize: 10, fontWeight: 600, color: C.green, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>{s.cat}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>{s.cat}</div>
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 5 }}>{s.title}</div>
                   <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 12, lineHeight: 1.5 }}>{s.desc}</div>
@@ -1444,7 +1448,7 @@ export default function App() {
                   {(obView === "employee" || (obView === "it" && obItTab === "general")) && (<>
 
                   {/* BENEFITS — collapsible */}
-                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}` }}>
+                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
                     <button onClick={() => setObExpanded(p=>({...p, ben:!p.ben}))} style={{
                       width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
                       background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
@@ -1481,7 +1485,7 @@ export default function App() {
                     { key:"ind",  icon:"🎓", label:"Induction",     items: OB_ACTIVITIES.filter(a=>a.cat==="ind")  },
                     { key:"feed", icon:"📋", label:"Feedback",      items: OB_ACTIVITIES.filter(a=>a.cat==="feed") },
                   ].map(sec => (
-                    <div key={sec.key} style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}` }}>
+                    <div key={sec.key} style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
                       <button onClick={() => setObExpanded(p=>({...p,[sec.key]:!p[sec.key]}))} style={{
                         width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
                         background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
