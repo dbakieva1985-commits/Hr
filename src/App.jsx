@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "5.3";
+const _v = "5.4";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -406,7 +406,7 @@ const LEVELS = [
 ];
 const OB_MILESTONES = [
   { cat:"pre",  reward:"Ручка и блокнот",  icon:"✏️" },
-  { cat:"ob",   reward:"Цифровой бейдж",   icon:"⭐" },
+  { cat:"ob",   reward:"Блокнот Halyk",      icon:"📓" },
   { cat:"ind",  reward:"Кружка Halyk",     icon:"☕" },
   { cat:"feed", reward:"Футболка Halyk",   icon:"👕" },
 ];
