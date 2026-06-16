@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "4.5";
+const _v = "4.6";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1481,16 +1481,18 @@ export default function App() {
                       <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s", transform: obExpanded.ben ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                     </button>
                     {obExpanded.ben && (
-                      <div style={{ background:C.white, padding:"4px 18px 14px", borderTop:`1px solid ${C.gray100}` }}>
-                        {BENEFITS.map((b, i) => (
-                          <div key={b.title} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom: i<BENEFITS.length-1 ? `1px solid ${C.gray100}` : "none" }}>
-                            <div style={{ width:34, height:34, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>{b.badge}</div>
-                            <div>
-                              <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>{b.title}</div>
-                              <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{b.desc}</div>
+                      <div style={{ background:C.white, padding:"14px 18px", borderTop:`1px solid ${C.gray100}` }}>
+                        <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:8 }}>
+                          {BENEFITS.map(b => (
+                            <div key={b.title} style={{ background:C.gray100, borderRadius:10, padding:"10px 12px", display:"flex", alignItems:"center", gap:10 }}>
+                              <div style={{ width:34, height:34, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>{b.badge}</div>
+                              <div>
+                                <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>{b.title}</div>
+                                <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{b.desc}</div>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
