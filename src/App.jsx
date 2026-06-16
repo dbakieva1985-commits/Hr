@@ -264,6 +264,83 @@ const OB_DOCS_INIT = [
   { id:5, name:"Трудовой договор",        status:"waiting"  },
 ];
 
+const BENEFITS = [
+  { icon:"🏠", title:"Ипотека",          desc:"Субсидирование ипотечного займа согласно условиям Банка" },
+  { icon:"🏥", title:"ДМС",              desc:"Полис ДМС с долевым участием" },
+  { icon:"🛡", title:"Страх. жизни",     desc:"Страхование жизни за счёт Банка" },
+  { icon:"📱", title:"Связь",            desc:"Оплата мобильной связи" },
+  { icon:"⭐", title:"Выслуга лет",      desc:"Поощрения за выслугу лет в Банке" },
+  { icon:"🏖", title:"Отпуск 26 дн",    desc:"24 + 2 календарных дня ежегодного отпуска" },
+  { icon:"🎁", title:"Детям",            desc:"Подарки детям сотрудников на Новый год" },
+  { icon:"💳", title:"Скидки",           desc:"Скидки и спецпредложения от партнёров Банка" },
+  { icon:"💡", title:"IT-бонус",         desc:"Бонусы за рекомендации на открытые IT-вакансии" },
+  { icon:"🅿", title:"Парковка/Фитнес", desc:"Льготные абонементы на парковку и фитнес-залы" },
+];
+
+const OB_ACTIVITIES = [
+  { id:"a1", cat:"pre", title:"Знакомство с командой до выхода",        desc:"Новичка заранее знакомят с будущей командой Halyk Group, чтобы быстрее включился в коллектив.", who:"Руководитель, кандидат, команда" },
+  { id:"a2", cat:"pre", title:"Job Offer",                              desc:"Фиксируются основные договорённости между Банком и кандидатом. Job Offer направляется кандидату Председателем Правления.", who:"Рекрутер, кандидат" },
+  { id:"a3", cat:"pre", title:'Курс "Наставник: как им стать"',         desc:"Готовят наставника к эффективной работе с новым сотрудником.", who:"Наставник", note:"За 5 суток до выхода" },
+  { id:"a4", cat:"pre", title:"Подготовка рабочего места",              desc:"До выхода нового работника подготавливается рабочее место.", who:"Руководитель, рекрутер" },
+  { id:"a5", cat:"ob",  title:'Приветствие "Ты часть Halyk Team"',      desc:"Новичка приветствуют и помогают быстрее адаптироваться в коллективе.", who:"Наставник, руководитель, команда, новичок" },
+  { id:"a6", cat:"ob",  title:'Знакомство с наставником "Hi Buddy"',    desc:"Новичку рассказывают, что у него есть наставник, который будет помогать и поддерживать.", who:"Наставник, новичок" },
+  { id:"a7", cat:"ob",  title:"Подписание трудовых документов",         desc:"В первый рабочий день новичок подписывает трудовые отношения с работодателем.", who:"Наставник, новичок, менеджер УАП", note:"День 1" },
+  { id:"a8", cat:"ob",  title:'Адаптационный курс "Welcome"',           desc:"Новичок знакомится с Банком: корпоративная культура, история, миссия и другое.", who:"Новичок" },
+  { id:"a9", cat:"ob",  title:'Курс "Письменные коммуникации"',         desc:"Новичок изучает правила письменной коммуникации в Банке.", who:"Новичок" },
+  { id:"a10",cat:"ob",  title:'Курс "Управление временем"',             desc:"Новичок учится эффективно управлять рабочим временем.", who:"Новичок" },
+  { id:"a11",cat:"ob",  title:'Встреча с руководителем "One-to-one"',   desc:"В течение испытательного срока проходят встречи с руководителем для погружения в рабочие процессы.", who:"Начальник, новичок" },
+  { id:"a12",cat:"ob",  title:"Мотивационное интервью",                 desc:"Проводится интервью для понимания, как проходит адаптация, выявить возможные сложности и зоны развития.", who:"Начальник управления ДУП, новичок" },
+  { id:"a13",cat:"ind", title:"Welcome Training (офлайн)",              desc:"Эмоциональное включение новичков в работу Банка. Проходит один раз в два месяца.", who:"Бизнес-тренеры, новички", note:"1 раз в 2 месяца" },
+  { id:"a14",cat:"feed",title:"Опрос по итогам испытательного срока",   desc:"Обратная связь по итогам испытательного срока, оценивается эффективность адаптации.", who:"Наставник, начальник, новичок" },
+];
+
+const OB_IT_SECTIONS = [
+  { id:"pre",      icon:"📦", label:"Pre-boarding",                    sub:"До выхода",  color:"#1F7A5C" },
+  { id:"setup",    icon:"💻", label:"Setup среды и инструментов",      sub:"Неделя 1",   color:"#1D4ED8" },
+  { id:"arch",     icon:"🏗",  label:"Погружение в архитектуру",       sub:"Неделя 1–2", color:"#7c3aed" },
+  { id:"security", icon:"🔐", label:"Security & Compliance",           sub:"Параллельно",color:"#DC2626" },
+  { id:"code",     icon:"📝",  label:"Кодовая база и стандарты",       sub:"Неделя 2–3", color:"#d97706" },
+  { id:"tasks",    icon:"✅",  label:"First tasks",                    sub:"Неделя 2–4", color:"#059669" },
+  { id:"perf",     icon:"📊",  label:"Performance & Feedback",         sub:"30–60–90 дн",color:"#0891b2" },
+];
+
+const OB_IT_TASKS_INIT = [
+  { id:"it1",  sec:"pre",      title:"Выделение оборудования и техники",                            done:false },
+  { id:"it2",  sec:"pre",      title:"Доступы: Почта, VPN, Git, Jira, Confluence",                 done:false },
+  { id:"it3",  sec:"pre",      title:"Настройка окружения (частично заранее)",                     done:false },
+  { id:"it4",  sec:"pre",      title:"Ключевые системы: core, payments, antifraud, data platform", done:false },
+  { id:"it5",  sec:"pre",      title:"Создание карты онбординга (пути: Новичок, Руководитель, Наставник)", done:false },
+  { id:"it6",  sec:"pre",      title:"Общий курс onboarding: миссия, ценности, льготы",           done:false },
+  { id:"it7",  sec:"pre",      title:"Курс techboarding: AI-раздел, RAG в Confluence, playbook, назначение buddy", done:false },
+  { id:"it8",  sec:"setup",    title:"Локальная среда: IDE, Docker, базы данных",                 done:false },
+  { id:"it9",  sec:"setup",    title:"Доступ к репозиториям",                                     done:false },
+  { id:"it10", sec:"setup",    title:"CI/CD пайплайны",                                           done:false },
+  { id:"it11", sec:"setup",    title:"Мониторинг: Grafana, Kibana",                               done:false },
+  { id:"it12", sec:"setup",    title:"Sandbox / тестовые стенды",                                 done:false },
+  { id:"it13", sec:"arch",     title:"Архитектура банка",                                         done:false },
+  { id:"it14", sec:"arch",     title:"Архитектура: микросервисы / монолит",                       done:false },
+  { id:"it15", sec:"arch",     title:"Интеграции: платежи, скоринг, AML",                        done:false },
+  { id:"it16", sec:"arch",     title:"Data flow: от клиента до транзакции",                       done:false },
+  { id:"it17", sec:"arch",     title:"Основные домены: платежи, кредиты, antifraud, digital channels", done:false },
+  { id:"it18", sec:"security", title:'Дист. курс "Основы обеспечения ИБ"',                       done:false },
+  { id:"it19", sec:"security", title:'Дист. курс "Основные уязвимости web-приложений" (Secure coding)', done:false },
+  { id:"it20", sec:"security", title:"Дист. курс: работа с персональными данными",                done:false },
+  { id:"it21", sec:"security", title:"Регуляторные требования для ИТ-владельцев информационных систем", done:false },
+  { id:"it22", sec:"security", title:"База требований ИБ в банке",                                done:false },
+  { id:"it23", sec:"security", title:"Порядок получения доступов (сетевых, к ИС, админ, локал. админ)", done:false },
+  { id:"it24", sec:"code",     title:"Code conventions",                                           done:false },
+  { id:"it25", sec:"code",     title:"Архитектурные принципы",                                    done:false },
+  { id:"it26", sec:"code",     title:"Code review культура",                                      done:false },
+  { id:"it27", sec:"tasks",    title:"Starter задачи (low-risk)",                                 done:false },
+  { id:"it28", sec:"tasks",    title:"Исправление багов",                                         done:false },
+  { id:"it29", sec:"tasks",    title:"Работа в команде (parallel)",                               done:false },
+  { id:"it30", sec:"tasks",    title:"Участие в: daily, sprint planning, retrospectives",         done:false },
+  { id:"it31", sec:"tasks",    title:"Взаимодействие с ролями: product owner, tech lead, QA",    done:false },
+  { id:"it32", sec:"perf",     title:"30 дней → освоение среды",                                 done:false },
+  { id:"it33", sec:"perf",     title:"60 дней → самостоятельная работа",                         done:false },
+  { id:"it34", sec:"perf",     title:"90 дней → полноценный вклад",                              done:false },
+];
+
 // ── Analytics mock ──────────────────────────────────────────────────────────
 const ANALYTICS = [
   { label: "Всего заявок", value: "124", sub: "за последние 30 дней", color: C.green },
@@ -287,12 +364,15 @@ export default function App() {
   const [obTasks, setObTasks]   = useState(OB_TASKS_INIT);
   const [obDocs,  setObDocs]    = useState(OB_DOCS_INIT);
   const [obPhase, setObPhase]   = useState("week1");
-  const [obView,  setObView]    = useState("employee"); // employee | manager | mentor | hr
+  const [obView,  setObView]    = useState("employee"); // employee | manager | mentor | it | hr
   const [obManagerTasks, setObManagerTasks] = useState(OB_MANAGER_TASKS_INIT);
   const [obMentorTasks,  setObMentorTasks]  = useState(OB_MENTOR_TASKS_INIT);
   const [obGoals,        setObGoals]        = useState(OB_GOALS_INIT);
   const [obSurveys,      setObSurveys]      = useState({ employee:{}, manager:{}, mentor:{} });
   const [newGoalText,    setNewGoalText]    = useState("");
+  const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
+  const [obItSec,        setObItSec]        = useState("pre");
+  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false });
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -1258,6 +1338,7 @@ export default function App() {
                     {v:"employee", label:"👤 Новичок"},
                     {v:"manager",  label:"👨‍💼 Руководитель"},
                     {v:"mentor",   label:"🤝 Наставник"},
+                    {v:"it",       label:"💻 IT-онбординг"},
                     {v:"hr",       label:"🏢 HR"},
                   ].map(({v,label}) => (
                     <button key={v} onClick={() => setObView(v)} style={{
@@ -1280,6 +1361,58 @@ export default function App() {
                       Первый рабочий день: <b>16 июня 2026 в 09:00</b> · Испытательный срок: 3 месяца
                     </div>
                   </div>
+
+                  {/* BENEFITS horizontal scroll */}
+                  <div style={{ marginBottom:14 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:10 }}>🎁 Ваши льготы в Halyk Bank</div>
+                    <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
+                      {BENEFITS.map(b => (
+                        <div key={b.title} title={b.desc} style={{ flexShrink:0, width:90, background:C.white, border:`1px solid ${C.gray300}`, borderRadius:14,
+                          padding:"12px 8px", textAlign:"center", cursor:"default" }}>
+                          <div style={{ fontSize:24, marginBottom:6 }}>{b.icon}</div>
+                          <div style={{ fontSize:10, fontWeight:700, color:C.dark, lineHeight:1.3 }}>{b.title}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ fontSize:11, color:C.gray500, marginTop:4 }}>Нажмите на карточку для подробностей · Прокрутите →</div>
+                  </div>
+
+                  {/* ACTIVITY CARDS — collapsible */}
+                  {[
+                    { key:"pre",  icon:"📦", label:"Pre-boarding",  color:"#1F7A5C", bg:"#EBF5F1", items: OB_ACTIVITIES.filter(a=>a.cat==="pre")  },
+                    { key:"ob",   icon:"🎉", label:"Onboarding",    color:"#1D4ED8", bg:"#EFF6FF", items: OB_ACTIVITIES.filter(a=>a.cat==="ob")   },
+                    { key:"ind",  icon:"🎓", label:"Induction",     color:"#7c3aed", bg:"#F5F3FF", items: OB_ACTIVITIES.filter(a=>a.cat==="ind")  },
+                    { key:"feed", icon:"📋", label:"Feedback",      color:"#d97706", bg:"#FFFBEB", items: OB_ACTIVITIES.filter(a=>a.cat==="feed") },
+                  ].map(sec => (
+                    <div key={sec.key} style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${sec.color}30` }}>
+                      <button onClick={() => setObExpanded(p=>({...p,[sec.key]:!p[sec.key]}))} style={{
+                        width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                        background:sec.bg, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                      }}>
+                        <span style={{ fontSize:22 }}>{sec.icon}</span>
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontSize:14, fontWeight:700, color:sec.color }}>{sec.label}</div>
+                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{sec.items.length} активностей</div>
+                        </div>
+                        <span style={{ fontSize:16, color:sec.color, transition:"transform .2s",
+                          display:"inline-block", transform: obExpanded[sec.key] ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                      </button>
+                      {obExpanded[sec.key] && (
+                        <div style={{ background:C.white, padding:"4px 0" }}>
+                          {sec.items.map((a,i) => (
+                            <div key={a.id} style={{ padding:"12px 18px", borderBottom: i<sec.items.length-1 ? `1px solid ${C.gray100}` : "none" }}>
+                              <div style={{ fontSize:13, fontWeight:600, color:C.dark, marginBottom:3 }}>{a.title}</div>
+                              <div style={{ fontSize:12, color:C.gray500, marginBottom:a.who||a.note?4:0 }}>{a.desc}</div>
+                              <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                                {a.who  && <span style={{ fontSize:11, background:sec.bg, color:sec.color, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>👥 {a.who}</span>}
+                                {a.note && <span style={{ fontSize:11, background:"#FFFBEB", color:C.orange, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>⏱ {a.note}</span>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
 
                   {/* ALWAYS VISIBLE: Documents to bring on Day 1 */}
                   <div style={{ background:C.white, border:`2px solid ${C.orange}60`, borderRadius:12, padding:"16px 20px", marginBottom:12 }}>
@@ -1573,6 +1706,72 @@ export default function App() {
                   </div>
                 </>
               )}
+
+              {/* ── IT VIEW ── */}
+              {obView === "it" && (() => {
+                const itDone  = obItTasks.filter(t=>t.done).length;
+                const itTotal = obItTasks.length;
+                const itPct   = Math.round((itDone/itTotal)*100);
+                const secTasks = obItTasks.filter(t=>t.sec===obItSec);
+                const curSec   = OB_IT_SECTIONS.find(s=>s.id===obItSec);
+                return (
+                  <>
+                    <div style={{ background:`linear-gradient(135deg, #1D4ED8, #7c3aed)`, borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
+                      <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>IT-онбординг 💻</div>
+                      <div style={{ fontSize:13, opacity:0.9, marginBottom:12 }}>Технический трек адаптации для разработчиков</div>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                        <span style={{ fontSize:12 }}>Прогресс</span>
+                        <span style={{ fontSize:13, fontWeight:800 }}>{itPct}%</span>
+                      </div>
+                      <div style={{ height:6, background:"rgba(255,255,255,0.3)", borderRadius:4, overflow:"hidden" }}>
+                        <div style={{ height:"100%", width:`${itPct}%`, background:"white", borderRadius:4, transition:"width .4s" }}/>
+                      </div>
+                    </div>
+
+                    {/* Section grid */}
+                    <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)", gap:10, marginBottom:16 }}>
+                      {OB_IT_SECTIONS.map(sec => {
+                        const done  = obItTasks.filter(t=>t.sec===sec.id&&t.done).length;
+                        const total = obItTasks.filter(t=>t.sec===sec.id).length;
+                        const isAct = sec.id === obItSec;
+                        return (
+                          <button key={sec.id} onClick={() => setObItSec(sec.id)} style={{
+                            background: isAct ? sec.color : C.white, color: isAct ? C.white : C.dark,
+                            border:`2px solid ${isAct ? sec.color : C.gray300}`, borderRadius:12,
+                            padding:"12px 10px", cursor:"pointer", fontFamily:"inherit", textAlign:"center",
+                            transition:"all .15s"
+                          }}>
+                            <div style={{ fontSize:20, marginBottom:4 }}>{sec.icon}</div>
+                            <div style={{ fontSize:11, fontWeight:700, lineHeight:1.3, marginBottom:4 }}>{sec.label}</div>
+                            <div style={{ fontSize:10, opacity:isAct?0.8:0, color: isAct?C.white:C.gray500 }}>{sec.sub}</div>
+                            <div style={{ fontSize:10, marginTop:4, fontWeight:600, color: isAct?"rgba(255,255,255,0.9)" : done===total&&total>0 ? C.green : C.gray500 }}>
+                              {done}/{total}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Tasks for selected section */}
+                    <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:14, padding:"18px 20px" }}>
+                      <div style={{ fontSize:14, fontWeight:700, color: curSec?.color || C.dark, marginBottom:14 }}>
+                        {curSec?.icon} {curSec?.label} <span style={{ fontSize:12, color:C.gray500, fontWeight:400 }}>— {curSec?.sub}</span>
+                      </div>
+                      {secTasks.map(task => (
+                        <div key={task.id} onClick={() => setObItTasks(prev=>prev.map(t=>t.id===task.id?{...t,done:!t.done}:t))}
+                          style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"10px 12px", borderRadius:10, cursor:"pointer", marginBottom:6,
+                            background:task.done?C.greenPale:C.gray100, border:`1px solid ${task.done?C.green+"40":"transparent"}` }}>
+                          <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${task.done?C.green:C.gray300}`, background:task.done?C.green:C.white,
+                            display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
+                            {task.done?"✓":""}
+                          </div>
+                          <div style={{ fontSize:13, color:task.done?C.gray500:C.dark, textDecoration:task.done?"line-through":"none", fontWeight:task.done?400:500 }}>{task.title}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                );
+              })()}
 
               {/* ── HR VIEW ── */}
               {obView === "hr" && (
