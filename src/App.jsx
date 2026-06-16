@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.5";
+const _v = "3.6";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1340,8 +1340,8 @@ export default function App() {
                 {task.who  && <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Отв.: {task.who}</div>}
                 {task.info && <div style={{ fontSize:11, color:C.blue, marginTop:4, fontStyle:"italic" }}>ℹ {task.info}</div>}
                 {task.instruction && !task.done && (
-                  <div style={{ marginTop:6, padding:"7px 10px", background:C.blue+"10", border:`1px solid ${C.blue}25`, borderRadius:6, fontSize:12, color:C.blue }}>
-                    📋 {task.instruction}
+                  <div style={{ marginTop:4, fontSize:12, color:C.blue, fontStyle:"italic" }}>
+                    {task.instruction}
                   </div>
                 )}
               </div>
