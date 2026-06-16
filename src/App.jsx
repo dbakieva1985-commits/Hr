@@ -584,54 +584,39 @@ export default function App() {
         </div>
       </div>
 
-      {/* Mobile bottom nav — Halyk style */}
+      {/* Mobile bottom nav */}
       {isMobile && (
-        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:62, background:C.white,
-          borderTop:`1px solid #EBEBEB`, display:"flex", zIndex:200, boxShadow:"0 -3px 16px #00000012" }}>
-          {NAV.map((n, i) => {
-            const isMid = i === 2;
-            return (
-              <button key={n.id} onClick={() => { setPage(n.id); setDetail(null); }} style={{
-                flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-                background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
-                color: page===n.id ? C.green : C.gray500, padding:"4px 0",
-                position: isMid ? "relative" : "static",
-              }}>
-                {isMid ? (
-                  <div style={{ width:52, height:52, borderRadius:"50%", background:C.green, display:"flex",
-                    alignItems:"center", justifyContent:"center", fontSize:22, color:C.white,
-                    position:"absolute", bottom:6, boxShadow:`0 4px 14px ${C.green}55` }}>
-                    {n.icon}
-                  </div>
-                ) : (
-                  <>
-                    <span style={{ fontSize:22, lineHeight:1 }}>{n.icon}</span>
-                    <span style={{ fontSize:9, fontWeight: page===n.id ? 700 : 400, marginTop:3 }}>{n.label}</span>
-                  </>
-                )}
-              </button>
-            );
-          })}
+        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:58, background:C.white,
+          borderTop:`1px solid ${C.gray300}`, display:"flex", zIndex:200, boxShadow:"0 -2px 8px rgba(0,0,0,0.08)" }}>
+          {NAV.map(n => (
+            <button key={n.id} onClick={() => { setPage(n.id); setDetail(null); }} style={{
+              flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+              background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
+              color: page===n.id ? C.green : C.gray500, padding:"6px 0",
+            }}>
+              <span style={{ fontSize:20, lineHeight:1 }}>{n.icon}</span>
+              <span style={{ fontSize:9, fontWeight: page===n.id ? 700 : 400, marginTop:3 }}>{n.label}</span>
+            </button>
+          ))}
         </nav>
       )}
 
-      {/* Mobile top header — Halyk style (white) */}
+      {/* Mobile top header */}
       {isMobile && (
-        <div style={{ position:"fixed", top:0, left:0, right:0, height:56, background:C.white,
+        <div style={{ position:"fixed", top:0, left:0, right:0, height:56, background:C.green,
           display:"flex", alignItems:"center", justifyContent:"space-between",
-          padding:"0 16px", zIndex:200, borderBottom:`1px solid #F0F0F0`,
-          boxShadow:"0 1px 8px #0000000A" }}>
+          padding:"0 16px", zIndex:200 }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <div style={{ width:34, height:34, borderRadius:10, background:C.green,
+            <div style={{ width:32, height:32, borderRadius:8, background:"rgba(255,255,255,0.25)",
               display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, color:C.white, fontWeight:800 }}>H</div>
             <div>
-              <div style={{ fontSize:11, fontWeight:800, color:C.dark, letterSpacing:0.5 }}>HR Portal</div>
-              <div style={{ fontSize:9, color:C.gray500 }}>Halyk Bank · ДУП</div>
+              <div style={{ fontSize:13, fontWeight:700, color:C.white }}>HR Service Portal</div>
+              <div style={{ fontSize:10, color:"rgba(255,255,255,0.8)" }}>Halyk Bank</div>
             </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
             <select value={currentRole} onChange={e => setCurrentRole(e.target.value)}
-              style={{ background:C.gray100, color:C.dark, border:`1px solid ${C.gray300}`,
+              style={{ background:"rgba(255,255,255,0.2)", color:C.white, border:"1px solid rgba(255,255,255,0.3)",
                 borderRadius:8, padding:"5px 8px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none" }}>
               {[
                 { id:"recruiter", label:"Рекрутер ДО" },
@@ -641,69 +626,73 @@ export default function App() {
                 { id:"hr_dir",    label:"HRD ГБ" },
                 { id:"do_date",   label:"ДО (дата)" },
                 { id:"uap",       label:"УАП ГБ" },
-              ].map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
+              ].map(r => <option key={r.id} value={r.id} style={{ background:C.dark }}>{r.label}</option>)}
             </select>
-            <div style={{ width:32, height:32, borderRadius:"50%", background:C.greenPale, border:`2px solid ${C.green}`,
-              display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:C.green, fontWeight:800 }}>Ф</div>
+            <div style={{ width:30, height:30, borderRadius:"50%", background:"rgba(255,255,255,0.25)",
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:C.white, fontWeight:700 }}>Ф</div>
           </div>
         </div>
       )}
 
       {/* Main */}
       <div style={{ marginLeft: sideW, flex: 1,
-        padding: page === "home" && !selected ? (isMobile ? "56px 0 74px" : "0") : (isMobile ? "68px 14px 74px" : "32px 36px"),
+        padding: isMobile ? "68px 16px 80px" : "32px 36px",
         maxWidth: isMobile ? "100vw" : `calc(100vw - ${sideW}px)`,
-        boxSizing: "border-box" }}>
+        boxSizing: "border-box", background: C.gray100 }}>
 
         {/* ── HOME ── */}
         {page === "home" && !selected && (
-          <div style={{ margin: isMobile ? "-68px -14px 0" : "-32px -36px 0" }}>
-
-            {/* Онбординг banner */}
-            <div onClick={() => setPage("onboarding")} style={{
-              background:`linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`,
-              padding: isMobile ? "18px 16px" : "22px 32px", cursor:"pointer", color:C.white,
-              display:"flex", justifyContent:"space-between", alignItems:"center"
-            }}>
-              <div>
-                <div style={{ fontSize: isMobile ? 13 : 15, fontWeight:700, marginBottom:3 }}>🎉 Трек онбординга нового сотрудника</div>
-                <div style={{ fontSize:12, opacity:0.85 }}>Задачи, документы, адрес HR, цели ИС</div>
-              </div>
-              <div style={{ fontSize:20, marginLeft:12, opacity:0.9 }}>›</div>
+          <div>
+            {/* Welcome */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 700, color: C.dark }}>Добро пожаловать 👋</div>
+              <div style={{ fontSize: 13, color: C.gray500, marginTop: 4 }}>HR Service Portal · Halyk Bank · ДУП</div>
             </div>
 
-            {/* Service grid — open on white, Halyk style */}
-            <div style={{ background: C.white, padding: isMobile ? "8px 0 4px" : "16px 16px 8px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)" }}>
-                {SERVICES.slice(0,8).map((s, idx) => (
-                  <div key={s.id} onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}
-                    style={{ display:"flex", flexDirection:"column", alignItems:"center",
-                      padding: isMobile ? "16px 4px" : "20px 8px", cursor:"pointer",
-                      borderBottom: idx < 4 ? `1px solid ${C.gray300}` : "none",
-                      borderRight: (idx+1) % 4 !== 0 ? `1px solid ${C.gray300}` : "none"
-                    }}>
-                    <div style={{ fontSize: isMobile ? 34 : 38, marginBottom: 8, lineHeight: 1 }}>{s.icon}</div>
-                    <div style={{ fontSize: isMobile ? 10 : 11, color: C.dark, textAlign:"center", lineHeight:1.3, fontWeight:400 }}>
-                      {s.title.length > 12 ? s.title.slice(0,11)+"…" : s.title}
-                    </div>
-                  </div>
-                ))}
+            {/* Onboarding banner */}
+            <div onClick={() => setPage("onboarding")} style={{
+              background: `linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`,
+              borderRadius: 14, padding: "18px 20px", marginBottom: 22,
+              cursor: "pointer", color: C.white,
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              boxShadow: `0 4px 16px ${C.green}44`
+            }}>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>🎉 Онбординг нового сотрудника</div>
+                <div style={{ fontSize: 12, opacity: 0.9 }}>Pre-boarding → Неделя 1 → Месяц 1 → Месяц 3</div>
               </div>
+              <div style={{ fontSize: 22, opacity: 0.9 }}>›</div>
+            </div>
+
+            {/* Quick service cards */}
+            <div style={{ fontSize: 13, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 12 }}>Популярные сервисы</div>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
+              {SERVICES.slice(0,4).map(s => (
+                <div key={s.id} onClick={() => { setSelected(s); setPage("form"); }}
+                  style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`,
+                    padding: "16px 14px", cursor: "pointer", transition: "box-shadow .15s" }}
+                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.10)"}
+                  onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}>
+                  <div style={{ width: 42, height: 42, borderRadius: 10, background: C.greenPale,
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 10 }}>{s.icon}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark, marginBottom: 3 }}>{s.title}</div>
+                  <div style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</div>
+                </div>
+              ))}
             </div>
 
             {/* Recent requests */}
-            <div style={{ background: C.white, marginTop: 8, padding: isMobile ? "16px 14px" : "20px 32px" }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-                <div style={{ fontSize:16, fontWeight:700, color:C.dark }}>Последние заявки</div>
-                <button onClick={() => setPage("my")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Все ›</button>
-              </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.8 }}>Последние заявки</div>
+              <button onClick={() => setPage("my")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Все ›</button>
+            </div>
+            <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`, overflow: "hidden" }}>
               {requests.slice(0,3).map((r, i) => (
                 <div key={r.id} onClick={() => { setDetail(r); setPage("my"); }}
-                  style={{ display:"flex", alignItems:"center", gap:14, cursor:"pointer",
-                    paddingBottom: i < 2 ? 14 : 0, marginBottom: i < 2 ? 14 : 0,
+                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 16px", cursor:"pointer",
                     borderBottom: i < 2 ? `1px solid ${C.gray300}` : "none" }}>
-                  <div style={{ width:44, height:44, borderRadius:12, background:C.greenPale,
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 }}>{r.icon}</div>
+                  <div style={{ width:38, height:38, borderRadius:10, background:C.greenPale,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0 }}>{r.icon}</div>
                   <div style={{ flex:1 }}>
                     <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{r.title}</div>
                     <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{r.id} · {r.date}</div>
@@ -1137,10 +1126,13 @@ export default function App() {
               <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>История всех ваших обращений в HR Service Center</p>
             </div>
 
-            <div style={{ background: C.white, borderRadius: 18, overflow: "hidden", boxShadow: "0 2px 12px #0000000A" }}>
+            <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`, overflow: "hidden" }}>
               {requests.map((r, ri) => (
                 <div key={r.id} onClick={() => setDetail(r)}
-                  style={{ padding: "14px 18px", cursor: "pointer", borderBottom: ri < requests.length-1 ? `1px solid ${C.gray100}` : "none" }}>
+                  style={{ padding: "14px 16px", cursor: "pointer", borderBottom: ri < requests.length-1 ? `1px solid ${C.gray300}` : "none",
+                    transition:"background .1s" }}
+                  onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                   <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                     <div style={{ width: 40, height: 40, borderRadius: 10, background: C.greenPale,
                       display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{r.icon}</div>
