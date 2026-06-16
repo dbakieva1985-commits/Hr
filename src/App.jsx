@@ -372,7 +372,7 @@ export default function App() {
   const [newGoalText,    setNewGoalText]    = useState("");
   const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
   const [obItSec,        setObItSec]        = useState("pre");
-  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false });
+  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false });
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -1414,10 +1414,22 @@ export default function App() {
                     </div>
                   ))}
 
-                  {/* ALWAYS VISIBLE: Documents to bring on Day 1 */}
-                  <div style={{ background:C.white, border:`2px solid ${C.orange}60`, borderRadius:12, padding:"16px 20px", marginBottom:12 }}>
-                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:2 }}>📋 Перечень документов при приёме в Halyk Bank</div>
-                    <div style={{ fontSize:12, color:C.orange, fontWeight:600, marginBottom:4 }}>⚠ В первый рабочий день в 09:00 · {hrAddress}</div>
+                  {/* Documents — collapsible */}
+                  <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${C.orange}40` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, docs:!p.docs}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:"#FFFBEB", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <span style={{ fontSize:22 }}>📋</span>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:700, color:C.orange }}>Перечень документов при приёме</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>⚠ Принести в первый день в 09:00 · {hrAddress}</div>
+                      </div>
+                      <span style={{ fontSize:16, color:C.orange, display:"inline-block", transition:"transform .2s",
+                        transform: obExpanded.docs ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.docs && (
+                    <div style={{ background:C.white, padding:"12px 18px" }}>
                     <div style={{ fontSize:11, color:C.gray500, marginBottom:10 }}>Сканы отправьте рекрутеру заранее. В первый день принесите оригиналы.</div>
                     <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
                       {[
@@ -1441,14 +1453,27 @@ export default function App() {
                         </div>
                       ))}
                     </div>
+                    </div>
+                    )}
                   </div>
 
-                  {/* ALWAYS VISIBLE: Address + directions + parking */}
-                  <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"16px 20px", marginBottom:14 }}>
-                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4 }}>📍 Куда прийти в первый день</div>
-                    <div style={{ fontSize:13, color:C.dark, fontWeight:600, marginBottom:10 }}>{hrAddress}</div>
-                    {candidateOrg === "ГБ" && (
-                      <>
+                  {/* Address — collapsible */}
+                  <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${C.blue}30` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, addr:!p.addr}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:"#EFF6FF", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <span style={{ fontSize:22 }}>📍</span>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:700, color:C.blue }}>Куда прийти в первый день</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{hrAddress}</div>
+                      </div>
+                      <span style={{ fontSize:16, color:C.blue, display:"inline-block", transition:"transform .2s",
+                        transform: obExpanded.addr ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.addr && candidateOrg === "ГБ" && (
+                      <div style={{ background:C.white, padding:"14px 18px" }}>
+                        <div style={{ fontSize:13, color:C.dark, fontWeight:600, marginBottom:10 }}>{hrAddress}</div>
                         <div style={{ display:"flex", gap:8, marginBottom:10, flexWrap:"wrap" }}>
                           <div style={{ flex:1, minWidth:140, background:C.blue+"0D", border:`1px solid ${C.blue}25`, borderRadius:8, padding:"10px 12px", fontSize:12 }}>
                             <div style={{ fontWeight:700, color:C.blue, marginBottom:4 }}>🚌 Общественный транспорт</div>
@@ -1461,7 +1486,7 @@ export default function App() {
                           </div>
                         </div>
                         <div style={{ background:"#f8f4ff", border:`1px solid #c4b5fd`, borderRadius:8, padding:"12px 14px", fontSize:12 }}>
-                          <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:6 }}>🅿 Парковка у БЦ «Нурлы Тау»</div>
+                          <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:6 }}>🅿 Парковка</div>
                           <div style={{ display:"flex", flexDirection:"column", gap:4, color:C.gray700, marginBottom:6 }}>
                             <div>Тариф: <b>100 ₸/час</b> · Скидка сотруднику Halyk: <b>50%</b></div>
                             <div>Как получить скидку: <b>корпоративный ID на въезде</b></div>
@@ -1469,7 +1494,7 @@ export default function App() {
                           </div>
                           <div style={{ color:"#7c3aed", fontSize:11 }}>Корпоративная парковочная карта выдаётся в административном отделе (к. 108) после оформления</div>
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
 
