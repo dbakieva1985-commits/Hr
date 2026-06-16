@@ -206,13 +206,11 @@ const OB_TASKS_INIT = [
   { id:16, phase:"month1", title:'Пройти курс "Управление временем"',           who:"Сотрудник",              done:false },
   { id:17, phase:"month1", title:"Пройти обучение Compliance / AML / ИБ",       who:"Сотрудник",              done:false },
   { id:18, phase:"month1", title:"Мотивационное интервью с руководством ДУП",   who:"ДУП, сотрудник",         done:false },
-  { id:19, phase:"month1", title:"Check-in встреча с HR (30-й день)",            who:"HR + сотрудник",         done:false },
   // Месяц 2–3
   { id:20, phase:"month3", title:"Встреча 1:1 с руководителем (2-й месяц)",     who:"Рук-ль + сотрудник",     done:false },
   { id:21, phase:"month3", title:"Welcome Training офлайн (Induction)",          who:"Бизнес-тренеры, новички",done:false },
   { id:22, phase:"month3", title:"Заполнить опрос адаптации (2 мес.)",           who:"Сотрудник",              done:false, isSurvey:true },
   { id:23, phase:"month3", title:"Встреча 1:1 с руководителем (3-й месяц)",     who:"Рук-ль + сотрудник",     done:false },
-  { id:24, phase:"month3", title:"Check-in встреча с HR (90 дней)",              who:"HR + сотрудник",         done:false },
   { id:25, phase:"month3", title:"Опрос по итогам испытательного срока",         who:"Наставник, рук-ль, новичок", done:false, isSurvey:true },
   { id:26, phase:"month3", title:"Финальная оценка по итогам ИС",               who:"Рук-ль",                 done:false },
   { id:27, phase:"month3", title:"Решение по ИС: принят / продлён / расстались", who:"Рук-ль + HR",           done:false },
