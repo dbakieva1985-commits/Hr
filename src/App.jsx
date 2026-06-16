@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.0";
+const _v = "3.1";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1741,7 +1741,7 @@ export default function App() {
               {/* ── MANAGER VIEW ── */}
               {obView === "manager" && (
                 <>
-                  <div style={{ background:`linear-gradient(135deg, ${C.blue}, #1a6fa8)`, borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
+                  <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
                     <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Новый сотрудник в вашей команде</div>
                     <div style={{ fontSize:13, opacity:0.9, marginBottom:10 }}>Алия Сейткали · Senior PM · Выход: 16 июня 2026</div>
                     <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
@@ -1838,7 +1838,7 @@ export default function App() {
               {/* ── MENTOR VIEW ── */}
               {obView === "mentor" && (
                 <>
-                  <div style={{ background:"linear-gradient(135deg,#7c3aed,#a78bfa)", borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
+                  <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
                     <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Вы — наставник нового сотрудника</div>
                     <div style={{ fontSize:13, opacity:0.9 }}>Алия Сейткали · Senior PM · Выход: 16 июня 2026</div>
                   </div>
