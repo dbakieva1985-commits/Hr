@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "2.7";
+const _v = "2.8";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1389,23 +1389,23 @@ export default function App() {
           return (
             <div>
               {/* Header + view switcher */}
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:24, flexWrap:"wrap", gap:10 }}>
-                <div>
-                  <h1 style={{ fontSize:24, fontWeight:700, color:C.dark, margin:0 }}>Онбординг</h1>
-                  <p style={{ color:C.gray500, fontSize:14, marginTop:6 }}>Трек адаптации нового сотрудника · {candidateOrg}</p>
-                </div>
-                <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+              <div style={{ marginBottom:20 }}>
+                <h1 style={{ fontSize: isMobile?18:22, fontWeight:700, color:C.dark, margin:"0 0 4px" }}>Трек адаптации</h1>
+                <p style={{ color:C.gray500, fontSize:13, margin:"0 0 16px" }}>Алия Сейткали · {candidateOrg} · Испытательный срок: 3 месяца</p>
+                <div style={{ display:"flex", gap:0, background:C.white, borderRadius:10, border:`1px solid ${C.gray300}`, overflow:"hidden", flexWrap:"wrap" }}>
                   {[
-                    {v:"employee", label:"👤 Новичок"},
-                    {v:"manager",  label:"👨‍💼 Руководитель"},
-                    {v:"mentor",   label:"🤝 Наставник"},
-                    {v:"it",       label:"💻 IT-онбординг"},
-                    {v:"hr",       label:"🏢 HR"},
+                    {v:"employee", label:"Новичок"},
+                    {v:"manager",  label:"Руководитель"},
+                    {v:"mentor",   label:"Наставник"},
+                    {v:"it",       label:"IT"},
+                    {v:"hr",       label:"HR"},
                   ].map(({v,label}) => (
                     <button key={v} onClick={() => setObView(v)} style={{
-                      padding:"7px 14px", borderRadius:8, fontSize:12, cursor:"pointer", fontFamily:"inherit",
-                      background: obView===v ? C.green : C.white, color: obView===v ? C.white : C.gray500,
-                      border:`1px solid ${obView===v ? C.green : C.gray300}`, fontWeight: obView===v ? 700 : 400,
+                      flex:1, padding:"9px 8px", fontSize:12, cursor:"pointer", fontFamily:"inherit",
+                      background: obView===v ? C.green : "transparent",
+                      color: obView===v ? C.white : C.gray700,
+                      border:"none", borderRight:`1px solid ${C.gray300}`,
+                      fontWeight: obView===v ? 700 : 400, minWidth:60,
                     }}>{label}</button>
                   ))}
                 </div>
@@ -1416,7 +1416,7 @@ export default function App() {
                 <>
                   {/* Welcome */}
                   <div style={{ background:`linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`, borderRadius:16, padding:"20px 24px", marginBottom:14, color:C.white, boxShadow:`0 4px 16px ${C.green}44` }}>
-                    <div style={{ fontSize:20, fontWeight:800, marginBottom:4 }}>Добро пожаловать в Халык Банк! 🎉</div>
+                    <div style={{ fontSize:20, fontWeight:800, marginBottom:4 }}>Персональный план адаптации</div>
                     <div style={{ fontSize:13, opacity:0.9, marginBottom:10 }}>Руководитель: <b>Нуржан Касымов</b> · Наставник: <b>Айгерим Бекова</b></div>
                     <div style={{ background:"rgba(255,255,255,0.15)", borderRadius:10, padding:"10px 14px", fontSize:13 }}>
                       Первый рабочий день: <b>16 июня 2026 в 09:00</b> · Испытательный срок: 3 месяца
@@ -1426,7 +1426,7 @@ export default function App() {
                   {/* IT tab switcher — only shown in IT view */}
                   {obView === "it" && (
                     <div style={{ display:"flex", gap:8, marginBottom:16 }}>
-                      {[{id:"general",label:"🎯 Общий трек"},{id:"it",label:"💻 IT-трек"}].map(t => (
+                      {[{id:"general",label:"Общий трек"},{id:"it",label:"IT-трек"}].map(t => (
                         <button key={t.id} onClick={() => setObItTab(t.id)} style={{
                           flex:1, padding:"12px", borderRadius:12, fontFamily:"inherit", fontWeight:700, fontSize:13,
                           cursor:"pointer", border:"none",
@@ -1607,7 +1607,7 @@ export default function App() {
                         return (
                           <div key={ph.id} style={{ display:"flex", alignItems:"flex-start", flex: i<OB_PHASES.length-1 ? 1 : "none" }}>
                             <button onClick={() => setObPhase(ph.id)} style={{ background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", minWidth:80 }}>
-                              <div style={{ width:40, height:40, borderRadius:"50%", background:col, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, color:C.white, border: isActive && !isDone ? `3px solid ${C.greenMid}` : "none" }}>{ph.icon}</div>
+                              <div style={{ width:40, height:40, borderRadius:"50%", background:col, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:C.white, border: isActive && !isDone ? `3px solid ${C.greenMid}` : "none" }}>{isDone ? "✓" : i+1}</div>
                               <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
                               <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
                             </button>
@@ -1622,7 +1622,7 @@ export default function App() {
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
                       <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>
-                        {OB_PHASES.find(p=>p.id===obPhase)?.icon} {OB_PHASES.find(p=>p.id===obPhase)?.label} — задачи
+                        {OB_PHASES.find(p=>p.id===obPhase)?.label} — задачи
                       </div>
                       <div style={{ fontSize:12, color:C.gray500 }}>{phaseTasks.filter(t=>t.done).length} / {phaseTasks.length} выполнено</div>
                     </div>
@@ -1636,7 +1636,7 @@ export default function App() {
                   {/* Goals — appear after meeting with manager */}
                   {managerMet && obPhase === "week1" && (
                     <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>🎯 Цели на испытательный срок</div>
+                      <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Цели на испытательный срок</div>
                       <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Поставлены руководителем <b>Нуржан Касымов</b></div>
                       {obGoals.map(goal => (
                         <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.gray100}` }}>
@@ -1652,7 +1652,7 @@ export default function App() {
                   {/* Survey — month3 phase */}
                   {obPhase === "month3" && (
                     <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>📋 Опрос адаптации — 2 месяца</div>
+                      <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Опрос адаптации — 2 месяца</div>
                       <div style={{ fontSize:12, color:C.gray500, marginBottom:2 }}>HR собирает обратную связь от вас, руководителя и наставника</div>
                       <SurveyBlock
                         questions={SURVEY_EMPLOYEE}
@@ -1666,14 +1666,14 @@ export default function App() {
 
                   {/* Documents */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>📁 Документы</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>Документы</div>
                     {obDocs.map(doc => (
                       <div key={doc.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:13 }}>
                         <span style={{ color:C.dark }}>{doc.name}</span>
                         <span style={{ fontSize:11, fontWeight:600, color:docStatusColor[doc.status] }}>{docStatusLabel[doc.status]}</span>
                       </div>
                     ))}
-                    <div style={{ marginTop:14 }}><Btn small variant="ghost">📎 Загрузить документ</Btn></div>
+                    <div style={{ marginTop:14 }}><Btn small variant="ghost">Загрузить документ</Btn></div>
                   </div>
 
                   </>)}
@@ -1687,7 +1687,7 @@ export default function App() {
                     const curSec   = OB_IT_SECTIONS.find(s=>s.id===obItSec);
                     return (
                       <>
-                        <div style={{ fontSize:16, fontWeight:800, color:C.dark, marginBottom:14 }}>💻 Технический трек</div>
+                        <div style={{ fontSize:16, fontWeight:800, color:C.dark, marginBottom:14 }}>Технический трек</div>
 
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
                           <span style={{ fontSize:12, color:C.gray500 }}>Технический прогресс</span>
@@ -1708,7 +1708,6 @@ export default function App() {
                                 border:`2px solid ${isAct ? C.green : C.gray300}`, borderRadius:12,
                                 padding:"12px 10px", cursor:"pointer", fontFamily:"inherit", textAlign:"center", transition:"all .15s"
                               }}>
-                                <div style={{ fontSize:20, marginBottom:4 }}>{sec.icon}</div>
                                 <div style={{ fontSize:11, fontWeight:700, lineHeight:1.3, marginBottom:4 }}>{sec.label}</div>
                                 <div style={{ fontSize:10, opacity:isAct?0.8:0 }}>{sec.sub}</div>
                                 <div style={{ fontSize:10, marginTop:4, fontWeight:600, color: isAct?"rgba(255,255,255,0.9)": done===total&&total>0?C.green:C.gray500 }}>{done}/{total}</div>
@@ -1719,7 +1718,7 @@ export default function App() {
 
                         <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:16, padding:"18px 20px" }}>
                           <div style={{ fontSize:14, fontWeight:700, color:C.green, marginBottom:14 }}>
-                            {curSec?.icon} {curSec?.label} <span style={{ fontSize:12, color:C.gray500, fontWeight:400 }}>— {curSec?.sub}</span>
+                            {curSec?.label} <span style={{ fontSize:12, color:C.gray500, fontWeight:400 }}>— {curSec?.sub}</span>
                           </div>
                           {secTasks.map(task => (
                             <div key={task.id} onClick={() => setObItTasks(prev=>prev.map(t=>t.id===task.id?{...t,done:!t.done}:t))}
@@ -1743,17 +1742,17 @@ export default function App() {
               {obView === "manager" && (
                 <>
                   <div style={{ background:`linear-gradient(135deg, ${C.blue}, #1a6fa8)`, borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
-                    <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Новый сотрудник в вашей команде 👋</div>
+                    <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Новый сотрудник в вашей команде</div>
                     <div style={{ fontSize:13, opacity:0.9, marginBottom:10 }}>Алия Сейткали · Senior PM · Выход: 16 июня 2026</div>
                     <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-                      <div style={{ background:"rgba(255,255,255,0.18)", borderRadius:8, padding:"8px 14px", fontSize:12 }}>🤝 Наставник: <b>Айгерим Бекова</b></div>
-                      <div style={{ background:"rgba(255,255,255,0.18)", borderRadius:8, padding:"8px 14px", fontSize:12 }}>⏱ ИС: 3 месяца</div>
+                      <div style={{ background:"rgba(255,255,255,0.18)", borderRadius:8, padding:"8px 14px", fontSize:12 }}>Наставник: <b>Айгерим Бекова</b></div>
+                      <div style={{ background:"rgba(255,255,255,0.18)", borderRadius:8, padding:"8px 14px", fontSize:12 }}>ИС: 3 месяца</div>
                     </div>
                   </div>
 
                   {/* Pre-boarding manager tasks */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>📨 Pre-boarding — ваши задачи</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Pre-boarding — ваши задачи</div>
                     <div style={{ fontSize:12, color:C.orange, fontWeight:600, marginBottom:12 }}>Выполните за 1–3 дня до первого рабочего дня сотрудника</div>
                     {obManagerTasks.filter(t=>t.phase==="pre").map(task => (
                       <TaskRow key={task.id} task={task}
@@ -1764,7 +1763,7 @@ export default function App() {
 
                   {/* Day 1 manager tasks + goals */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>🚀 День 1 — ваши задачи</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>День 1 — ваши задачи</div>
                     <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Выполните в первый рабочий день</div>
                     {obManagerTasks.filter(t=>t.phase==="week1").map(task => (
                       <div key={task.id}>
@@ -1780,7 +1779,7 @@ export default function App() {
                             )}
                             {task.done && (
                               <div style={{ background:C.greenPale, border:`1px solid ${C.green}40`, borderRadius:10, padding:"14px 16px" }}>
-                                <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:10 }}>🎯 Цели на испытательный срок</div>
+                                <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:10 }}>Цели на испытательный срок</div>
                                 {obGoals.map(goal => (
                                   <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 10px", borderRadius:6, marginBottom:4,
                                     background:goal.done?C.green+"15":C.white, border:`1px solid ${goal.done?C.green+"30":C.gray300}` }}>
@@ -1812,7 +1811,7 @@ export default function App() {
 
                   {/* Month 3 manager tasks */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>📊 Месяц 2–3</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Месяц 2–3</div>
                     <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Оценка прогресса и финальное решение по ИС</div>
                     {obManagerTasks.filter(t=>t.phase==="month3").map(task => (
                       <div key={task.id}>
@@ -1840,11 +1839,11 @@ export default function App() {
               {obView === "mentor" && (
                 <>
                   <div style={{ background:"linear-gradient(135deg,#7c3aed,#a78bfa)", borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
-                    <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Вы — наставник нового сотрудника 🤝</div>
+                    <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Вы — наставник нового сотрудника</div>
                     <div style={{ fontSize:13, opacity:0.9 }}>Алия Сейткали · Senior PM · Выход: 16 июня 2026</div>
                   </div>
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>📋 Ваши задачи</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>Ваши задачи</div>
                     {(()=>{
                       const groups = [
                         { phase:"pre",    label:"До выхода" },
@@ -1925,15 +1924,15 @@ export default function App() {
 
                   {/* Survey results */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginTop:10 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>📋 Опросы адаптации — Алия Сейткали</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>Опросы адаптации — Алия Сейткали</div>
                     {[
-                      { role:"Новичок",      icon:"👤",  submitted:obSurveys.employeeSubmitted, answers:obSurveys.employee, qs:SURVEY_EMPLOYEE },
-                      { role:"Руководитель", icon:"👨‍💼", submitted:obSurveys.managerSubmitted,  answers:obSurveys.manager,  qs:SURVEY_MANAGER  },
-                      { role:"Наставник",    icon:"🤝",  submitted:obSurveys.mentorSubmitted,   answers:obSurveys.mentor,   qs:SURVEY_MENTOR   },
+                      { role:"Новичок",      submitted:obSurveys.employeeSubmitted, answers:obSurveys.employee, qs:SURVEY_EMPLOYEE },
+                      { role:"Руководитель", submitted:obSurveys.managerSubmitted,  answers:obSurveys.manager,  qs:SURVEY_MANAGER  },
+                      { role:"Наставник",    submitted:obSurveys.mentorSubmitted,   answers:obSurveys.mentor,   qs:SURVEY_MENTOR   },
                     ].map(s => (
                       <div key={s.role} style={{ padding:"12px 0", borderBottom:`1px solid ${C.gray100}` }}>
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:s.submitted?8:0 }}>
-                          <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{s.icon} {s.role}</div>
+                          <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{s.role}</div>
                           <Badge text={s.submitted?"✓ Заполнено":"Ожидает"} color={s.submitted?C.green:C.orange} />
                         </div>
                         {s.submitted && s.qs.map(q => s.answers[q.id] && (
