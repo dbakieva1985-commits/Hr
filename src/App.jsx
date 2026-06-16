@@ -231,6 +231,7 @@ const OB_MANAGER_TASKS_INIT = [
 ];
 
 const OB_MENTOR_TASKS_INIT = [
+  { id:"mt0", phase:"pre",    title:'Пройти курс "Наставник: как им стать"',      done:false },
   { id:"me1", phase:"pre",    title:"Получить briefing от HR о новом сотруднике", done:false },
   { id:"me2", phase:"week1",  title:"Встретиться с новым сотрудником в День 1",   done:false },
   { id:"me3", phase:"week1",  title:"Провести экскурсию по офису",                done:false },
@@ -1585,24 +1586,31 @@ export default function App() {
                       </button>
                       {obExpanded[sec.key] && (
                         <div style={{ background:C.white, padding:"4px 0", borderTop:`1px solid ${C.gray300}` }}>
-                          {sec.items.map(a => (
-                            <div key={a.id} onClick={() => setObActivities(prev=>prev.map(x=>x.id===a.id?{...x,done:!x.done}:x))}
-                              style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"11px 18px", borderBottom:`1px solid ${C.gray100}`, cursor:"pointer",
-                                background: a.done ? C.greenPale : C.white }}>
-                              <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:a.done?C.green:C.white,
-                                display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
-                                {a.done?"✓":""}
+                          {sec.items.map(a => {
+                            if(a.type==="header") return (
+                              <div key={a.id} style={{ padding:"8px 18px 4px", fontSize:11, fontWeight:800, color:C.gray500, textTransform:"uppercase", letterSpacing:0.6, background:C.gray100, borderBottom:`1px solid ${C.gray300}` }}>
+                                {a.title}
                               </div>
-                              <div style={{ flex:1 }}>
-                                <div style={{ fontSize:13, fontWeight:a.done?400:600, color:a.done?C.gray500:C.dark, textDecoration:a.done?"line-through":"none", marginBottom:2 }}>{a.title}</div>
-                                <div style={{ fontSize:11, color:C.gray500, marginBottom:a.who||a.note?4:0 }}>{a.desc}</div>
-                                <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                                  {a.who  && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.who}</span>}
-                                  {a.note && <span style={{ fontSize:11, background:C.gray100, color:C.gray500, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.note}</span>}
+                            );
+                            return (
+                              <div key={a.id} onClick={() => setObActivities(prev=>prev.map(x=>x.id===a.id?{...x,done:!x.done}:x))}
+                                style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"11px 18px", paddingLeft: a.indent ? 30 : 18, borderBottom:`1px solid ${C.gray100}`, cursor:"pointer",
+                                  background: a.done ? C.greenPale : C.white }}>
+                                <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:a.done?C.green:C.white,
+                                  display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
+                                  {a.done?"✓":""}
+                                </div>
+                                <div style={{ flex:1 }}>
+                                  <div style={{ fontSize:13, fontWeight:a.done?400:600, color:a.done?C.gray500:C.dark, textDecoration:a.done?"line-through":"none", marginBottom:2 }}>{a.title}</div>
+                                  <div style={{ fontSize:11, color:C.gray500, marginBottom:a.who||a.note?4:0 }}>{a.desc}</div>
+                                  <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                                    {a.who  && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.who}</span>}
+                                    {a.note && <span style={{ fontSize:11, background:C.gray100, color:C.gray500, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.note}</span>}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
 
                           {/* Documents + Address inside Pre-boarding — each collapsible */}
                           {sec.key === "pre" && (<>
@@ -1690,30 +1698,60 @@ export default function App() {
 
 
                   {/* Goals */}
-                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Цели на испытательный срок</div>
-                    <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Поставлены руководителем <b>Нуржан Касымов</b></div>
-                    {obGoals.map(goal => (
-                      <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.gray100}` }}>
-                        <div style={{ width:18, height:18, borderRadius:"50%", background:goal.done?C.green:C.white, border:`2px solid ${goal.done?C.green:C.gray300}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, color:C.white }}>
-                          {goal.done?"✓":""}
-                        </div>
-                        <div style={{ fontSize:13, color:goal.done?C.gray500:C.dark, textDecoration:goal.done?"line-through":"none" }}>{goal.text}</div>
+                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, goals:!p.goals}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>ЦЕЛ</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Цели на испытательный срок</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Руководитель: Нуржан Касымов</div>
                       </div>
-                    ))}
+                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s",
+                        transform: obExpanded.goals ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.goals && (
+                      <div style={{ background:C.white, padding:"4px 18px 12px", borderTop:`1px solid ${C.gray300}` }}>
+                        {obGoals.map(goal => (
+                          <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                            <div style={{ width:18, height:18, borderRadius:"50%", background:goal.done?C.green:C.white, border:`2px solid ${goal.done?C.green:C.gray300}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, color:C.white }}>
+                              {goal.done?"✓":""}
+                            </div>
+                            <div style={{ fontSize:13, color:goal.done?C.gray500:C.dark, textDecoration:goal.done?"line-through":"none" }}>{goal.text}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Survey */}
-                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Опрос адаптации — 2 месяца</div>
-                    <div style={{ fontSize:12, color:C.gray500, marginBottom:2 }}>HR собирает обратную связь от вас, руководителя и наставника</div>
-                    <SurveyBlock
-                      questions={SURVEY_EMPLOYEE}
-                      answers={obSurveys.employee}
-                      onAnswer={(qid, val) => setObSurveys(p => ({...p, employee:{...p.employee, [qid]:val}}))}
-                      onSubmit={() => setObSurveys(p => ({...p, employeeSubmitted:true}))}
-                      submitted={!!obSurveys.employeeSubmitted}
-                    />
+                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, survey:!p.survey}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>ОПР</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Опрос адаптации — 2 месяца</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{obSurveys.employeeSubmitted ? "✓ Заполнен" : "HR собирает обратную связь"}</div>
+                      </div>
+                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s",
+                        transform: obExpanded.survey ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.survey && (
+                      <div style={{ background:C.white, padding:"4px 0", borderTop:`1px solid ${C.gray300}` }}>
+                        <div style={{ padding:"12px 18px" }}>
+                          <SurveyBlock
+                            questions={SURVEY_EMPLOYEE}
+                            answers={obSurveys.employee}
+                            onAnswer={(qid, val) => setObSurveys(p => ({...p, employee:{...p.employee, [qid]:val}}))}
+                            onSubmit={() => setObSurveys(p => ({...p, employeeSubmitted:true}))}
+                            submitted={!!obSurveys.employeeSubmitted}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Documents */}
@@ -1799,6 +1837,28 @@ export default function App() {
                     <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                       <div style={{ background:"rgba(255,255,255,0.18)", borderRadius:8, padding:"8px 14px", fontSize:12 }}>Наставник: <b>Айгерим Бекова</b></div>
                       <div style={{ background:"rgba(255,255,255,0.18)", borderRadius:8, padding:"8px 14px", fontSize:12 }}>ИС: 3 месяца</div>
+                    </div>
+                  </div>
+
+                  {/* Manager: Goals editor */}
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Цели на испытательный срок</div>
+                    <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Поставьте цели для Алия Сейткали на период испытательного срока</div>
+                    {obGoals.map(goal => (
+                      <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                        <div style={{ fontSize:12, color:C.dark, flex:1 }}>{goal.text}</div>
+                        <button onClick={() => setObGoals(prev=>prev.filter(g=>g.id!==goal.id))} style={{
+                          background:"none", border:"none", cursor:"pointer", color:C.red, fontSize:14, padding:"0 4px", fontWeight:700 }}>×</button>
+                      </div>
+                    ))}
+                    <div style={{ display:"flex", gap:8, marginTop:10 }}>
+                      <input value={newGoalText} onChange={e=>setNewGoalText(e.target.value)}
+                        placeholder="Добавить цель..."
+                        style={{ flex:1, border:`1px solid ${C.gray300}`, borderRadius:6, padding:"7px 10px", fontSize:12, fontFamily:"inherit", outline:"none" }}
+                      />
+                      <button onClick={()=>{if(newGoalText.trim()){setObGoals(prev=>[...prev,{id:Date.now(),text:newGoalText.trim(),done:false}]);setNewGoalText("");}}} style={{
+                        padding:"7px 14px", background:C.green, color:C.white, border:"none", borderRadius:6, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit"
+                      }}>+ Добавить</button>
                     </div>
                   </div>
 
