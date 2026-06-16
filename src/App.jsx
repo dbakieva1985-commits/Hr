@@ -1355,8 +1355,8 @@ export default function App() {
                 </div>
               </div>
 
-              {/* ── EMPLOYEE VIEW ── */}
-              {obView === "employee" && (
+              {/* ── EMPLOYEE VIEW (shared with IT) ── */}
+              {(obView === "employee" || obView === "it") && (
                 <>
                   {/* Welcome */}
                   <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px 24px", marginBottom:14, color:C.white }}>
@@ -1602,6 +1602,67 @@ export default function App() {
                     ))}
                     <div style={{ marginTop:14 }}><Btn small variant="ghost">📎 Загрузить документ</Btn></div>
                   </div>
+
+                  {/* ── IT TECHNICAL TRACK (only for IT view) ── */}
+                  {obView === "it" && (() => {
+                    const itDone  = obItTasks.filter(t=>t.done).length;
+                    const itTotal = obItTasks.length;
+                    const itPct   = Math.round((itDone/itTotal)*100);
+                    const secTasks = obItTasks.filter(t=>t.sec===obItSec);
+                    const curSec   = OB_IT_SECTIONS.find(s=>s.id===obItSec);
+                    return (
+                      <>
+                        <div style={{ background:`linear-gradient(135deg, #1D4ED8, #7c3aed)`, borderRadius:16, padding:"20px 24px", margin:"16px 0 14px", color:C.white }}>
+                          <div style={{ fontSize:16, fontWeight:800, marginBottom:4 }}>💻 Технический трек IT-онбординга</div>
+                          <div style={{ fontSize:12, opacity:0.9, marginBottom:10 }}>Дополнительно к общему треку — для разработчиков</div>
+                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                            <span style={{ fontSize:12 }}>Технический прогресс</span>
+                            <span style={{ fontSize:13, fontWeight:800 }}>{itPct}%</span>
+                          </div>
+                          <div style={{ height:6, background:"rgba(255,255,255,0.3)", borderRadius:4, overflow:"hidden" }}>
+                            <div style={{ height:"100%", width:`${itPct}%`, background:"white", borderRadius:4, transition:"width .4s" }}/>
+                          </div>
+                        </div>
+
+                        <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)", gap:10, marginBottom:14 }}>
+                          {OB_IT_SECTIONS.map(sec => {
+                            const done  = obItTasks.filter(t=>t.sec===sec.id&&t.done).length;
+                            const total = obItTasks.filter(t=>t.sec===sec.id).length;
+                            const isAct = sec.id === obItSec;
+                            return (
+                              <button key={sec.id} onClick={() => setObItSec(sec.id)} style={{
+                                background: isAct ? sec.color : C.white, color: isAct ? C.white : C.dark,
+                                border:`2px solid ${isAct ? sec.color : C.gray300}`, borderRadius:12,
+                                padding:"12px 10px", cursor:"pointer", fontFamily:"inherit", textAlign:"center", transition:"all .15s"
+                              }}>
+                                <div style={{ fontSize:20, marginBottom:4 }}>{sec.icon}</div>
+                                <div style={{ fontSize:11, fontWeight:700, lineHeight:1.3, marginBottom:4 }}>{sec.label}</div>
+                                <div style={{ fontSize:10, opacity:isAct?0.8:0 }}>{sec.sub}</div>
+                                <div style={{ fontSize:10, marginTop:4, fontWeight:600, color: isAct?"rgba(255,255,255,0.9)": done===total&&total>0?C.green:C.gray500 }}>{done}/{total}</div>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:14, padding:"18px 20px" }}>
+                          <div style={{ fontSize:14, fontWeight:700, color:curSec?.color||C.dark, marginBottom:14 }}>
+                            {curSec?.icon} {curSec?.label} <span style={{ fontSize:12, color:C.gray500, fontWeight:400 }}>— {curSec?.sub}</span>
+                          </div>
+                          {secTasks.map(task => (
+                            <div key={task.id} onClick={() => setObItTasks(prev=>prev.map(t=>t.id===task.id?{...t,done:!t.done}:t))}
+                              style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"10px 12px", borderRadius:10, cursor:"pointer", marginBottom:6,
+                                background:task.done?C.greenPale:C.gray100, border:`1px solid ${task.done?C.green+"40":"transparent"}` }}>
+                              <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${task.done?C.green:C.gray300}`, background:task.done?C.green:C.white,
+                                display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
+                                {task.done?"✓":""}
+                              </div>
+                              <div style={{ fontSize:13, color:task.done?C.gray500:C.dark, textDecoration:task.done?"line-through":"none", fontWeight:task.done?400:500 }}>{task.title}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })()}
                 </>
               )}
 
@@ -1748,72 +1809,6 @@ export default function App() {
                   </div>
                 </>
               )}
-
-              {/* ── IT VIEW ── */}
-              {obView === "it" && (() => {
-                const itDone  = obItTasks.filter(t=>t.done).length;
-                const itTotal = obItTasks.length;
-                const itPct   = Math.round((itDone/itTotal)*100);
-                const secTasks = obItTasks.filter(t=>t.sec===obItSec);
-                const curSec   = OB_IT_SECTIONS.find(s=>s.id===obItSec);
-                return (
-                  <>
-                    <div style={{ background:`linear-gradient(135deg, #1D4ED8, #7c3aed)`, borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
-                      <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>IT-онбординг 💻</div>
-                      <div style={{ fontSize:13, opacity:0.9, marginBottom:12 }}>Технический трек адаптации для разработчиков</div>
-                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
-                        <span style={{ fontSize:12 }}>Прогресс</span>
-                        <span style={{ fontSize:13, fontWeight:800 }}>{itPct}%</span>
-                      </div>
-                      <div style={{ height:6, background:"rgba(255,255,255,0.3)", borderRadius:4, overflow:"hidden" }}>
-                        <div style={{ height:"100%", width:`${itPct}%`, background:"white", borderRadius:4, transition:"width .4s" }}/>
-                      </div>
-                    </div>
-
-                    {/* Section grid */}
-                    <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)", gap:10, marginBottom:16 }}>
-                      {OB_IT_SECTIONS.map(sec => {
-                        const done  = obItTasks.filter(t=>t.sec===sec.id&&t.done).length;
-                        const total = obItTasks.filter(t=>t.sec===sec.id).length;
-                        const isAct = sec.id === obItSec;
-                        return (
-                          <button key={sec.id} onClick={() => setObItSec(sec.id)} style={{
-                            background: isAct ? sec.color : C.white, color: isAct ? C.white : C.dark,
-                            border:`2px solid ${isAct ? sec.color : C.gray300}`, borderRadius:12,
-                            padding:"12px 10px", cursor:"pointer", fontFamily:"inherit", textAlign:"center",
-                            transition:"all .15s"
-                          }}>
-                            <div style={{ fontSize:20, marginBottom:4 }}>{sec.icon}</div>
-                            <div style={{ fontSize:11, fontWeight:700, lineHeight:1.3, marginBottom:4 }}>{sec.label}</div>
-                            <div style={{ fontSize:10, opacity:isAct?0.8:0, color: isAct?C.white:C.gray500 }}>{sec.sub}</div>
-                            <div style={{ fontSize:10, marginTop:4, fontWeight:600, color: isAct?"rgba(255,255,255,0.9)" : done===total&&total>0 ? C.green : C.gray500 }}>
-                              {done}/{total}
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Tasks for selected section */}
-                    <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:14, padding:"18px 20px" }}>
-                      <div style={{ fontSize:14, fontWeight:700, color: curSec?.color || C.dark, marginBottom:14 }}>
-                        {curSec?.icon} {curSec?.label} <span style={{ fontSize:12, color:C.gray500, fontWeight:400 }}>— {curSec?.sub}</span>
-                      </div>
-                      {secTasks.map(task => (
-                        <div key={task.id} onClick={() => setObItTasks(prev=>prev.map(t=>t.id===task.id?{...t,done:!t.done}:t))}
-                          style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"10px 12px", borderRadius:10, cursor:"pointer", marginBottom:6,
-                            background:task.done?C.greenPale:C.gray100, border:`1px solid ${task.done?C.green+"40":"transparent"}` }}>
-                          <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${task.done?C.green:C.gray300}`, background:task.done?C.green:C.white,
-                            display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
-                            {task.done?"✓":""}
-                          </div>
-                          <div style={{ fontSize:13, color:task.done?C.gray500:C.dark, textDecoration:task.done?"line-through":"none", fontWeight:task.done?400:500 }}>{task.title}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                );
-              })()}
 
               {/* ── HR VIEW ── */}
               {obView === "hr" && (
