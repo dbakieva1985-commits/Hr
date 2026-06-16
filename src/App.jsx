@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.7";
+const _v = "3.8";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1349,8 +1349,8 @@ export default function App() {
           );
 
           const SurveyBlock = ({ questions, answers, onAnswer, submitted, onSubmit }) => (
-            <div style={{ padding:"14px 16px", background:C.white, border:`1px solid ${C.blue}30`, borderRadius:10, marginTop:8 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:12 }}>📋 Опрос от HR</div>
+            <div style={{ padding:"14px 16px", background:C.white, border:`1px solid ${C.gray300}`, borderRadius:10, marginTop:8 }}>
+              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:12 }}>Опрос от HR</div>
               {questions.map((q, i) => (
                 <div key={q.id} style={{ marginBottom:14, paddingBottom:14, borderBottom: i<questions.length-1?`1px solid ${C.gray100}`:"none" }}>
                   <div style={{ fontSize:12, fontWeight:600, color:C.gray700, marginBottom:6 }}>{i+1}. {q.q}</div>
@@ -1380,7 +1380,7 @@ export default function App() {
                 </div>
               ))}
               {!submitted
-                ? <button onClick={e => { e.stopPropagation(); onSubmit(); }} style={{ padding:"7px 18px", background:C.blue, color:C.white, border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Отправить</button>
+                ? <button onClick={e => { e.stopPropagation(); onSubmit(); }} style={{ padding:"7px 18px", background:C.green, color:C.white, border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Отправить</button>
                 : <div style={{ fontSize:12, color:C.green, fontWeight:700 }}>✓ Ответы отправлены в HR</div>
               }
             </div>
