@@ -1,18 +1,18 @@
 import { useState } from "react";
-const _v = "2.6";
+const _v = "2.7";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
-  bg:       "#F5F5F5",
+  bg:       "#FFFFFF",
   white:    "#FFFFFF",
   dark:     "#111827",
-  green:    "#06AE48",   // Halyk brand green — pure emerald, no warm tint
-  greenDark:"#058036",
-  greenMid: "#09C954",
-  greenPale:"#E6F9EE",   // very light mint for subtle backgrounds
+  green:    "#00A84A",   // Halyk green — pure, no red, emerald
+  greenDark:"#007D35",
+  greenMid: "#00C455",
+  greenPale:"#E6F9EE",
   gray700:  "#374151",
   gray500:  "#6B7280",
-  gray300:  "#E0E0E0",
-  gray100:  "#F9FAFB",
+  gray300:  "#E5E7EB",
+  gray100:  "#F3F4F6",
   orange:   "#EA7C1E",
   blue:     "#1D5CB4",
   red:      "#DC2626",
@@ -651,38 +651,39 @@ export default function App() {
 
       {/* Main */}
       <div style={{ marginLeft: sideW, flex: 1,
-        padding: isMobile ? "68px 14px 74px" : "32px 36px",
+        padding: page === "home" && !selected ? (isMobile ? "56px 0 74px" : "0") : (isMobile ? "68px 14px 74px" : "32px 36px"),
         maxWidth: isMobile ? "100vw" : `calc(100vw - ${sideW}px)`,
         boxSizing: "border-box" }}>
 
         {/* ── HOME ── */}
         {page === "home" && !selected && (
-          <div>
-            <div style={{ marginBottom: 28 }}>
-              <h1 style={{ fontSize: isMobile ? 20 : 26, fontWeight: 700, color: C.dark, margin: 0 }}>Добро пожаловать 👋</h1>
-              <p style={{ color: C.gray500, marginTop: 4, fontSize: isMobile ? 13 : 14 }}>Здесь вы можете подать любую HR-заявку и отследить её статус</p>
-            </div>
+          <div style={{ margin: isMobile ? "-68px -14px 0" : "-32px -36px 0" }}>
 
             {/* Онбординг banner */}
-            <div onClick={() => setPage("onboarding")} style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:20, padding:"18px 22px", marginBottom:20, cursor:"pointer", color:C.white, display:"flex", justifyContent:"space-between", alignItems:"center", boxShadow:`0 6px 20px ${C.green}44` }}>
+            <div onClick={() => setPage("onboarding")} style={{
+              background:`linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`,
+              padding: isMobile ? "18px 16px" : "22px 32px", cursor:"pointer", color:C.white,
+              display:"flex", justifyContent:"space-between", alignItems:"center"
+            }}>
               <div>
-                <div style={{ fontSize:15, fontWeight:800, marginBottom:2 }}>🎉 Трек онбординга нового сотрудника</div>
-                <div style={{ fontSize:12, opacity:0.9 }}>Задачи, документы, адрес HR, схема проезда, парковка, цели ИС</div>
+                <div style={{ fontSize: isMobile ? 13 : 15, fontWeight:700, marginBottom:3 }}>🎉 Трек онбординга нового сотрудника</div>
+                <div style={{ fontSize:12, opacity:0.85 }}>Задачи, документы, адрес HR, цели ИС</div>
               </div>
-              <div style={{ fontSize:22, marginLeft:16 }}>→</div>
+              <div style={{ fontSize:20, marginLeft:12, opacity:0.9 }}>›</div>
             </div>
 
-            {/* Quick actions — Halyk-style compact grid */}
-            <div style={{ background: C.white, borderRadius: 16, padding: isMobile ? "14px 4px" : "18px 12px", marginBottom: 20, boxShadow: "0 1px 6px #0000000A" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0 }}>
-                {SERVICES.slice(0,8).map(s => (
+            {/* Service grid — open on white, Halyk style */}
+            <div style={{ background: C.white, padding: isMobile ? "8px 0 4px" : "16px 16px 8px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)" }}>
+                {SERVICES.slice(0,8).map((s, idx) => (
                   <div key={s.id} onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}
-                    style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: isMobile ? "10px 4px" : "14px 8px", cursor: "pointer" }}>
-                    <div style={{ width: isMobile ? 52 : 58, height: isMobile ? 52 : 58, borderRadius: 16,
-                      background: C.greenPale,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: isMobile ? 26 : 30, marginBottom: 7 }}>{s.icon}</div>
-                    <div style={{ fontSize: isMobile ? 10 : 11, fontWeight: 500, color: C.dark, textAlign: "center", lineHeight: 1.3 }}>
+                    style={{ display:"flex", flexDirection:"column", alignItems:"center",
+                      padding: isMobile ? "16px 4px" : "20px 8px", cursor:"pointer",
+                      borderBottom: idx < 4 ? `1px solid ${C.gray300}` : "none",
+                      borderRight: (idx+1) % 4 !== 0 ? `1px solid ${C.gray300}` : "none"
+                    }}>
+                    <div style={{ fontSize: isMobile ? 34 : 38, marginBottom: 8, lineHeight: 1 }}>{s.icon}</div>
+                    <div style={{ fontSize: isMobile ? 10 : 11, color: C.dark, textAlign:"center", lineHeight:1.3, fontWeight:400 }}>
                       {s.title.length > 12 ? s.title.slice(0,11)+"…" : s.title}
                     </div>
                   </div>
@@ -691,21 +692,21 @@ export default function App() {
             </div>
 
             {/* Recent requests */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: C.dark, margin: 0 }}>Последние заявки</h2>
-              <Btn variant="ghost" small onClick={() => setPage("my")}>Все →</Btn>
-            </div>
-            <div style={{ background: C.white, borderRadius: 18, overflow: "hidden", boxShadow: "0 2px 12px #0000000A" }}>
+            <div style={{ background: C.white, marginTop: 8, padding: isMobile ? "16px 14px" : "20px 32px" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
+                <div style={{ fontSize:16, fontWeight:700, color:C.dark }}>Последние заявки</div>
+                <button onClick={() => setPage("my")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Все ›</button>
+              </div>
               {requests.slice(0,3).map((r, i) => (
                 <div key={r.id} onClick={() => { setDetail(r); setPage("my"); }}
-                  style={{ padding: "13px 18px", display: "flex",
-                    alignItems: "center", gap: 14, cursor: "pointer",
-                    borderBottom: i < 2 ? `1px solid ${C.gray100}` : "none" }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 12, background: C.greenPale,
-                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{r.icon}</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{r.title}</div>
-                    <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{r.id} · {r.date}</div>
+                  style={{ display:"flex", alignItems:"center", gap:14, cursor:"pointer",
+                    paddingBottom: i < 2 ? 14 : 0, marginBottom: i < 2 ? 14 : 0,
+                    borderBottom: i < 2 ? `1px solid ${C.gray300}` : "none" }}>
+                  <div style={{ width:44, height:44, borderRadius:12, background:C.greenPale,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 }}>{r.icon}</div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{r.title}</div>
+                    <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{r.id} · {r.date}</div>
                   </div>
                   <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
                 </div>
