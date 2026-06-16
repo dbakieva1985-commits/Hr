@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "4.4";
+const _v = "4.5";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1785,13 +1785,20 @@ export default function App() {
                   {/* Documents */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>Документы</div>
-                    {obDocs.map(doc => (
-                      <div key={doc.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:13 }}>
-                        <span style={{ color:C.dark }}>{doc.name}</span>
-                        <span style={{ fontSize:11, fontWeight:600, color:docStatusColor[doc.status] }}>{docStatusLabel[doc.status]}</span>
+                    {obDocs.map((doc, i) => (
+                      <div key={doc.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom: i<obDocs.length-1 ? `1px solid ${C.gray100}` : "none", fontSize:13 }}>
+                        <span style={{ color:C.dark, flex:1, marginRight:10 }}>{doc.name}</span>
+                        {doc.status === "waiting" ? (
+                          <button
+                            onClick={() => setObDocs(p => p.map(d => d.id===doc.id ? {...d, status:"pending"} : d))}
+                            style={{ fontSize:11, fontWeight:600, color:C.green, background:C.greenPale, border:`1px solid ${C.green}`, borderRadius:6, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>
+                            Загрузить
+                          </button>
+                        ) : (
+                          <span style={{ fontSize:11, fontWeight:600, color:docStatusColor[doc.status], whiteSpace:"nowrap" }}>{docStatusLabel[doc.status]}</span>
+                        )}
                       </div>
                     ))}
-                    <div style={{ marginTop:14 }}><Btn small variant="ghost">Загрузить документ</Btn></div>
                   </div>
 
                   </>)}
