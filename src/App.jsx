@@ -1362,19 +1362,21 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* BENEFITS horizontal scroll */}
+                  {/* BENEFITS — 2-column grid */}
                   <div style={{ marginBottom:14 }}>
                     <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:10 }}>🎁 Ваши льготы в Halyk Bank</div>
-                    <div style={{ display:"flex", gap:10, overflowX:"auto", paddingBottom:6 }}>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:8 }}>
                       {BENEFITS.map(b => (
-                        <div key={b.title} title={b.desc} style={{ flexShrink:0, width:90, background:C.white, border:`1px solid ${C.gray300}`, borderRadius:14,
-                          padding:"12px 8px", textAlign:"center", cursor:"default" }}>
-                          <div style={{ fontSize:24, marginBottom:6 }}>{b.icon}</div>
-                          <div style={{ fontSize:10, fontWeight:700, color:C.dark, lineHeight:1.3 }}>{b.title}</div>
+                        <div key={b.title} style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12,
+                          padding:"12px 14px", display:"flex", alignItems:"center", gap:10 }}>
+                          <span style={{ fontSize:22, flexShrink:0 }}>{b.icon}</span>
+                          <div>
+                            <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>{b.title}</div>
+                            <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.4 }}>{b.desc}</div>
+                          </div>
                         </div>
                       ))}
                     </div>
-                    <div style={{ fontSize:11, color:C.gray500, marginTop:4 }}>Нажмите на карточку для подробностей · Прокрутите →</div>
                   </div>
 
                   {/* ACTIVITY CARDS — collapsible */}
@@ -1400,7 +1402,7 @@ export default function App() {
                       {obExpanded[sec.key] && (
                         <div style={{ background:C.white, padding:"4px 0" }}>
                           {sec.items.map((a,i) => (
-                            <div key={a.id} style={{ padding:"12px 18px", borderBottom: i<sec.items.length-1 ? `1px solid ${C.gray100}` : "none" }}>
+                            <div key={a.id} style={{ padding:"12px 18px", borderBottom:`1px solid ${C.gray100}` }}>
                               <div style={{ fontSize:13, fontWeight:600, color:C.dark, marginBottom:3 }}>{a.title}</div>
                               <div style={{ fontSize:12, color:C.gray500, marginBottom:a.who||a.note?4:0 }}>{a.desc}</div>
                               <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
@@ -1409,94 +1411,60 @@ export default function App() {
                               </div>
                             </div>
                           ))}
+
+                          {/* Documents + Address inside Pre-boarding */}
+                          {sec.key === "pre" && (<>
+                            <div style={{ padding:"14px 18px", borderTop:`2px solid ${C.gray100}` }}>
+                              <div style={{ fontSize:12, fontWeight:700, color:C.orange, marginBottom:8 }}>📋 Перечень документов при приёме</div>
+                              <div style={{ fontSize:11, color:C.gray500, marginBottom:8 }}>⚠ Принести в первый день в 09:00 · {hrAddress}<br/>Сканы отправьте рекрутеру заранее. Оригиналы — в первый день.</div>
+                              {[
+                                { n:"1",  text:"Трудовая книжка или документы, подтверждающие трудовую деятельность. Копия приказа об увольнении при отсутствии записей с последнего места работы" },
+                                { n:"2",  text:"Медосмотр при приёме на работу (форма 075 с печатью флюорографии и подписью главного врача)" },
+                                { n:"3",  text:"Справка об инвалидности работника и/или ребёнка (при наличии)" },
+                                { n:"4",  text:"Для инвалидов — справка с прежнего места работы за весь период" },
+                                { n:"5",  text:"Для совместителей — справка о характере и условиях труда по основному месту работы" },
+                                { n:"6",  text:"Уведомление об открытии карточного счёта Halyk Bank (20-значный IBAN счёт)", highlight:true },
+                                { n:"7",  text:"Военный билет / приписное свидетельство (военнообязанные должны состоять на учёте в городе работы)" },
+                                { n:"8",  text:"Свидетельство о заключении / расторжении брака (при наличии)" },
+                                { n:"9",  text:"Свидетельства о рождении детей (при наличии)" },
+                                { n:"10", text:"Цветная фотография 3×4 (если не вложена в онлайн-анкету)" },
+                                { n:"11", text:"Дополнительные сведения к анкете (оригинал из онлайн-анкеты)" },
+                                { n:"12", text:"Согласие субъекта (оригинал из онлайн-анкеты)" },
+                                { n:"13", text:"Согласие на сбор и обработку персональных данных (оригинал из онлайн-анкеты)" },
+                              ].map(doc => (
+                                <div key={doc.n} style={{ display:"flex", gap:8, alignItems:"flex-start", padding:"6px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:11 }}>
+                                  <span style={{ color:C.white, background:doc.highlight?C.green:C.gray500, borderRadius:"50%", width:16, height:16, display:"flex", alignItems:"center", justifyContent:"center", fontSize:8, fontWeight:700, flexShrink:0, marginTop:1 }}>{doc.n}</span>
+                                  <span style={{ color:doc.highlight?C.dark:C.gray700, fontWeight:doc.highlight?600:400 }}>{doc.text}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div style={{ padding:"14px 18px", borderTop:`2px solid ${C.gray100}` }}>
+                              <div style={{ fontSize:12, fontWeight:700, color:C.blue, marginBottom:8 }}>📍 Куда прийти в первый день</div>
+                              <div style={{ fontSize:12, color:C.dark, fontWeight:600, marginBottom:10 }}>{hrAddress}</div>
+                              {candidateOrg === "ГБ" && (<>
+                                <div style={{ display:"flex", gap:8, marginBottom:8, flexWrap:"wrap" }}>
+                                  <div style={{ flex:1, minWidth:130, background:C.blue+"0D", border:`1px solid ${C.blue}25`, borderRadius:8, padding:"9px 11px", fontSize:11 }}>
+                                    <div style={{ fontWeight:700, color:C.blue, marginBottom:3 }}>🚌 Транспорт</div>
+                                    <div style={{ color:C.gray700 }}>Автобусы 28, 65, 86, 97 — ост. «Нурлы Тау»</div>
+                                    <div style={{ color:C.gray700, marginTop:2 }}>Метро: ст. «Аль-Фараби» → 5 мин. пешком</div>
+                                  </div>
+                                  <div style={{ flex:1, minWidth:130, background:C.orange+"0D", border:`1px solid ${C.orange}25`, borderRadius:8, padding:"9px 11px", fontSize:11 }}>
+                                    <div style={{ fontWeight:700, color:C.orange, marginBottom:3 }}>🚗 Авто</div>
+                                    <div style={{ color:C.gray700 }}>Въезд с ул. Тимирязева, паркинг P2 (подземный) и наземная парковка</div>
+                                  </div>
+                                </div>
+                                <div style={{ background:"#f8f4ff", border:`1px solid #c4b5fd`, borderRadius:8, padding:"10px 12px", fontSize:11 }}>
+                                  <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:4 }}>🅿 Парковка</div>
+                                  <div style={{ color:C.gray700 }}>Тариф: <b>100 ₸/час</b> · Скидка сотруднику Halyk: <b>50%</b> · Оплата: <b>приложение Halyk</b></div>
+                                  <div style={{ color:"#7c3aed", marginTop:4 }}>Корпоративная карта — в административном отделе (к. 108) после оформления</div>
+                                </div>
+                              </>)}
+                            </div>
+                          </>)}
                         </div>
                       )}
                     </div>
                   ))}
-
-                  {/* Documents — collapsible */}
-                  <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${C.orange}40` }}>
-                    <button onClick={() => setObExpanded(p=>({...p, docs:!p.docs}))} style={{
-                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
-                      background:"#FFFBEB", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
-                    }}>
-                      <span style={{ fontSize:22 }}>📋</span>
-                      <div style={{ flex:1 }}>
-                        <div style={{ fontSize:14, fontWeight:700, color:C.orange }}>Перечень документов при приёме</div>
-                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>⚠ Принести в первый день в 09:00 · {hrAddress}</div>
-                      </div>
-                      <span style={{ fontSize:16, color:C.orange, display:"inline-block", transition:"transform .2s",
-                        transform: obExpanded.docs ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
-                    </button>
-                    {obExpanded.docs && (
-                    <div style={{ background:C.white, padding:"12px 18px" }}>
-                    <div style={{ fontSize:11, color:C.gray500, marginBottom:10 }}>Сканы отправьте рекрутеру заранее. В первый день принесите оригиналы.</div>
-                    <div style={{ display:"flex", flexDirection:"column", gap:0 }}>
-                      {[
-                        { n:"1", text:"Трудовая книжка или документы, подтверждающие трудовую деятельность. Копия приказа об увольнении при отсутствии записей в трудовой книжке с последнего места работы" },
-                        { n:"2", text:"Медосмотр при приёме на работу (форма 075 с печатью флюорографии и подписью главного врача)" },
-                        { n:"3", text:"Справка об инвалидности работника и/или ребёнка (при наличии)" },
-                        { n:"4", text:"Для инвалидов — справка с прежнего места работы за весь период" },
-                        { n:"5", text:"Для совместителей — справка о характере и условиях труда по основному месту работы" },
-                        { n:"6", text:"Уведомление об открытии карточного счёта Halyk Bank (20-значный IBAN счёт)", highlight:true },
-                        { n:"7", text:"Военный билет / приписное свидетельство (военнообязанные должны состоять на учёте в городе работы)" },
-                        { n:"8", text:"Свидетельство о заключении / расторжении брака (при наличии)" },
-                        { n:"9", text:"Свидетельства о рождении детей (при наличии)" },
-                        { n:"10", text:"Цветная фотография 3×4 (если не вложена в онлайн-анкету)" },
-                        { n:"11", text:"Дополнительные сведения к анкете (заполнялись ранее — оригинал из онлайн-анкеты)" },
-                        { n:"12", text:"Согласие субъекта (заполнялось ранее — оригинал из онлайн-анкеты)" },
-                        { n:"13", text:"Согласие на сбор и обработку персональных данных (заполнялось ранее — оригинал из онлайн-анкеты)" },
-                      ].map((doc) => (
-                        <div key={doc.n} style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"7px 0", borderBottom:`1px solid ${C.gray100}`, fontSize:12 }}>
-                          <span style={{ color:C.white, background:doc.highlight ? C.green : C.gray500, borderRadius:"50%", width:18, height:18, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:700, flexShrink:0, marginTop:1 }}>{doc.n}</span>
-                          <span style={{ color: doc.highlight ? C.dark : C.gray700, fontWeight: doc.highlight ? 600 : 400 }}>{doc.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                    </div>
-                    )}
-                  </div>
-
-                  {/* Address — collapsible */}
-                  <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${C.blue}30` }}>
-                    <button onClick={() => setObExpanded(p=>({...p, addr:!p.addr}))} style={{
-                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
-                      background:"#EFF6FF", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
-                    }}>
-                      <span style={{ fontSize:22 }}>📍</span>
-                      <div style={{ flex:1 }}>
-                        <div style={{ fontSize:14, fontWeight:700, color:C.blue }}>Куда прийти в первый день</div>
-                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{hrAddress}</div>
-                      </div>
-                      <span style={{ fontSize:16, color:C.blue, display:"inline-block", transition:"transform .2s",
-                        transform: obExpanded.addr ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
-                    </button>
-                    {obExpanded.addr && candidateOrg === "ГБ" && (
-                      <div style={{ background:C.white, padding:"14px 18px" }}>
-                        <div style={{ fontSize:13, color:C.dark, fontWeight:600, marginBottom:10 }}>{hrAddress}</div>
-                        <div style={{ display:"flex", gap:8, marginBottom:10, flexWrap:"wrap" }}>
-                          <div style={{ flex:1, minWidth:140, background:C.blue+"0D", border:`1px solid ${C.blue}25`, borderRadius:8, padding:"10px 12px", fontSize:12 }}>
-                            <div style={{ fontWeight:700, color:C.blue, marginBottom:4 }}>🚌 Общественный транспорт</div>
-                            <div style={{ color:C.gray700 }}>Автобусы 28, 65, 86, 97 — ост. «Нурлы Тау»</div>
-                            <div style={{ color:C.gray700, marginTop:2 }}>Метро: ст. «Аль-Фараби» → 5 мин. пешком</div>
-                          </div>
-                          <div style={{ flex:1, minWidth:140, background:C.orange+"0D", border:`1px solid ${C.orange}25`, borderRadius:8, padding:"10px 12px", fontSize:12 }}>
-                            <div style={{ fontWeight:700, color:C.orange, marginBottom:4 }}>🚗 На автомобиле</div>
-                            <div style={{ color:C.gray700 }}>Въезд с ул. Тимирязева, паркинг P2 (подземный) и наземная парковка у входа</div>
-                          </div>
-                        </div>
-                        <div style={{ background:"#f8f4ff", border:`1px solid #c4b5fd`, borderRadius:8, padding:"12px 14px", fontSize:12 }}>
-                          <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:6 }}>🅿 Парковка</div>
-                          <div style={{ display:"flex", flexDirection:"column", gap:4, color:C.gray700, marginBottom:6 }}>
-                            <div>Тариф: <b>100 ₸/час</b> · Скидка сотруднику Halyk: <b>50%</b></div>
-                            <div>Как получить скидку: <b>корпоративный ID на въезде</b></div>
-                            <div>Оплата: <b>приложение Halyk или касса</b></div>
-                          </div>
-                          <div style={{ color:"#7c3aed", fontSize:11 }}>Корпоративная парковочная карта выдаётся в административном отделе (к. 108) после оформления</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
 
                   {/* Phase progress */}
                   <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12, padding:"20px 24px", marginBottom:14 }}>
