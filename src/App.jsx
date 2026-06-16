@@ -1463,17 +1463,17 @@ export default function App() {
                   {(obView === "employee" || (obView === "it" && obItTab === "general")) && (<>
 
                   {/* BENEFITS — collapsible */}
-                  <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid #d97706AA` }}>
+                  <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${C.green}40` }}>
                     <button onClick={() => setObExpanded(p=>({...p, ben:!p.ben}))} style={{
                       width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
-                      background:"#FFFBEB", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                      background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                     }}>
                       <span style={{ fontSize:22 }}>🎁</span>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:14, fontWeight:700, color:"#d97706" }}>Льготы</div>
+                        <div style={{ fontSize:14, fontWeight:700, color:C.green }}>Льготы</div>
                         <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{BENEFITS.length} льгот</div>
                       </div>
-                      <span style={{ fontSize:16, color:"#d97706", display:"inline-block", transition:"transform .2s",
+                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s",
                         transform: obExpanded.ben ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                     </button>
                     {obExpanded.ben && (
@@ -1495,22 +1495,22 @@ export default function App() {
 
                   {/* ACTIVITY CARDS — collapsible */}
                   {[
-                    { key:"pre",  icon:"📦", label:"Pre-boarding",  color:"#1F7A5C", bg:"#EBF5F1", items: OB_ACTIVITIES.filter(a=>a.cat==="pre")  },
-                    { key:"ob",   icon:"🎉", label:"Onboarding",    color:"#1D4ED8", bg:"#EFF6FF", items: OB_ACTIVITIES.filter(a=>a.cat==="ob")   },
-                    { key:"ind",  icon:"🎓", label:"Induction",     color:"#7c3aed", bg:"#F5F3FF", items: OB_ACTIVITIES.filter(a=>a.cat==="ind")  },
-                    { key:"feed", icon:"📋", label:"Feedback",      color:"#d97706", bg:"#FFFBEB", items: OB_ACTIVITIES.filter(a=>a.cat==="feed") },
+                    { key:"pre",  icon:"📦", label:"Pre-boarding",  items: OB_ACTIVITIES.filter(a=>a.cat==="pre")  },
+                    { key:"ob",   icon:"🎉", label:"Onboarding",    items: OB_ACTIVITIES.filter(a=>a.cat==="ob")   },
+                    { key:"ind",  icon:"🎓", label:"Induction",     items: OB_ACTIVITIES.filter(a=>a.cat==="ind")  },
+                    { key:"feed", icon:"📋", label:"Feedback",      items: OB_ACTIVITIES.filter(a=>a.cat==="feed") },
                   ].map(sec => (
-                    <div key={sec.key} style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${sec.color}30` }}>
+                    <div key={sec.key} style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${C.green}40` }}>
                       <button onClick={() => setObExpanded(p=>({...p,[sec.key]:!p[sec.key]}))} style={{
                         width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
-                        background:sec.bg, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                        background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                       }}>
                         <span style={{ fontSize:22 }}>{sec.icon}</span>
                         <div style={{ flex:1 }}>
-                          <div style={{ fontSize:14, fontWeight:700, color:sec.color }}>{sec.label}</div>
+                          <div style={{ fontSize:14, fontWeight:700, color:C.green }}>{sec.label}</div>
                           <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{sec.items.length} активностей</div>
                         </div>
-                        <span style={{ fontSize:16, color:sec.color, transition:"transform .2s",
+                        <span style={{ fontSize:16, color:C.green, transition:"transform .2s",
                           display:"inline-block", transform: obExpanded[sec.key] ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                       </button>
                       {obExpanded[sec.key] && (
@@ -1520,8 +1520,8 @@ export default function App() {
                               <div style={{ fontSize:13, fontWeight:600, color:C.dark, marginBottom:3 }}>{a.title}</div>
                               <div style={{ fontSize:12, color:C.gray500, marginBottom:a.who||a.note?4:0 }}>{a.desc}</div>
                               <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                                {a.who  && <span style={{ fontSize:11, background:sec.bg, color:sec.color, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>👥 {a.who}</span>}
-                                {a.note && <span style={{ fontSize:11, background:"#FFFBEB", color:C.orange, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>⏱ {a.note}</span>}
+                                {a.who  && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>👥 {a.who}</span>}
+                                {a.note && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>⏱ {a.note}</span>}
                               </div>
                             </div>
                           ))}
@@ -1532,14 +1532,14 @@ export default function App() {
                             <div style={{ borderTop:`2px solid ${C.gray100}` }}>
                               <button onClick={e=>{e.stopPropagation();setObExpanded(p=>({...p,docs:!p.docs}));}} style={{
                                 width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
-                                background:"#FFFBEB", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                                background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                               }}>
                                 <span style={{ fontSize:18 }}>📋</span>
                                 <div style={{ flex:1 }}>
-                                  <div style={{ fontSize:13, fontWeight:700, color:C.orange }}>Перечень документов</div>
+                                  <div style={{ fontSize:13, fontWeight:700, color:C.green }}>Перечень документов</div>
                                   <div style={{ fontSize:11, color:C.gray500 }}>⚠ Принести в первый день в 09:00</div>
                                 </div>
-                                <span style={{ fontSize:14, color:C.orange, display:"inline-block", transition:"transform .2s",
+                                <span style={{ fontSize:14, color:C.green, display:"inline-block", transition:"transform .2s",
                                   transform: obExpanded.docs ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                               </button>
                               {obExpanded.docs && (
@@ -1572,34 +1572,34 @@ export default function App() {
                             <div style={{ borderTop:`2px solid ${C.gray100}` }}>
                               <button onClick={e=>{e.stopPropagation();setObExpanded(p=>({...p,addr:!p.addr}));}} style={{
                                 width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
-                                background:"#EFF6FF", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                                background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                               }}>
                                 <span style={{ fontSize:18 }}>📍</span>
                                 <div style={{ flex:1 }}>
-                                  <div style={{ fontSize:13, fontWeight:700, color:C.blue }}>Куда прийти</div>
+                                  <div style={{ fontSize:13, fontWeight:700, color:C.green }}>Куда прийти</div>
                                   <div style={{ fontSize:11, color:C.gray500 }}>{hrAddress}</div>
                                 </div>
-                                <span style={{ fontSize:14, color:C.blue, display:"inline-block", transition:"transform .2s",
+                                <span style={{ fontSize:14, color:C.green, display:"inline-block", transition:"transform .2s",
                                   transform: obExpanded.addr ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                               </button>
                               {obExpanded.addr && candidateOrg === "ГБ" && (
                                 <div style={{ padding:"0 18px 14px" }}>
                                   <div style={{ fontSize:12, color:C.dark, fontWeight:600, marginBottom:10 }}>{hrAddress}</div>
                                   <div style={{ display:"flex", gap:8, marginBottom:8, flexWrap:"wrap" }}>
-                                    <div style={{ flex:1, minWidth:130, background:C.blue+"0D", border:`1px solid ${C.blue}25`, borderRadius:8, padding:"9px 11px", fontSize:11 }}>
-                                      <div style={{ fontWeight:700, color:C.blue, marginBottom:3 }}>🚌 Транспорт</div>
+                                    <div style={{ flex:1, minWidth:130, background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:8, padding:"9px 11px", fontSize:11 }}>
+                                      <div style={{ fontWeight:700, color:C.green, marginBottom:3 }}>🚌 Транспорт</div>
                                       <div style={{ color:C.gray700 }}>Автобусы 28, 65, 86, 97 — ост. «Нурлы Тау»</div>
                                       <div style={{ color:C.gray700, marginTop:2 }}>Метро: ст. «Аль-Фараби» → 5 мин. пешком</div>
                                     </div>
-                                    <div style={{ flex:1, minWidth:130, background:C.orange+"0D", border:`1px solid ${C.orange}25`, borderRadius:8, padding:"9px 11px", fontSize:11 }}>
-                                      <div style={{ fontWeight:700, color:C.orange, marginBottom:3 }}>🚗 Авто</div>
+                                    <div style={{ flex:1, minWidth:130, background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:8, padding:"9px 11px", fontSize:11 }}>
+                                      <div style={{ fontWeight:700, color:C.green, marginBottom:3 }}>🚗 Авто</div>
                                       <div style={{ color:C.gray700 }}>Въезд с ул. Тимирязева, паркинг P2 (подземный) и наземная парковка</div>
                                     </div>
                                   </div>
-                                  <div style={{ background:"#f8f4ff", border:`1px solid #c4b5fd`, borderRadius:8, padding:"10px 12px", fontSize:11 }}>
-                                    <div style={{ fontWeight:700, color:"#7c3aed", marginBottom:4 }}>🅿 Парковка</div>
+                                  <div style={{ background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:8, padding:"10px 12px", fontSize:11 }}>
+                                    <div style={{ fontWeight:700, color:C.green, marginBottom:4 }}>🅿 Парковка</div>
                                     <div style={{ color:C.gray700 }}>Тариф: <b>100 ₸/час</b> · Скидка сотруднику Halyk: <b>50%</b> · Оплата: <b>приложение Halyk</b></div>
-                                    <div style={{ color:"#7c3aed", marginTop:4 }}>Корпоративная карта — в административном управлении (к. 108) после оформления</div>
+                                    <div style={{ color:C.green, marginTop:4 }}>Корпоративная карта — в административном управлении (к. 108) после оформления</div>
                                   </div>
                                 </div>
                               )}
@@ -1625,11 +1625,11 @@ export default function App() {
                         const phTotal = obTasks.filter(t=>t.phase===ph.id).length;
                         const isActive = ph.id === obPhase;
                         const isDone   = phDone === phTotal && phTotal > 0;
-                        const col = isDone ? C.green : isActive ? C.orange : C.gray300;
+                        const col = isDone ? C.green : isActive ? C.green : C.gray300;
                         return (
                           <div key={ph.id} style={{ display:"flex", alignItems:"flex-start", flex: i<OB_PHASES.length-1 ? 1 : "none" }}>
                             <button onClick={() => setObPhase(ph.id)} style={{ background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", minWidth:80 }}>
-                              <div style={{ width:40, height:40, borderRadius:"50%", background:col, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, color:C.white, border: isActive ? `3px solid ${C.orange}` : "none" }}>{ph.icon}</div>
+                              <div style={{ width:40, height:40, borderRadius:"50%", background:col, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, color:C.white, border: isActive && !isDone ? `3px solid ${C.greenMid}` : "none" }}>{ph.icon}</div>
                               <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
                               <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
                             </button>
