@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "6.0";
+const _v = "6.1";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -422,6 +422,14 @@ const OB_BADGES = [
   { id:"allob", icon:"🌟", name:"Команда приняла", desc:"Pre-boarding и ONB завершены" },
   { id:"done",  icon:"🚀", name:"Адаптирован!",    desc:"Испытательный срок пройден" },
 ];
+const VALUES_QUIZ = [
+  { scenario:"Клиент позвонил с жалобой — сотрудник выслушал его внимательно и предложил решение, выходящее за рамки инструкции, но максимально удобное для клиента.", answer:"Клиентоориентированность и надёжность", options:["Клиентоориентированность и надёжность","Профессионализм и честность","Лидерство и ответственность"] },
+  { scenario:"Сотрудник обнаружил ошибку в отчёте и немедленно сообщил об этом руководителю, даже зная, что это его собственная ошибка.", answer:"Профессионализм и честность", options:["Лидерство и ответственность","Профессионализм и честность","Клиентоориентированность и надёжность"] },
+  { scenario:"Менеджер взял на себя полную ответственность за срыв дедлайна и лично предложил план по исправлению ситуации.", answer:"Лидерство и ответственность", options:["Профессионализм и честность","Клиентоориентированность и надёжность","Лидерство и ответственность"] },
+  { scenario:"Банк запустил новый продукт только после масштабного тестирования с реальными клиентами, чтобы гарантировать надёжность.", answer:"Клиентоориентированность и надёжность", options:["Лидерство и ответственность","Клиентоориентированность и надёжность","Профессионализм и честность"] },
+  { scenario:"Коллеги открыто рассказывают о рисках проекта на совещании, не скрывая проблем от руководства.", answer:"Профессионализм и честность", options:["Клиентоориентированность и надёжность","Лидерство и ответственность","Профессионализм и честность"] },
+  { scenario:"Сотрудник сам инициировал улучшение процесса в отделе, не дожидаясь указаний руководства.", answer:"Лидерство и ответственность", options:["Профессионализм и честность","Лидерство и ответственность","Клиентоориентированность и надёжность"] },
+];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN APP
@@ -447,6 +455,7 @@ export default function App() {
   const [obToast,        setObToast]        = useState(null);
   const [spasiboSent,    setSpasiboSent]    = useState(false);
   const [joinedComms,    setJoinedComms]    = useState([]);
+  const [valQuiz,        setValQuiz]        = useState({ idx:0, picked:null, score:0, done:false });
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -1675,6 +1684,82 @@ export default function App() {
                             </div>
                           );
                         })}
+
+                        {/* ── Игра: Угадай ценность ── */}
+                        <div style={{ marginTop:16, borderRadius:12, border:`2px solid ${C.green}30`, background:C.greenPale, padding:"16px 14px" }}>
+                          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+                            <div>
+                              <div style={{ fontSize:13, fontWeight:800, color:C.dark }}>🎮 Угадай ценность</div>
+                              <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Выбери правильный ответ — получи +5 XP</div>
+                            </div>
+                            {!valQuiz.done && (
+                              <div style={{ fontSize:11, color:C.gray500, fontWeight:600 }}>{valQuiz.idx+1} / {VALUES_QUIZ.length}</div>
+                            )}
+                          </div>
+
+                          {valQuiz.done ? (
+                            <div style={{ textAlign:"center", padding:"10px 0" }}>
+                              <div style={{ fontSize:28, marginBottom:6 }}>{valQuiz.score === VALUES_QUIZ.length ? "🏆" : valQuiz.score >= VALUES_QUIZ.length/2 ? "🌟" : "💪"}</div>
+                              <div style={{ fontSize:15, fontWeight:800, color:C.dark, marginBottom:4 }}>
+                                {valQuiz.score} из {VALUES_QUIZ.length} правильно!
+                              </div>
+                              <div style={{ fontSize:12, color:C.gray500, marginBottom:14 }}>
+                                {valQuiz.score === VALUES_QUIZ.length ? "Отлично! Ты знаешь ценности Halyk." : "Повтори ещё раз и закрепи знания."}
+                              </div>
+                              <button onClick={() => setValQuiz({ idx:0, picked:null, score:0, done:false })}
+                                style={{ padding:"9px 22px", background:C.green, color:C.white, border:"none", borderRadius:8, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+                                Сыграть снова
+                              </button>
+                            </div>
+                          ) : (() => {
+                            const q = VALUES_QUIZ[valQuiz.idx];
+                            return (
+                              <>
+                                <div style={{ background:C.white, borderRadius:10, padding:"14px 14px", marginBottom:12, fontSize:13, color:C.dark, lineHeight:1.5, boxShadow:"0 1px 4px #00000010" }}>
+                                  {q.scenario}
+                                </div>
+                                <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                                  {q.options.map(opt => {
+                                    const isPicked  = valQuiz.picked === opt;
+                                    const isCorrect = opt === q.answer;
+                                    const revealed  = valQuiz.picked !== null;
+                                    const bg = !revealed ? C.white
+                                      : isCorrect   ? C.green
+                                      : isPicked    ? C.red
+                                      : C.white;
+                                    const color = revealed && (isCorrect || isPicked) ? C.white : C.dark;
+                                    return (
+                                      <button key={opt}
+                                        disabled={revealed}
+                                        onClick={() => {
+                                          if (valQuiz.picked !== null) return;
+                                          const correct = opt === q.answer;
+                                          setValQuiz(p => ({ ...p, picked:opt, score: correct ? p.score+1 : p.score }));
+                                          setTimeout(() => {
+                                            setValQuiz(p => {
+                                              const next = p.idx + 1;
+                                              return next >= VALUES_QUIZ.length
+                                                ? { ...p, done:true, picked:null }
+                                                : { ...p, idx:next, picked:null };
+                                            });
+                                          }, 1400);
+                                        }}
+                                        style={{ padding:"10px 14px", background:bg, color, border:`1.5px solid ${revealed && isCorrect ? C.green : revealed && isPicked ? C.red : C.gray300}`,
+                                          borderRadius:8, fontSize:12, fontWeight:600, cursor: revealed ? "default" : "pointer",
+                                          textAlign:"left", fontFamily:"inherit", transition:"background .25s,color .25s",
+                                          display:"flex", alignItems:"center", gap:8 }}>
+                                        <span style={{ fontSize:14 }}>
+                                          {revealed ? (isCorrect ? "✓" : isPicked ? "✗" : "") : ""}
+                                        </span>
+                                        {opt}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </>
+                            );
+                          })()}
+                        </div>
                       </div>
                     )}
                   </div>
