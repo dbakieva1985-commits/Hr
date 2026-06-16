@@ -1370,7 +1370,7 @@ export default function App() {
                     }}>
                       <span style={{ fontSize:22 }}>🎁</span>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:14, fontWeight:700, color:"#d97706" }}>Ваши льготы в Halyk Bank</div>
+                        <div style={{ fontSize:14, fontWeight:700, color:"#d97706" }}>Льготы</div>
                         <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{BENEFITS.length} льгот</div>
                       </div>
                       <span style={{ fontSize:16, color:"#d97706", display:"inline-block", transition:"transform .2s",
