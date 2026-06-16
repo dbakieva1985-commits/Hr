@@ -185,32 +185,37 @@ const OB_PHASES = [
 ];
 
 const OB_TASKS_INIT = [
-  // Pre-boarding
-  { id:1, phase:"pre",   title:"Получить welcome-письмо",                          who:"Сотрудник", done:true  },
-  { id:2, phase:"pre",   title:"Загрузить фото для пропуска",                      who:"Сотрудник", done:true  },
-  { id:3, phase:"pre",   title:"Загрузить копии документов (уд-ние, ИИН, диплом)", who:"Сотрудник", done:true  },
-  { id:4, phase:"pre",   title:"Заполнить анкету нового сотрудника",               who:"Сотрудник", done:false },
-  { id:5, phase:"pre",   title:"Ознакомиться с welcome-пакетом",                   who:"Сотрудник", done:false },
-  // День 1
-  { id:6,  phase:"week1", title:"Пройти знакомство с СБ / инструктаж", who:"Сотрудник", done:false, info:"Служба безопасности проводит инструктаж в первый рабочий день" },
-  { id:7,  phase:"week1", title:"Встретиться с руководителем",          who:"Сотрудник", done:false, isManagerMeeting:true },
-  { id:8,  phase:"week1", title:"Встретиться с наставником",            who:"Сотрудник", done:false },
-  { id:9,  phase:"week1", title:"Получить рабочую технику",             who:"Сотрудник / ИТ", done:false, instruction:"Обратитесь к ответственному за рабочие места в вашем офисе с заявкой от HR" },
-  { id:10, phase:"week1", title:"Получить IT-доступы",                  who:"Сотрудник / ИТ", done:false, instruction:"Доступы предоставляются через корпоративный портал ИТ-службы после получения приказа о приёме" },
-  { id:11, phase:"week1", title:"Познакомиться с командой (1:1)",       who:"Сотрудник",      done:false },
-  { id:12, phase:"week1", title:"Подписать трудовой договор и политики",who:"Сотрудник + HR", done:false },
-  { id:13, phase:"week1", title:"Оформить пропуск",                     who:"HR",             done:false },
+  // Pre-boarding (уже выполнено — зачёркнуто)
+  { id:1,  phase:"pre", title:"Получить Job Offer",                              who:"Рекрутер, кандидат",    done:true  },
+  { id:2,  phase:"pre", title:"Знакомство с командой до выхода",                who:"Руководитель, команда", done:true  },
+  { id:3,  phase:"pre", title:"Загрузить фото и копии документов",              who:"Сотрудник",             done:true  },
+  { id:4,  phase:"pre", title:"Заполнить анкету нового сотрудника",             who:"Сотрудник",             done:true  },
+  { id:5,  phase:"pre", title:"Подготовка рабочего места (HR, руководитель)",   who:"HR, руководитель",      done:true  },
+  // День 1–7
+  { id:6,  phase:"week1", title:'Приветствие "Ты часть Halyk Team"',            who:"Команда, наставник",     done:false },
+  { id:7,  phase:"week1", title:'Знакомство с наставником "Hi Buddy"',          who:"Наставник, новичок",     done:false },
+  { id:8,  phase:"week1", title:"Пройти инструктаж Службы безопасности",        who:"Сотрудник",              done:false, info:"Служба безопасности проводит инструктаж в первый рабочий день" },
+  { id:9,  phase:"week1", title:"Встретиться с руководителем (1:1)",            who:"Сотрудник",              done:false, isManagerMeeting:true },
+  { id:10, phase:"week1", title:"Подписать трудовые документы",                 who:"Сотрудник + УАП",        done:false },
+  { id:11, phase:"week1", title:"Получить рабочую технику",                     who:"Сотрудник / ИТ",         done:false, instruction:"Обратитесь к ответственному за рабочие места в вашем офисе с заявкой от HR" },
+  { id:12, phase:"week1", title:"Получить IT-доступы",                          who:"Сотрудник / ИТ",         done:false, instruction:"Доступы предоставляются через корпоративный портал ИТ-службы после получения приказа о приёме" },
+  { id:13, phase:"week1", title:"Оформить пропуск",                             who:"HR",                     done:false },
   // Месяц 1
-  { id:14, phase:"month1", title:"Пройти обучение Compliance / AML / ИБ",  who:"Сотрудник",     done:false },
-  { id:15, phase:"month1", title:"Ознакомиться с процессами подразделения", who:"Сотрудник",     done:false },
-  { id:16, phase:"month1", title:"Check-in встреча с HR на 30-й день",      who:"HR + сотрудник", done:false },
-  // Месяц 2-3
-  { id:17, phase:"month3", title:"Заполнить опрос адаптации (2 мес.)",        who:"Сотрудник",          done:false, isSurvey:true },
-  { id:18, phase:"month3", title:"Встреча 1:1 с руководителем (2-й месяц)",   who:"Рук-ль + сотрудник", done:false },
-  { id:19, phase:"month3", title:"Check-in встреча с HR (90 дней)",            who:"HR + сотрудник",     done:false },
-  { id:20, phase:"month3", title:"Встреча 1:1 с руководителем (3-й месяц)",   who:"Рук-ль + сотрудник", done:false },
-  { id:21, phase:"month3", title:"Финальная оценка по итогам ИС",             who:"Рук-ль",             done:false },
-  { id:22, phase:"month3", title:"Решение по ИС: принят / продлён / расстались", who:"Рук-ль + HR",     done:false },
+  { id:14, phase:"month1", title:'Пройти адаптационный курс "Welcome"',         who:"Сотрудник",              done:false },
+  { id:15, phase:"month1", title:'Пройти курс "Письменные коммуникации"',       who:"Сотрудник",              done:false },
+  { id:16, phase:"month1", title:'Пройти курс "Управление временем"',           who:"Сотрудник",              done:false },
+  { id:17, phase:"month1", title:"Пройти обучение Compliance / AML / ИБ",       who:"Сотрудник",              done:false },
+  { id:18, phase:"month1", title:"Мотивационное интервью с руководством ДУП",   who:"ДУП, сотрудник",         done:false },
+  { id:19, phase:"month1", title:"Check-in встреча с HR (30-й день)",            who:"HR + сотрудник",         done:false },
+  // Месяц 2–3
+  { id:20, phase:"month3", title:"Встреча 1:1 с руководителем (2-й месяц)",     who:"Рук-ль + сотрудник",     done:false },
+  { id:21, phase:"month3", title:"Welcome Training офлайн (Induction)",          who:"Бизнес-тренеры, новички",done:false },
+  { id:22, phase:"month3", title:"Заполнить опрос адаптации (2 мес.)",           who:"Сотрудник",              done:false, isSurvey:true },
+  { id:23, phase:"month3", title:"Встреча 1:1 с руководителем (3-й месяц)",     who:"Рук-ль + сотрудник",     done:false },
+  { id:24, phase:"month3", title:"Check-in встреча с HR (90 дней)",              who:"HR + сотрудник",         done:false },
+  { id:25, phase:"month3", title:"Опрос по итогам испытательного срока",         who:"Наставник, рук-ль, новичок", done:false, isSurvey:true },
+  { id:26, phase:"month3", title:"Финальная оценка по итогам ИС",               who:"Рук-ль",                 done:false },
+  { id:27, phase:"month3", title:"Решение по ИС: принят / продлён / расстались", who:"Рук-ль + HR",           done:false },
 ];
 
 const OB_MANAGER_TASKS_INIT = [
