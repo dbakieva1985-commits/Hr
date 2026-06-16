@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "5.5";
+const _v = "5.6";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -405,7 +405,7 @@ const LEVELS = [
   { min:91, label:"Уровень 6", name:"Легенда Halyk" },
 ];
 const OB_MILESTONES = [
-  { cat:"ob",   reward:"Ручка и блокнот",  icon:"✏️" },
+  { cat:"ob",   reward:"Ручка и блокнот — получи в HR",  icon:"✏️" },
   { cat:"ind",  reward:"Кружка Halyk",     icon:"☕" },
   { cat:"feed", reward:"Футболка Halyk",   icon:"👕" },
 ];
