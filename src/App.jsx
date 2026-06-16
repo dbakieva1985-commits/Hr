@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.2";
+const _v = "3.3";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1608,7 +1608,7 @@ export default function App() {
                         return (
                           <div key={ph.id} style={{ display:"flex", alignItems:"flex-start", flex: i<OB_PHASES.length-1 ? 1 : "none" }}>
                             <button onClick={() => setObPhase(ph.id)} style={{ background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", minWidth:80 }}>
-                              <div style={{ width:40, height:40, borderRadius:"50%", background:col, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:C.white, border: isActive && !isDone ? `3px solid ${C.greenMid}` : "none" }}>{isDone ? "✓" : i+1}</div>
+                              <div style={{ width:40, height:40, borderRadius:"50%", background: isDone ? C.green : C.white, border:`2px solid ${isDone ? C.green : isActive ? C.green : C.gray300}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color: isDone ? C.white : isActive ? C.green : C.gray500 }}>{isDone ? "✓" : i+1}</div>
                               <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
                               <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
                             </button>
