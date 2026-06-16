@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.6";
+const _v = "3.7";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -299,16 +299,16 @@ const OB_DOCS_INIT = [
 ];
 
 const BENEFITS = [
-  { icon:"🏠", title:"Ипотека",          desc:"Субсидирование ипотечного займа согласно условиям Банка" },
-  { icon:"🏥", title:"ДМС",              desc:"Полис ДМС с долевым участием" },
-  { icon:"🛡", title:"Страх. жизни",     desc:"Страхование жизни за счёт Банка" },
-  { icon:"📱", title:"Связь",            desc:"Оплата мобильной связи" },
-  { icon:"⭐", title:"Выслуга лет",      desc:"Поощрения за выслугу лет в Банке" },
-  { icon:"🏖", title:"Отпуск 26 дн",    desc:"24 + 2 календарных дня ежегодного отпуска" },
-  { icon:"🎁", title:"Детям",            desc:"Подарки детям сотрудников на Новый год" },
-  { icon:"💳", title:"Скидки",           desc:"Скидки и спецпредложения от партнёров Банка" },
-  { icon:"💡", title:"IT-бонус",         desc:"Бонусы за рекомендации на открытые IT-вакансии" },
-  { icon:"🅿", title:"Парковка/Фитнес", desc:"Льготные абонементы на парковку и фитнес-залы" },
+  { badge:"ИПО", title:"Ипотека",          desc:"Субсидирование ипотечного займа согласно условиям Банка" },
+  { badge:"ДМС", title:"ДМС",              desc:"Полис ДМС с долевым участием" },
+  { badge:"СЖ",  title:"Страх. жизни",     desc:"Страхование жизни за счёт Банка" },
+  { badge:"СВЗ", title:"Связь",            desc:"Оплата мобильной связи" },
+  { badge:"ВЛ",  title:"Выслуга лет",      desc:"Поощрения за выслугу лет в Банке" },
+  { badge:"ОТП", title:"Отпуск 26 дн",    desc:"24 + 2 календарных дня ежегодного отпуска" },
+  { badge:"ДЕТ", title:"Детям",            desc:"Подарки детям сотрудников на Новый год" },
+  { badge:"СКД", title:"Скидки",           desc:"Скидки и спецпредложения от партнёров Банка" },
+  { badge:"IT",  title:"IT-бонус",         desc:"Бонусы за рекомендации на открытые IT-вакансии" },
+  { badge:"ПФ",  title:"Парковка/Фитнес", desc:"Льготные абонементы на парковку и фитнес-залы" },
 ];
 
 const OB_ACTIVITIES = [
@@ -1460,7 +1460,7 @@ export default function App() {
                         <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:8 }}>
                           {BENEFITS.map(b => (
                             <div key={b.title} style={{ background:C.gray100, borderRadius:10, padding:"10px 12px", display:"flex", alignItems:"center", gap:10 }}>
-                              <span style={{ fontSize:20, flexShrink:0 }}>{b.icon}</span>
+                              <div style={{ width:34, height:34, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>{b.badge}</div>
                               <div>
                                 <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>{b.title}</div>
                                 <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{b.desc}</div>
