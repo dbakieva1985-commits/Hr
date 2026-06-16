@@ -1,14 +1,14 @@
 import { useState } from "react";
-const _v = "2.8";
+const _v = "2.9";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
   white:    "#FFFFFF",
   dark:     "#111827",
-  green:    "#00A84A",   // Halyk green — pure, no red, emerald
-  greenDark:"#007D35",
-  greenMid: "#00C455",
-  greenPale:"#E6F9EE",
+  green:    "#00843D",   // Halyk green — corporate dark emerald
+  greenDark:"#006830",
+  greenMid: "#009B4A",
+  greenPale:"#E6F5EE",
   gray700:  "#374151",
   gray500:  "#6B7280",
   gray300:  "#E5E7EB",
@@ -170,11 +170,11 @@ const ApprovalBar = ({ decisions, businessDir }) => (
 
 // ── Sidebar nav ─────────────────────────────────────────────────────────────
 const NAV = [
-  { id: "home",     icon: "⊞", label: "Главная" },
-  { id: "catalog",  icon: "☰", label: "Каталог" },
-  { id: "my",       icon: "📋", label: "Мои заявки" },
-  { id: "onboarding",icon: "🎉", label: "Онбординг" },
-  { id: "analytics", icon: "📊", label: "Аналитика" },
+  { id: "home",      icon: "⊞", label: "Главная" },
+  { id: "catalog",   icon: "☰", label: "Каталог" },
+  { id: "my",        icon: "⊟", label: "Мои заявки" },
+  { id: "onboarding",icon: "◉", label: "Онбординг" },
+  { id: "analytics", icon: "⊡", label: "Аналитика" },
 ];
 
 // ── Onboarding data ─────────────────────────────────────────────────────────
@@ -1446,7 +1446,7 @@ export default function App() {
                       width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
                       background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                     }}>
-                      <span style={{ fontSize:22 }}>🎁</span>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>BEN</div>
                       <div style={{ flex:1 }}>
                         <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Льготы</div>
                         <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{BENEFITS.length} льгот</div>
@@ -1473,17 +1473,17 @@ export default function App() {
 
                   {/* ACTIVITY CARDS — collapsible */}
                   {[
-                    { key:"pre",  icon:"📦", label:"Pre-boarding",  items: OB_ACTIVITIES.filter(a=>a.cat==="pre")  },
-                    { key:"ob",   icon:"🎉", label:"Onboarding",    items: OB_ACTIVITIES.filter(a=>a.cat==="ob")   },
-                    { key:"ind",  icon:"🎓", label:"Induction",     items: OB_ACTIVITIES.filter(a=>a.cat==="ind")  },
-                    { key:"feed", icon:"📋", label:"Feedback",      items: OB_ACTIVITIES.filter(a=>a.cat==="feed") },
+                    { key:"pre",  badge:"PRE", label:"Pre-boarding",  items: OB_ACTIVITIES.filter(a=>a.cat==="pre")  },
+                    { key:"ob",   badge:"ONB", label:"Onboarding",    items: OB_ACTIVITIES.filter(a=>a.cat==="ob")   },
+                    { key:"ind",  badge:"IND", label:"Induction",     items: OB_ACTIVITIES.filter(a=>a.cat==="ind")  },
+                    { key:"feed", badge:"FBK", label:"Feedback",      items: OB_ACTIVITIES.filter(a=>a.cat==="feed") },
                   ].map(sec => (
                     <div key={sec.key} style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
                       <button onClick={() => setObExpanded(p=>({...p,[sec.key]:!p[sec.key]}))} style={{
                         width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
                         background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                       }}>
-                        <span style={{ fontSize:22 }}>{sec.icon}</span>
+                        <div style={{ width:36, height:36, borderRadius:8, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>{sec.badge}</div>
                         <div style={{ flex:1 }}>
                           <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>{sec.label}</div>
                           <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{sec.items.length} активностей</div>
@@ -1498,8 +1498,8 @@ export default function App() {
                               <div style={{ fontSize:13, fontWeight:600, color:C.dark, marginBottom:3 }}>{a.title}</div>
                               <div style={{ fontSize:12, color:C.gray500, marginBottom:a.who||a.note?4:0 }}>{a.desc}</div>
                               <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                                {a.who  && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>👥 {a.who}</span>}
-                                {a.note && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>⏱ {a.note}</span>}
+                                {a.who  && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.who}</span>}
+                                {a.note && <span style={{ fontSize:11, background:C.gray100, color:C.gray500, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.note}</span>}
                               </div>
                             </div>
                           ))}
@@ -1512,7 +1512,7 @@ export default function App() {
                                 width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
                                 background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                               }}>
-                                <span style={{ fontSize:18 }}>📋</span>
+                                <div style={{ width:28, height:28, borderRadius:6, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>DOC</div>
                                 <div style={{ flex:1 }}>
                                   <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>Перечень документов</div>
                                   <div style={{ fontSize:11, color:C.gray500 }}>⚠ Принести в первый день в 09:00</div>
@@ -1552,7 +1552,7 @@ export default function App() {
                                 width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
                                 background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                               }}>
-                                <span style={{ fontSize:18 }}>📍</span>
+                                <div style={{ width:28, height:28, borderRadius:6, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>ADR</div>
                                 <div style={{ flex:1 }}>
                                   <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>Куда прийти</div>
                                   <div style={{ fontSize:11, color:C.gray500 }}>{hrAddress}</div>
