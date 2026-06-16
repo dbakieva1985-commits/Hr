@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.1";
+const _v = "3.2";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1392,7 +1392,7 @@ export default function App() {
               <div style={{ marginBottom:20 }}>
                 <h1 style={{ fontSize: isMobile?18:22, fontWeight:700, color:C.dark, margin:"0 0 4px" }}>Трек адаптации</h1>
                 <p style={{ color:C.gray500, fontSize:13, margin:"0 0 16px" }}>Алия Сейткали · {candidateOrg} · Испытательный срок: 3 месяца</p>
-                <div style={{ display:"flex", gap:0, background:C.white, borderRadius:10, border:`1px solid ${C.gray300}`, overflow:"hidden", flexWrap:"wrap" }}>
+                <div style={{ display:"flex", gap:0, background:C.white, borderRadius:10, border:`1px solid ${C.gray300}`, overflow:"hidden" }}>
                   {[
                     {v:"employee", label:"Новичок"},
                     {v:"manager",  label:"Руководитель"},
@@ -1401,11 +1401,12 @@ export default function App() {
                     {v:"hr",       label:"HR"},
                   ].map(({v,label}) => (
                     <button key={v} onClick={() => setObView(v)} style={{
-                      flex:1, padding:"9px 8px", fontSize:12, cursor:"pointer", fontFamily:"inherit",
+                      flex:1, padding:"9px 4px", fontSize:isMobile?11:12, cursor:"pointer", fontFamily:"inherit",
                       background: obView===v ? C.green : "transparent",
                       color: obView===v ? C.white : C.gray700,
                       border:"none", borderRight:`1px solid ${C.gray300}`,
-                      fontWeight: obView===v ? 700 : 400, minWidth:60,
+                      fontWeight: obView===v ? 700 : 400, minWidth:0,
+                      whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis",
                     }}>{label}</button>
                   ))}
                 </div>
