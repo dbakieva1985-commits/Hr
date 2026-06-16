@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "5.1";
+const _v = "5.2";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1607,18 +1607,33 @@ export default function App() {
                           { title:"Клиентоориентированность и надёжность", desc:"Интересы клиента превыше всего — мы создаём лучший сервис для каждого.", imgs:["val1a.jpg","val1b.jpg"] },
                           { title:"Профессионализм и честность",            desc:"Высокий стандарт качества, открытость и прозрачность во всех действиях.", imgs:["val2a.jpg","val2b.jpg"] },
                           { title:"Лидерство и ответственность",            desc:"Берём на себя ответственность за результат и ведём команду к успеху.", imgs:["val3a.jpg","val3b.jpg"] },
-                        ].map((v, i) => (
-                          <div key={i} style={{ padding:"12px 0", borderBottom: i<2 ? `1px solid ${C.gray100}` : "none" }}>
-                            <div style={{ display:"flex", gap:8, marginBottom:10 }}>
-                              {v.imgs.map((img, j) => (
-                                <img key={j} src={process.env.PUBLIC_URL + "/values/" + img}
-                                  style={{ flex:1, height:90, borderRadius:10, objectFit:"cover" }} alt="" />
-                              ))}
+                        ].map((v, i) => {
+                          const iconPairs = [
+                            [
+                              <svg key="a" width="30" height="30" viewBox="0 0 36 36"><rect x="-1" y="9" width="20" height="20" rx="4" transform="rotate(45 9 19)" fill="#90CAF9" opacity="0.9"/><rect x="15" y="5" width="20" height="20" rx="4" transform="rotate(45 25 15)" fill="#1565C0"/></svg>,
+                              <svg key="b" width="30" height="30" viewBox="0 0 36 36"><rect x="6" y="6" width="24" height="24" rx="5" fill="#4DB6AC"/><rect x="6" y="6" width="24" height="24" rx="5" fill="#00796B" transform="rotate(45 18 18)" opacity="0.85"/></svg>,
+                            ],
+                            [
+                              <svg key="c" width="30" height="30" viewBox="0 0 36 36"><path d="M4 5 L32 18 L4 31 L10 18 Z" fill="#9C27B0"/></svg>,
+                              <svg key="d" width="30" height="30" viewBox="0 0 36 36"><circle cx="13" cy="18" r="13" fill="#FF7043" opacity="0.85"/><circle cx="23" cy="18" r="13" fill="#FF8A65" opacity="0.85"/><ellipse cx="18" cy="18" rx="4" ry="4" fill="white" opacity="0.4"/></svg>,
+                            ],
+                            [
+                              <svg key="e" width="30" height="30" viewBox="0 0 36 36"><defs><clipPath id={`hc${i}`}><circle cx="18" cy="18" r="16"/></clipPath></defs><rect x="2" y="2" width="32" height="16" fill="#E64A19" clipPath={`url(#hc${i})`}/><rect x="2" y="18" width="32" height="16" fill="#FFCCBC" clipPath={`url(#hc${i})`}/></svg>,
+                              <svg key="f" width="30" height="30" viewBox="0 0 36 36"><path d="M18 31C18 31 3 22 3 12C3 7 7 3 12 4C15 5 17 9 18 12C19 9 21 5 24 4C29 3 33 7 33 12C33 22 18 31 18 31Z" fill="#F06292"/></svg>,
+                            ],
+                          ];
+                          return (
+                            <div key={i} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"12px 0", borderBottom: i<2 ? `1px solid ${C.gray100}` : "none" }}>
+                              <div style={{ display:"flex", gap:4, flexShrink:0, marginTop:2 }}>
+                                {iconPairs[i]}
+                              </div>
+                              <div>
+                                <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:3 }}>{v.title}</div>
+                                <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4 }}>{v.desc}</div>
+                              </div>
                             </div>
-                            <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:3 }}>{v.title}</div>
-                            <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4 }}>{v.desc}</div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -1844,6 +1859,21 @@ export default function App() {
                                       <span style={{ color:doc.highlight?C.dark:C.gray700, fontWeight:doc.highlight?600:400 }}>{doc.text}</span>
                                     </div>
                                   ))}
+                                  {/* Document upload status */}
+                                  <div style={{ fontSize:12, fontWeight:700, color:C.dark, marginTop:12, marginBottom:6 }}>Статус загрузки</div>
+                                  {obDocs.map((doc, idx) => (
+                                    <div key={doc.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"7px 0", borderBottom: idx<obDocs.length-1 ? `1px solid ${C.gray100}` : "none", fontSize:12 }}>
+                                      <span style={{ color:C.dark, flex:1, marginRight:8 }}>{doc.name}</span>
+                                      {doc.status === "waiting" ? (
+                                        <button onClick={() => setObDocs(p => p.map(d => d.id===doc.id ? {...d, status:"pending"} : d))}
+                                          style={{ fontSize:11, fontWeight:600, color:C.green, background:C.greenPale, border:`1px solid ${C.green}`, borderRadius:6, padding:"3px 10px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>
+                                          Загрузить
+                                        </button>
+                                      ) : (
+                                        <span style={{ fontSize:11, fontWeight:600, color:docStatusColor[doc.status], whiteSpace:"nowrap" }}>{docStatusLabel[doc.status]}</span>
+                                      )}
+                                    </div>
+                                  ))}
                                 </div>
                               )}
                             </div>
@@ -1947,24 +1977,6 @@ export default function App() {
                     )}
                   </div>
 
-                  {/* Documents */}
-                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>Документы</div>
-                    {obDocs.map((doc, i) => (
-                      <div key={doc.id} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom: i<obDocs.length-1 ? `1px solid ${C.gray100}` : "none", fontSize:13 }}>
-                        <span style={{ color:C.dark, flex:1, marginRight:10 }}>{doc.name}</span>
-                        {doc.status === "waiting" ? (
-                          <button
-                            onClick={() => setObDocs(p => p.map(d => d.id===doc.id ? {...d, status:"pending"} : d))}
-                            style={{ fontSize:11, fontWeight:600, color:C.green, background:C.greenPale, border:`1px solid ${C.green}`, borderRadius:6, padding:"4px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>
-                            Загрузить
-                          </button>
-                        ) : (
-                          <span style={{ fontSize:11, fontWeight:600, color:docStatusColor[doc.status], whiteSpace:"nowrap" }}>{docStatusLabel[doc.status]}</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
 
                   </>)}
 
