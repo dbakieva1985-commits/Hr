@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "5.7";
+const _v = "5.8";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -446,6 +446,7 @@ export default function App() {
   const [obStreak,       setObStreak]       = useState(3);
   const [obToast,        setObToast]        = useState(null);
   const [spasiboSent,    setSpasiboSent]    = useState(false);
+  const [joinedComms,    setJoinedComms]    = useState([]);
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -1522,8 +1523,10 @@ export default function App() {
                                 <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>{c.name}</div>
                                 <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>{c.desc}</div>
                               </div>
-                              <button style={{ fontSize:11, fontWeight:600, color:C.green, background:C.greenPale, border:`1px solid ${C.green}`, borderRadius:8, padding:"5px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>
-                                Вступить
+                              <button
+                                onClick={() => setJoinedComms(p => p.includes(c.name) ? p.filter(x=>x!==c.name) : [...p, c.name])}
+                                style={{ fontSize:11, fontWeight:600, whiteSpace:"nowrap", cursor:"pointer", fontFamily:"inherit", borderRadius:8, padding:"5px 12px", border:`1px solid ${joinedComms.includes(c.name) ? C.green : C.green}`, background:joinedComms.includes(c.name) ? C.green : C.greenPale, color:joinedComms.includes(c.name) ? C.white : C.green }}>
+                                {joinedComms.includes(c.name) ? "Вы в клубе ✓" : "Вступить"}
                               </button>
                             </div>
                           ))}
