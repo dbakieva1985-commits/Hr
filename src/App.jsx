@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.9";
+const _v = "4.0";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1600,81 +1600,32 @@ export default function App() {
                     </div>
                   ); })}
 
-                  {/* Phase progress */}
+                  {/* Goals */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
-                      <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Общий прогресс</div>
-                      <div style={{ fontSize:13, fontWeight:800, color:C.green }}>{pct}%</div>
-                    </div>
-                    <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:18, overflow:"hidden" }}>
-                      <div style={{ height:"100%", width:`${pct}%`, background:C.green, borderRadius:4, transition:"width .4s" }} />
-                    </div>
-                    <div style={{ display:"flex", alignItems:"flex-start" }}>
-                      {OB_PHASES.map((ph, i) => {
-                        const phDone  = obTasks.filter(t=>t.phase===ph.id && t.done).length;
-                        const phTotal = obTasks.filter(t=>t.phase===ph.id).length;
-                        const isActive = ph.id === obPhase;
-                        const isDone   = phDone === phTotal && phTotal > 0;
-                        const col = isDone ? C.green : isActive ? C.green : C.gray300;
-                        return (
-                          <div key={ph.id} style={{ display:"flex", alignItems:"flex-start", flex: i<OB_PHASES.length-1 ? 1 : "none" }}>
-                            <button onClick={() => setObPhase(ph.id)} style={{ background:"none", border:"none", padding:0, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", minWidth:60 }}>
-                              <div style={{ width:40, height:40, borderRadius:"50%", background: isDone ? C.green : C.white, border:`2px solid ${isDone ? C.green : isActive ? C.green : C.gray300}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color: isDone ? C.white : isActive ? C.green : C.gray500 }}>{isDone ? "✓" : i+1}</div>
-                              <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
-                              <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
-                            </button>
-                            {i < OB_PHASES.length-1 && <div style={{ flex:1, height:2, background:isDone?C.green:C.gray300, margin:"19px 2px 0", flexShrink:0 }} />}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Tasks */}
-                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>
-                        {OB_PHASES.find(p=>p.id===obPhase)?.label} — задачи
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Цели на испытательный срок</div>
+                    <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Поставлены руководителем <b>Нуржан Касымов</b></div>
+                    {obGoals.map(goal => (
+                      <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                        <div style={{ width:18, height:18, borderRadius:"50%", background:goal.done?C.green:C.white, border:`2px solid ${goal.done?C.green:C.gray300}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, color:C.white }}>
+                          {goal.done?"✓":""}
+                        </div>
+                        <div style={{ fontSize:13, color:goal.done?C.gray500:C.dark, textDecoration:goal.done?"line-through":"none" }}>{goal.text}</div>
                       </div>
-                      <div style={{ fontSize:12, color:C.gray500 }}>{phaseTasks.filter(t=>t.done).length} / {phaseTasks.length} выполнено</div>
-                    </div>
-                    {phaseTasks.map(task => (
-                      <TaskRow key={task.id} task={task}
-                        onToggle={id => setObTasks(prev => prev.map(t => t.id===id ? {...t,done:!t.done} : t))}
-                      />
                     ))}
                   </div>
 
-                  {/* Goals — appear after meeting with manager */}
-                  {managerMet && obPhase === "week1" && (
-                    <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Цели на испытательный срок</div>
-                      <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Поставлены руководителем <b>Нуржан Касымов</b></div>
-                      {obGoals.map(goal => (
-                        <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.gray100}` }}>
-                          <div style={{ width:18, height:18, borderRadius:"50%", background:goal.done?C.green:C.gray300, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, color:C.white }}>
-                            {goal.done?"✓":""}
-                          </div>
-                          <div style={{ fontSize:13, color:goal.done?C.gray500:C.dark, textDecoration:goal.done?"line-through":"none" }}>{goal.text}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Survey — month3 phase */}
-                  {obPhase === "month3" && (
-                    <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Опрос адаптации — 2 месяца</div>
-                      <div style={{ fontSize:12, color:C.gray500, marginBottom:2 }}>HR собирает обратную связь от вас, руководителя и наставника</div>
-                      <SurveyBlock
-                        questions={SURVEY_EMPLOYEE}
-                        answers={obSurveys.employee}
-                        onAnswer={(qid, val) => setObSurveys(p => ({...p, employee:{...p.employee, [qid]:val}}))}
-                        onSubmit={() => setObSurveys(p => ({...p, employeeSubmitted:true}))}
-                        submitted={!!obSurveys.employeeSubmitted}
-                      />
-                    </div>
-                  )}
+                  {/* Survey */}
+                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Опрос адаптации — 2 месяца</div>
+                    <div style={{ fontSize:12, color:C.gray500, marginBottom:2 }}>HR собирает обратную связь от вас, руководителя и наставника</div>
+                    <SurveyBlock
+                      questions={SURVEY_EMPLOYEE}
+                      answers={obSurveys.employee}
+                      onAnswer={(qid, val) => setObSurveys(p => ({...p, employee:{...p.employee, [qid]:val}}))}
+                      onSubmit={() => setObSurveys(p => ({...p, employeeSubmitted:true}))}
+                      submitted={!!obSurveys.employeeSubmitted}
+                    />
+                  </div>
 
                   {/* Documents */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px" }}>
