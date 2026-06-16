@@ -372,7 +372,7 @@ export default function App() {
   const [newGoalText,    setNewGoalText]    = useState("");
   const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
   const [obItSec,        setObItSec]        = useState("pre");
-  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false });
+  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false });
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -1362,21 +1362,35 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* BENEFITS — 2-column grid */}
-                  <div style={{ marginBottom:14 }}>
-                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:10 }}>🎁 Ваши льготы в Halyk Bank</div>
-                    <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:8 }}>
-                      {BENEFITS.map(b => (
-                        <div key={b.title} style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:12,
-                          padding:"12px 14px", display:"flex", alignItems:"center", gap:10 }}>
-                          <span style={{ fontSize:22, flexShrink:0 }}>{b.icon}</span>
-                          <div>
-                            <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>{b.title}</div>
-                            <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.4 }}>{b.desc}</div>
-                          </div>
+                  {/* BENEFITS — collapsible */}
+                  <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid #d97706AA` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, ben:!p.ben}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:"#FFFBEB", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <span style={{ fontSize:22 }}>🎁</span>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:700, color:"#d97706" }}>Ваши льготы в Halyk Bank</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{BENEFITS.length} льгот</div>
+                      </div>
+                      <span style={{ fontSize:16, color:"#d97706", display:"inline-block", transition:"transform .2s",
+                        transform: obExpanded.ben ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.ben && (
+                      <div style={{ background:C.white, padding:"14px 18px" }}>
+                        <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:8 }}>
+                          {BENEFITS.map(b => (
+                            <div key={b.title} style={{ background:C.gray100, borderRadius:10, padding:"10px 12px", display:"flex", alignItems:"center", gap:10 }}>
+                              <span style={{ fontSize:20, flexShrink:0 }}>{b.icon}</span>
+                              <div>
+                                <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>{b.title}</div>
+                                <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{b.desc}</div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* ACTIVITY CARDS — collapsible */}
