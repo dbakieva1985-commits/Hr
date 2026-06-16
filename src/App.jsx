@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "4.0";
+const _v = "4.1";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1599,6 +1599,50 @@ export default function App() {
                       )}
                     </div>
                   ); })}
+
+                  {/* Phase progress — driven by activity checkboxes */}
+                  {(() => {
+                    const phases = [
+                      { label:"Pre-board.", cat:"pre",  sub:"До выхода"  },
+                      { label:"День 1–7",  cat:"ob",   sub:"Неделя 1"   },
+                      { label:"Месяц 1",   cat:"ind",  sub:"День 8–30"  },
+                      { label:"Мес. 2–3",  cat:"feed", sub:"День 31–90" },
+                    ];
+                    const actDone  = obActivities.filter(a=>a.done).length;
+                    const actTotal = obActivities.length;
+                    const actPct   = actTotal > 0 ? Math.round(actDone/actTotal*100) : 0;
+                    return (
+                      <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                          <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Общий прогресс</div>
+                          <div style={{ fontSize:13, fontWeight:800, color:C.green }}>{actPct}%</div>
+                        </div>
+                        <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:18, overflow:"hidden" }}>
+                          <div style={{ height:"100%", width:`${actPct}%`, background:C.green, borderRadius:4, transition:"width .4s" }} />
+                        </div>
+                        <div style={{ display:"flex", alignItems:"flex-start" }}>
+                          {phases.map((ph, i) => {
+                            const phActs  = obActivities.filter(a=>a.cat===ph.cat);
+                            const phDone  = phActs.filter(a=>a.done).length;
+                            const phTotal = phActs.length;
+                            const isDone  = phDone === phTotal && phTotal > 0;
+                            const isAct   = phDone > 0 && !isDone;
+                            const col     = isDone ? C.green : isAct ? C.green : C.gray300;
+                            return (
+                              <div key={ph.cat} style={{ display:"flex", alignItems:"flex-start", flex: i<phases.length-1 ? 1 : "none" }}>
+                                <div style={{ display:"flex", flexDirection:"column", alignItems:"center", minWidth:60 }}>
+                                  <div style={{ width:40, height:40, borderRadius:"50%", background: isDone ? C.green : C.white, border:`2px solid ${col}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color: isDone ? C.white : isAct ? C.green : C.gray500 }}>{isDone ? "✓" : i+1}</div>
+                                  <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
+                                  <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
+                                </div>
+                                {i < phases.length-1 && <div style={{ flex:1, height:2, background:isDone?C.green:C.gray300, margin:"19px 2px 0", flexShrink:0 }} />}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Goals */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
