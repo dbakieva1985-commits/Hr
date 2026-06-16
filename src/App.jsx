@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "4.1";
+const _v = "4.2";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -312,20 +312,27 @@ const BENEFITS = [
 ];
 
 const OB_ACTIVITIES_INIT = [
-  { id:"a1", cat:"pre", done:false, title:"Знакомство с командой до выхода",        desc:"Новичка заранее знакомят с будущей командой Halyk Group, чтобы быстрее включился в коллектив.", who:"Руководитель, кандидат, команда" },
-  { id:"a2", cat:"pre", done:false, title:"Job Offer",                              desc:"Фиксируются основные договорённости между Банком и кандидатом. Job Offer направляется кандидату Председателем Правления.", who:"Рекрутер, кандидат" },
-  { id:"a3", cat:"pre", done:false, title:'Курс "Наставник: как им стать"',         desc:"Готовят наставника к эффективной работе с новым сотрудником.", who:"Наставник", note:"За 5 суток до выхода" },
-  { id:"a4", cat:"pre", done:false, title:"Подготовка рабочего места",              desc:"До выхода нового работника подготавливается рабочее место.", who:"Руководитель, рекрутер" },
-  { id:"a5", cat:"ob",  done:false, title:'Приветствие "Ты часть Halyk Team"',      desc:"Новичка приветствуют и помогают быстрее адаптироваться в коллективе.", who:"Наставник, руководитель, команда, новичок" },
-  { id:"a6", cat:"ob",  done:false, title:'Знакомство с наставником "Hi Buddy"',    desc:"Новичку рассказывают, что у него есть наставник, который будет помогать и поддерживать.", who:"Наставник, новичок" },
-  { id:"a7", cat:"ob",  done:false, title:"Подписание трудовых документов",         desc:"В первый рабочий день новичок подписывает трудовые отношения с работодателем.", who:"Наставник, новичок, менеджер УАП", note:"День 1" },
-  { id:"a8", cat:"ob",  done:false, title:'Адаптационный курс "Welcome"',           desc:"Новичок знакомится с Банком: корпоративная культура, история, миссия и другое.", who:"Новичок" },
-  { id:"a9", cat:"ob",  done:false, title:'Курс "Письменные коммуникации"',         desc:"Новичок изучает правила письменной коммуникации в Банке.", who:"Новичок" },
-  { id:"a10",cat:"ob",  done:false, title:'Курс "Управление временем"',             desc:"Новичок учится эффективно управлять рабочим временем.", who:"Новичок" },
-  { id:"a11",cat:"ob",  done:false, title:'Встреча с руководителем "One-to-one"',   desc:"В течение испытательного срока проходят встречи с руководителем для погружения в рабочие процессы.", who:"Начальник, новичок" },
-  { id:"a12",cat:"ob",  done:false, title:"Мотивационное интервью",                 desc:"Проводится интервью для понимания, как проходит адаптация, выявить возможные сложности и зоны развития.", who:"Начальник управления ДУП, новичок" },
-  { id:"a13",cat:"ind", done:false, title:"Welcome Training (офлайн)",              desc:"Эмоциональное включение новичков в работу Банка. Проходит один раз в два месяца.", who:"Бизнес-тренеры, новички", note:"1 раз в 2 месяца" },
-  { id:"a14",cat:"feed",done:false, title:"Опрос по итогам испытательного срока",   desc:"Обратная связь по итогам испытательного срока, оценивается эффективность адаптации.", who:"Наставник, начальник, новичок" },
+  // PRE-BOARDING
+  { id:"a1",  cat:"pre",  done:false, title:"Знакомство с командой до выхода",        desc:"Новичка заранее знакомят с будущей командой Halyk Group, чтобы быстрее включился в коллектив.", who:"Руководитель, кандидат, команда" },
+  { id:"a2",  cat:"pre",  done:false, title:"Job Offer",                              desc:"Фиксируются основные договорённости между Банком и кандидатом. Job Offer направляется кандидату Председателем Правления.", who:"Рекрутер, кандидат" },
+  // ONBOARDING
+  { id:"a7",  cat:"ob",   done:false, title:"Подписание и сдача трудовых документов в HR", desc:"В первый рабочий день новичок подписывает трудовые отношения и сдаёт оригиналы документов.", who:"Сотрудник, менеджер УАП" },
+  { id:"a5",  cat:"ob",   done:false, title:'Приветствие "Ты часть Halyk Team"',      desc:"Новичка приветствуют и помогают быстрее адаптироваться в коллективе.", who:"Наставник, руководитель, команда" },
+  { id:"a6",  cat:"ob",   done:false, title:'Знакомство с наставником "Hi Buddy"',    desc:"Новичку рассказывают, что у него есть наставник, который будет помогать и поддерживать.", who:"Наставник, новичок" },
+  { id:"a_sb",cat:"ob",   done:false, title:"Пройти инструктаж Службы безопасности", desc:"Служба безопасности проводит инструктаж в первый рабочий день.", who:"Сотрудник" },
+  { id:"a_11",cat:"ob",   done:false, title:'Встреча с руководителем "One-to-one"',   desc:"Встреча для постановки задач и целей на период испытательного срока.", who:"Руководитель, новичок" },
+  { id:"a_rt",cat:"ob",   done:false, title:"Получить рабочую технику",               desc:"Обратитесь к ответственному за рабочие места в вашем офисе с заявкой от HR.", who:"Сотрудник / ИТ" },
+  { id:"a_it",cat:"ob",   done:false, title:"Получить IT-доступы",                   desc:"Доступы предоставляются через корпоративный портал ИТ-службы после получения приказа о приёме.", who:"Сотрудник / ИТ" },
+  { id:"a_ps",cat:"ob",   done:false, title:"Оформить пропуск",                      desc:"Оформление постоянного пропуска в офис через HR.", who:"HR" },
+  { id:"h1",  cat:"ob",   done:false, title:"Обучение", type:"header" },
+  { id:"a8",  cat:"ob",   done:false, title:'Адаптационный курс "Welcome"',           desc:"Новичок знакомится с Банком: корпоративная культура, история, миссия и другое.", who:"Новичок", indent:true },
+  { id:"a9",  cat:"ob",   done:false, title:'Курс "Письменные коммуникации"',         desc:"Новичок изучает правила письменной коммуникации в Банке.", who:"Новичок", indent:true },
+  { id:"a10", cat:"ob",   done:false, title:'Курс "Управление временем"',             desc:"Новичок учится эффективно управлять рабочим временем.", who:"Новичок", indent:true },
+  { id:"a12", cat:"ob",   done:false, title:"Мотивационное интервью",                 desc:"Интервью для понимания, как проходит адаптация, выявить возможные сложности и зоны развития.", who:"HR" },
+  // INDUCTION
+  { id:"a13", cat:"ind",  done:false, title:"Welcome Training (офлайн)",              desc:"Эмоциональное включение новичков в работу Банка.", who:"Бизнес-тренеры, новички", note:"1 раз в месяц" },
+  // FEEDBACK
+  { id:"a14", cat:"feed", done:false, title:"Опрос по итогам испытательного срока",   desc:"Обратная связь по итогам испытательного срока, оценивается эффективность адаптации.", who:"Наставник, начальник, новичок" },
 ];
 
 const OB_IT_SECTIONS = [
@@ -408,7 +415,7 @@ export default function App() {
   const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
   const [obItSec,        setObItSec]        = useState("pre");
   const [obItTab,        setObItTab]        = useState("general"); // "general" | "it"
-  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false });
+  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false, goals:false, survey:false, princ:false });
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
@@ -1425,6 +1432,42 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* Принципы Халык */}
+                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, princ:!p.princ}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>HAL</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Принципы Халык</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Корпоративные ценности Банка</div>
+                      </div>
+                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s",
+                        transform: obExpanded.princ ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.princ && (
+                      <div style={{ background:C.white, padding:"8px 18px 14px" }}>
+                        {[
+                          { badge:"1", title:"Клиент на первом месте",  desc:"Интересы клиента превыше всего — мы создаём лучший сервис для каждого." },
+                          { badge:"2", title:"Ответственность",          desc:"Берём на себя ответственность за результат и выполняем обещания." },
+                          { badge:"3", title:"Профессионализм",          desc:"Высокий стандарт качества в каждом действии и решении." },
+                          { badge:"4", title:"Инновации",                desc:"Внедряем новые технологии и подходы для развития Банка." },
+                          { badge:"5", title:"Командная работа",         desc:"Достигаем целей вместе, поддерживая и уважая друг друга." },
+                          { badge:"6", title:"Честность",                desc:"Открытость и прозрачность во всех действиях и коммуникациях." },
+                        ].map(p => (
+                          <div key={p.badge} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                            <div style={{ width:28, height:28, borderRadius:8, background:C.green, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, color:C.white, flexShrink:0, marginTop:2 }}>{p.badge}</div>
+                            <div>
+                              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:2 }}>{p.title}</div>
+                              <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4 }}>{p.desc}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   {/* IT tab switcher — only shown in IT view */}
                   {obView === "it" && (
                     <div style={{ display:"flex", gap:8, marginBottom:16 }}>
@@ -1441,6 +1484,50 @@ export default function App() {
 
                   {/* General track content — shown for employee view or IT view with general tab */}
                   {(obView === "employee" || (obView === "it" && obItTab === "general")) && (<>
+
+                  {/* Phase progress — driven by activity checkboxes */}
+                  {(() => {
+                    const phases = [
+                      { label:"Pre-board.", cat:"pre",  sub:"До выхода"  },
+                      { label:"День 1–7",  cat:"ob",   sub:"Неделя 1"   },
+                      { label:"Месяц 1",   cat:"ind",  sub:"День 8–30"  },
+                      { label:"Мес. 2–3",  cat:"feed", sub:"День 31–90" },
+                    ];
+                    const actDone  = obActivities.filter(a=>a.done).length;
+                    const actTotal = obActivities.filter(a=>!a.type).length;
+                    const actPct   = actTotal > 0 ? Math.round(actDone/actTotal*100) : 0;
+                    return (
+                      <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                          <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Общий прогресс</div>
+                          <div style={{ fontSize:13, fontWeight:800, color:C.green }}>{actPct}%</div>
+                        </div>
+                        <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:18, overflow:"hidden" }}>
+                          <div style={{ height:"100%", width:`${actPct}%`, background:C.green, borderRadius:4, transition:"width .4s" }} />
+                        </div>
+                        <div style={{ display:"flex", alignItems:"flex-start" }}>
+                          {phases.map((ph, i) => {
+                            const phActs  = obActivities.filter(a=>a.cat===ph.cat && !a.type);
+                            const phDone  = phActs.filter(a=>a.done).length;
+                            const phTotal = phActs.length;
+                            const isDone  = phDone === phTotal && phTotal > 0;
+                            const isAct   = phDone > 0 && !isDone;
+                            const col     = isDone ? C.green : isAct ? C.green : C.gray300;
+                            return (
+                              <div key={ph.cat} style={{ display:"flex", alignItems:"flex-start", flex: i<phases.length-1 ? 1 : "none" }}>
+                                <div style={{ display:"flex", flexDirection:"column", alignItems:"center", minWidth:60 }}>
+                                  <div style={{ width:40, height:40, borderRadius:"50%", background: isDone ? C.green : C.white, border:`2px solid ${col}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color: isDone ? C.white : isAct ? C.green : C.gray500 }}>{isDone ? "✓" : i+1}</div>
+                                  <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
+                                  <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
+                                </div>
+                                {i < phases.length-1 && <div style={{ flex:1, height:2, background:isDone?C.green:C.gray300, margin:"19px 2px 0", flexShrink:0 }} />}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* BENEFITS — collapsible */}
                   <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
@@ -1480,7 +1567,8 @@ export default function App() {
                     { key:"ind",  badge:"IND", label:"Induction",     items: obActivities.filter(a=>a.cat==="ind")  },
                     { key:"feed", badge:"FBK", label:"Feedback",      items: obActivities.filter(a=>a.cat==="feed") },
                   ].map(sec => {
-                    const doneCount = sec.items.filter(a=>a.done).length;
+                    const doneCount = sec.items.filter(a=>a.done && !a.type).length;
+                    const totalCount = sec.items.filter(a=>!a.type).length;
                     return (
                     <div key={sec.key} style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
                       <button onClick={() => setObExpanded(p=>({...p,[sec.key]:!p[sec.key]}))} style={{
@@ -1490,7 +1578,7 @@ export default function App() {
                         <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>{sec.badge}</div>
                         <div style={{ flex:1 }}>
                           <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>{sec.label}</div>
-                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{doneCount}/{sec.items.length} выполнено</div>
+                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{doneCount}/{totalCount} выполнено</div>
                         </div>
                         <span style={{ fontSize:16, color:C.green, transition:"transform .2s",
                           display:"inline-block", transform: obExpanded[sec.key] ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
@@ -1600,49 +1688,6 @@ export default function App() {
                     </div>
                   ); })}
 
-                  {/* Phase progress — driven by activity checkboxes */}
-                  {(() => {
-                    const phases = [
-                      { label:"Pre-board.", cat:"pre",  sub:"До выхода"  },
-                      { label:"День 1–7",  cat:"ob",   sub:"Неделя 1"   },
-                      { label:"Месяц 1",   cat:"ind",  sub:"День 8–30"  },
-                      { label:"Мес. 2–3",  cat:"feed", sub:"День 31–90" },
-                    ];
-                    const actDone  = obActivities.filter(a=>a.done).length;
-                    const actTotal = obActivities.length;
-                    const actPct   = actTotal > 0 ? Math.round(actDone/actTotal*100) : 0;
-                    return (
-                      <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
-                          <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Общий прогресс</div>
-                          <div style={{ fontSize:13, fontWeight:800, color:C.green }}>{actPct}%</div>
-                        </div>
-                        <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:18, overflow:"hidden" }}>
-                          <div style={{ height:"100%", width:`${actPct}%`, background:C.green, borderRadius:4, transition:"width .4s" }} />
-                        </div>
-                        <div style={{ display:"flex", alignItems:"flex-start" }}>
-                          {phases.map((ph, i) => {
-                            const phActs  = obActivities.filter(a=>a.cat===ph.cat);
-                            const phDone  = phActs.filter(a=>a.done).length;
-                            const phTotal = phActs.length;
-                            const isDone  = phDone === phTotal && phTotal > 0;
-                            const isAct   = phDone > 0 && !isDone;
-                            const col     = isDone ? C.green : isAct ? C.green : C.gray300;
-                            return (
-                              <div key={ph.cat} style={{ display:"flex", alignItems:"flex-start", flex: i<phases.length-1 ? 1 : "none" }}>
-                                <div style={{ display:"flex", flexDirection:"column", alignItems:"center", minWidth:60 }}>
-                                  <div style={{ width:40, height:40, borderRadius:"50%", background: isDone ? C.green : C.white, border:`2px solid ${col}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color: isDone ? C.white : isAct ? C.green : C.gray500 }}>{isDone ? "✓" : i+1}</div>
-                                  <div style={{ fontSize:10, fontWeight:700, color:col, marginTop:5, textAlign:"center" }}>{ph.label}</div>
-                                  <div style={{ fontSize:9, color:C.gray500, textAlign:"center" }}>{phDone}/{phTotal}</div>
-                                </div>
-                                {i < phases.length-1 && <div style={{ flex:1, height:2, background:isDone?C.green:C.gray300, margin:"19px 2px 0", flexShrink:0 }} />}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })()}
 
                   {/* Goals */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
