@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "4.3";
+const _v = "4.4";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1434,93 +1434,98 @@ export default function App() {
                   </div>
 
                   {/* TOP 3 BLOCKS — Ценности / Льготы / Забота о здоровье */}
-                  <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:14 }}>
-                    {/* 1 — Ценности */}
-                    <div style={{ borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderTop:`3px solid ${C.green}` }}>
-                      <button onClick={() => setObExpanded(p=>({...p, vals:!p.vals}))} style={{
-                        width:"100%", display:"flex", flexDirection:"column", alignItems:"center", gap:6, padding:"16px 12px 12px",
-                        background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"center"
-                      }}>
-                        <div style={{ width:40, height:40, borderRadius:10, background:C.greenPale, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green }}>ЦЕН</div>
-                        <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Ценности</div>
-                        <div style={{ fontSize:10, color:C.gray500 }}>Корпоративные</div>
-                        <span style={{ fontSize:14, color:C.green, transition:"transform .2s", display:"inline-block", transform: obExpanded.vals ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
-                      </button>
-                      {obExpanded.vals && (
-                        <div style={{ borderTop:`1px solid ${C.gray100}`, padding:"10px 14px 14px" }}>
-                          {[
-                            { title:"Клиентоориентированность и надёжность", desc:"Интересы клиента превыше всего — мы создаём лучший сервис для каждого." },
-                            { title:"Профессионализм и честность",            desc:"Высокий стандарт качества, открытость и прозрачность во всех действиях." },
-                            { title:"Лидерство и ответственность",            desc:"Берём на себя ответственность за результат и ведём команду к успеху." },
-                          ].map((v, i) => (
-                            <div key={i} style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"8px 0", borderBottom: i<2 ? `1px solid ${C.gray100}` : "none" }}>
-                              <div style={{ width:24, height:24, borderRadius:6, background:C.green, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800, color:C.white, flexShrink:0, marginTop:1 }}>{i+1}</div>
-                              <div>
-                                <div style={{ fontSize:12, fontWeight:700, color:C.dark, marginBottom:2 }}>{v.title}</div>
-                                <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4 }}>{v.desc}</div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
 
-                    {/* 2 — Льготы */}
-                    <div style={{ borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderTop:`3px solid ${C.green}` }}>
-                      <button onClick={() => setObExpanded(p=>({...p, ben:!p.ben}))} style={{
-                        width:"100%", display:"flex", flexDirection:"column", alignItems:"center", gap:6, padding:"16px 12px 12px",
-                        background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"center"
-                      }}>
-                        <div style={{ width:40, height:40, borderRadius:10, background:C.greenPale, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green }}>ЛЬГ</div>
-                        <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Льготы</div>
-                        <div style={{ fontSize:10, color:C.gray500 }}>{BENEFITS.length} льгот</div>
-                        <span style={{ fontSize:14, color:C.green, transition:"transform .2s", display:"inline-block", transform: obExpanded.ben ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
-                      </button>
-                      {obExpanded.ben && (
-                        <div style={{ borderTop:`1px solid ${C.gray100}`, padding:"10px 14px 14px" }}>
-                          {BENEFITS.map(b => (
-                            <div key={b.title} style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"8px 0", borderBottom:`1px solid ${C.gray100}` }}>
-                              <div style={{ width:30, height:30, borderRadius:7, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>{b.badge}</div>
-                              <div>
-                                <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>{b.title}</div>
-                                <div style={{ fontSize:11, color:C.gray500, marginTop:1, lineHeight:1.3 }}>{b.desc}</div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* 3 — Забота о здоровье */}
-                    <div style={{ borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderTop:`3px solid ${C.green}` }}>
-                      <button onClick={() => setObExpanded(p=>({...p, health:!p.health}))} style={{
-                        width:"100%", display:"flex", flexDirection:"column", alignItems:"center", gap:6, padding:"16px 12px 12px",
-                        background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"center"
-                      }}>
-                        <div style={{ width:40, height:40, borderRadius:10, background:C.greenPale, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green }}>ЗДР</div>
-                        <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Забота о здоровье</div>
-                        <div style={{ fontSize:10, color:C.gray500 }}>ДМС · Check-up Day</div>
-                        <span style={{ fontSize:14, color:C.green, transition:"transform .2s", display:"inline-block", transform: obExpanded.health ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
-                      </button>
-                      {obExpanded.health && (
-                        <div style={{ borderTop:`1px solid ${C.gray100}`, padding:"10px 14px 14px" }}>
-                          <div style={{ display:"flex", gap:10, alignItems:"flex-start", padding:"8px 0", borderBottom:`1px solid ${C.gray100}`, marginBottom:8 }}>
-                            <div style={{ width:30, height:30, borderRadius:7, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>ДМС</div>
+                  {/* 1 — Ценности */}
+                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, vals:!p.vals}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>ЦЕН</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Ценности</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Корпоративные ценности Банка</div>
+                      </div>
+                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s", transform: obExpanded.vals ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.vals && (
+                      <div style={{ background:C.white, padding:"4px 18px 14px", borderTop:`1px solid ${C.gray100}` }}>
+                        {[
+                          { title:"Клиентоориентированность и надёжность", desc:"Интересы клиента превыше всего — мы создаём лучший сервис для каждого." },
+                          { title:"Профессионализм и честность",            desc:"Высокий стандарт качества, открытость и прозрачность во всех действиях." },
+                          { title:"Лидерство и ответственность",            desc:"Берём на себя ответственность за результат и ведём команду к успеху." },
+                        ].map((v, i) => (
+                          <div key={i} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom: i<2 ? `1px solid ${C.gray100}` : "none" }}>
+                            <div style={{ width:26, height:26, borderRadius:7, background:C.green, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, color:C.white, flexShrink:0, marginTop:1 }}>{i+1}</div>
                             <div>
-                              <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>ДМС</div>
-                              <div style={{ fontSize:11, color:C.gray500, marginTop:1, lineHeight:1.3 }}>Полис ДМС с долевым участием Банка</div>
+                              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:2 }}>{v.title}</div>
+                              <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4 }}>{v.desc}</div>
                             </div>
                           </div>
-                          <div style={{ display:"flex", gap:10, alignItems:"flex-start" }}>
-                            <div style={{ width:30, height:30, borderRadius:7, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:8, fontWeight:800, color:C.green, flexShrink:0, textAlign:"center", lineHeight:1.1 }}>CHK</div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 2 — Льготы */}
+                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, ben:!p.ben}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>ЛЬГ</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Льготы</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{BENEFITS.length} льгот для сотрудников</div>
+                      </div>
+                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s", transform: obExpanded.ben ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.ben && (
+                      <div style={{ background:C.white, padding:"4px 18px 14px", borderTop:`1px solid ${C.gray100}` }}>
+                        {BENEFITS.map((b, i) => (
+                          <div key={b.title} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom: i<BENEFITS.length-1 ? `1px solid ${C.gray100}` : "none" }}>
+                            <div style={{ width:34, height:34, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>{b.badge}</div>
                             <div>
-                              <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>Check-up Day</div>
-                              <div style={{ fontSize:11, color:C.gray500, marginTop:1, lineHeight:1.4 }}>Банк ежегодно организует Check-up Day: приглашает врачей прямо в офис, благодаря чему сотрудники могут пройти профилактические осмотры и получить консультации специалистов без необходимости выезжать в медицинские учреждения.</div>
+                              <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>{b.title}</div>
+                              <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{b.desc}</div>
                             </div>
                           </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 3 — Забота о здоровье */}
+                  <div style={{ marginBottom:14, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
+                    <button onClick={() => setObExpanded(p=>({...p, health:!p.health}))} style={{
+                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                      background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                    }}>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>ЗДР</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Забота о здоровье</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>ДМС · Check-up Day</div>
+                      </div>
+                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s", transform: obExpanded.health ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                    </button>
+                    {obExpanded.health && (
+                      <div style={{ background:C.white, padding:"4px 18px 14px", borderTop:`1px solid ${C.gray100}` }}>
+                        <div style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                          <div style={{ width:34, height:34, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>ДМС</div>
+                          <div>
+                            <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>ДМС</div>
+                            <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.3 }}>Полис ДМС с долевым участием Банка</div>
+                          </div>
                         </div>
-                      )}
-                    </div>
+                        <div style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0" }}>
+                          <div style={{ width:34, height:34, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:8, fontWeight:800, color:C.green, flexShrink:0, textAlign:"center", lineHeight:1.2 }}>CHK</div>
+                          <div>
+                            <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Check-up Day</div>
+                            <div style={{ fontSize:11, color:C.gray500, marginTop:2, lineHeight:1.4 }}>Банк ежегодно организует Check-up Day: приглашает врачей прямо в офис, благодаря чему сотрудники могут пройти профилактические осмотры и получить консультации специалистов без необходимости выезжать в медицинские учреждения.</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* IT tab switcher — only shown in IT view */}
