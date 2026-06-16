@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "4.7";
+const _v = "4.8";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1449,16 +1449,19 @@ export default function App() {
                     {obExpanded.vals && (
                       <div style={{ background:C.white, padding:"4px 18px 14px", borderTop:`1px solid ${C.gray100}` }}>
                         {[
-                          { title:"Клиентоориентированность и надёжность", desc:"Интересы клиента превыше всего — мы создаём лучший сервис для каждого." },
-                          { title:"Профессионализм и честность",            desc:"Высокий стандарт качества, открытость и прозрачность во всех действиях." },
-                          { title:"Лидерство и ответственность",            desc:"Берём на себя ответственность за результат и ведём команду к успеху." },
+                          { title:"Клиентоориентированность и надёжность", desc:"Интересы клиента превыше всего — мы создаём лучший сервис для каждого.", imgs:["val1a.jpg","val1b.jpg"] },
+                          { title:"Профессионализм и честность",            desc:"Высокий стандарт качества, открытость и прозрачность во всех действиях.", imgs:["val2a.jpg","val2b.jpg"] },
+                          { title:"Лидерство и ответственность",            desc:"Берём на себя ответственность за результат и ведём команду к успеху.", imgs:["val3a.jpg","val3b.jpg"] },
                         ].map((v, i) => (
-                          <div key={i} style={{ display:"flex", gap:12, alignItems:"flex-start", padding:"10px 0", borderBottom: i<2 ? `1px solid ${C.gray100}` : "none" }}>
-                            <div style={{ width:26, height:26, borderRadius:7, background:C.green, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, color:C.white, flexShrink:0, marginTop:1 }}>{i+1}</div>
-                            <div>
-                              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:2 }}>{v.title}</div>
-                              <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4 }}>{v.desc}</div>
+                          <div key={i} style={{ padding:"12px 0", borderBottom: i<2 ? `1px solid ${C.gray100}` : "none" }}>
+                            <div style={{ display:"flex", gap:8, marginBottom:10 }}>
+                              {v.imgs.map((img, j) => (
+                                <img key={j} src={process.env.PUBLIC_URL + "/values/" + img}
+                                  style={{ flex:1, height:90, borderRadius:10, objectFit:"cover" }} alt="" />
+                              ))}
                             </div>
+                            <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:3 }}>{v.title}</div>
+                            <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4 }}>{v.desc}</div>
                           </div>
                         ))}
                       </div>
