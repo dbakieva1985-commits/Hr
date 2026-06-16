@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "5.8";
+const _v = "5.9";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1595,7 +1595,7 @@ export default function App() {
                           <div style={{ display:"flex", alignItems:"center", gap:10, background:C.gray100, borderRadius:10, padding:"9px 12px" }}>
                             <span style={{ fontSize:22 }}>{nextMilestone.icon}</span>
                             <div>
-                              <div style={{ fontSize:10, color:C.gray500 }}>Следующая награда</div>
+                              <div style={{ fontSize:11, color:C.gray500 }}>Тебя ждёт награда, как пройдёшь путь</div>
                               <div style={{ fontSize:12, fontWeight:700, color:C.dark }}>{nextMilestone.reward}</div>
                             </div>
                           </div>
