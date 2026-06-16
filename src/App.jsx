@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "2.9";
+const _v = "3.0";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1446,7 +1446,7 @@ export default function App() {
                       width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
                       background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                     }}>
-                      <div style={{ width:36, height:36, borderRadius:8, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>BEN</div>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>BEN</div>
                       <div style={{ flex:1 }}>
                         <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Льготы</div>
                         <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{BENEFITS.length} льгот</div>
@@ -1483,7 +1483,7 @@ export default function App() {
                         width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
                         background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                       }}>
-                        <div style={{ width:36, height:36, borderRadius:8, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>{sec.badge}</div>
+                        <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>{sec.badge}</div>
                         <div style={{ flex:1 }}>
                           <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>{sec.label}</div>
                           <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{sec.items.length} активностей</div>
@@ -1512,7 +1512,7 @@ export default function App() {
                                 width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
                                 background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                               }}>
-                                <div style={{ width:28, height:28, borderRadius:6, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>DOC</div>
+                                <div style={{ width:28, height:28, borderRadius:6, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>DOC</div>
                                 <div style={{ flex:1 }}>
                                   <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>Перечень документов</div>
                                   <div style={{ fontSize:11, color:C.gray500 }}>⚠ Принести в первый день в 09:00</div>
@@ -1552,7 +1552,7 @@ export default function App() {
                                 width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
                                 background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                               }}>
-                                <div style={{ width:28, height:28, borderRadius:6, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>ADR</div>
+                                <div style={{ width:28, height:28, borderRadius:6, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>ADR</div>
                                 <div style={{ flex:1 }}>
                                   <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>Куда прийти</div>
                                   <div style={{ fontSize:11, color:C.gray500 }}>{hrAddress}</div>
