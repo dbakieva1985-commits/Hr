@@ -1,5 +1,5 @@
-import { useState } from "react";
-const _v = "6.1";
+import { useState, useEffect } from "react";
+const _v = "6.2";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -456,7 +456,14 @@ export default function App() {
   const [spasiboSent,    setSpasiboSent]    = useState(false);
   const [joinedComms,    setJoinedComms]    = useState([]);
   const [valQuiz,        setValQuiz]        = useState({ idx:0, picked:null, score:0, done:false });
-  const [page, setPage] = useState("home");
+  const hashToPage = h => ["home","catalog","requests","onboarding","analytics"].includes(h.replace("#","")) ? h.replace("#","") : "home";
+  const [page, setPage] = useState(() => hashToPage(window.location.hash));
+  const navigate = p => { window.location.hash = p; setPage(p); };
+  useEffect(() => {
+    const onHash = () => setPage(hashToPage(window.location.hash));
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);   // service being applied to
@@ -612,7 +619,7 @@ export default function App() {
         {/* Nav */}
         <nav style={{ padding: "12px 10px", flex: 1 }}>
           {NAV.map(n => (
-            <button key={n.id} onClick={() => { setPage(n.id); setDetail(null); }} style={{
+            <button key={n.id} onClick={() => { navigate(n.id); setDetail(null); }} style={{
               display: "flex", alignItems: "center", gap: 10, width: "100%",
               padding: "10px 12px", borderRadius: 8, border: "none",
               background: page === n.id ? C.green + "30" : "transparent",
@@ -668,7 +675,7 @@ export default function App() {
         <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:58, background:C.white,
           borderTop:`1px solid ${C.gray300}`, display:"flex", zIndex:200, boxShadow:"0 -2px 8px rgba(0,0,0,0.08)" }}>
           {NAV.map(n => (
-            <button key={n.id} onClick={() => { setPage(n.id); setDetail(null); }} style={{
+            <button key={n.id} onClick={() => { navigate(n.id); setDetail(null); }} style={{
               flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
               background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
               color: page===n.id ? C.green : C.gray500, padding:"6px 0",
@@ -729,7 +736,7 @@ export default function App() {
             </div>
 
             {/* Onboarding banner */}
-            <div onClick={() => setPage("onboarding")} style={{
+            <div onClick={() => navigate("onboarding")} style={{
               background: `linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`,
               borderRadius: 14, padding: "18px 20px", marginBottom: 22,
               cursor: "pointer", color: C.white,
@@ -827,7 +834,7 @@ export default function App() {
                   <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 12, lineHeight: 1.5 }}>{s.desc}</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</span>
-                    <Btn small onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}>
+                    <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else { setSelected(s); setPage("form"); } }}>
                       {s.isOnboarding ? "Открыть" : "Подать заявку"}
                     </Btn>
                   </div>
