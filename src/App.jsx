@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "3.8";
+const _v = "3.9";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -311,21 +311,21 @@ const BENEFITS = [
   { badge:"ПФ",  title:"Парковка/Фитнес", desc:"Льготные абонементы на парковку и фитнес-залы" },
 ];
 
-const OB_ACTIVITIES = [
-  { id:"a1", cat:"pre", title:"Знакомство с командой до выхода",        desc:"Новичка заранее знакомят с будущей командой Halyk Group, чтобы быстрее включился в коллектив.", who:"Руководитель, кандидат, команда" },
-  { id:"a2", cat:"pre", title:"Job Offer",                              desc:"Фиксируются основные договорённости между Банком и кандидатом. Job Offer направляется кандидату Председателем Правления.", who:"Рекрутер, кандидат" },
-  { id:"a3", cat:"pre", title:'Курс "Наставник: как им стать"',         desc:"Готовят наставника к эффективной работе с новым сотрудником.", who:"Наставник", note:"За 5 суток до выхода" },
-  { id:"a4", cat:"pre", title:"Подготовка рабочего места",              desc:"До выхода нового работника подготавливается рабочее место.", who:"Руководитель, рекрутер" },
-  { id:"a5", cat:"ob",  title:'Приветствие "Ты часть Halyk Team"',      desc:"Новичка приветствуют и помогают быстрее адаптироваться в коллективе.", who:"Наставник, руководитель, команда, новичок" },
-  { id:"a6", cat:"ob",  title:'Знакомство с наставником "Hi Buddy"',    desc:"Новичку рассказывают, что у него есть наставник, который будет помогать и поддерживать.", who:"Наставник, новичок" },
-  { id:"a7", cat:"ob",  title:"Подписание трудовых документов",         desc:"В первый рабочий день новичок подписывает трудовые отношения с работодателем.", who:"Наставник, новичок, менеджер УАП", note:"День 1" },
-  { id:"a8", cat:"ob",  title:'Адаптационный курс "Welcome"',           desc:"Новичок знакомится с Банком: корпоративная культура, история, миссия и другое.", who:"Новичок" },
-  { id:"a9", cat:"ob",  title:'Курс "Письменные коммуникации"',         desc:"Новичок изучает правила письменной коммуникации в Банке.", who:"Новичок" },
-  { id:"a10",cat:"ob",  title:'Курс "Управление временем"',             desc:"Новичок учится эффективно управлять рабочим временем.", who:"Новичок" },
-  { id:"a11",cat:"ob",  title:'Встреча с руководителем "One-to-one"',   desc:"В течение испытательного срока проходят встречи с руководителем для погружения в рабочие процессы.", who:"Начальник, новичок" },
-  { id:"a12",cat:"ob",  title:"Мотивационное интервью",                 desc:"Проводится интервью для понимания, как проходит адаптация, выявить возможные сложности и зоны развития.", who:"Начальник управления ДУП, новичок" },
-  { id:"a13",cat:"ind", title:"Welcome Training (офлайн)",              desc:"Эмоциональное включение новичков в работу Банка. Проходит один раз в два месяца.", who:"Бизнес-тренеры, новички", note:"1 раз в 2 месяца" },
-  { id:"a14",cat:"feed",title:"Опрос по итогам испытательного срока",   desc:"Обратная связь по итогам испытательного срока, оценивается эффективность адаптации.", who:"Наставник, начальник, новичок" },
+const OB_ACTIVITIES_INIT = [
+  { id:"a1", cat:"pre", done:false, title:"Знакомство с командой до выхода",        desc:"Новичка заранее знакомят с будущей командой Halyk Group, чтобы быстрее включился в коллектив.", who:"Руководитель, кандидат, команда" },
+  { id:"a2", cat:"pre", done:false, title:"Job Offer",                              desc:"Фиксируются основные договорённости между Банком и кандидатом. Job Offer направляется кандидату Председателем Правления.", who:"Рекрутер, кандидат" },
+  { id:"a3", cat:"pre", done:false, title:'Курс "Наставник: как им стать"',         desc:"Готовят наставника к эффективной работе с новым сотрудником.", who:"Наставник", note:"За 5 суток до выхода" },
+  { id:"a4", cat:"pre", done:false, title:"Подготовка рабочего места",              desc:"До выхода нового работника подготавливается рабочее место.", who:"Руководитель, рекрутер" },
+  { id:"a5", cat:"ob",  done:false, title:'Приветствие "Ты часть Halyk Team"',      desc:"Новичка приветствуют и помогают быстрее адаптироваться в коллективе.", who:"Наставник, руководитель, команда, новичок" },
+  { id:"a6", cat:"ob",  done:false, title:'Знакомство с наставником "Hi Buddy"',    desc:"Новичку рассказывают, что у него есть наставник, который будет помогать и поддерживать.", who:"Наставник, новичок" },
+  { id:"a7", cat:"ob",  done:false, title:"Подписание трудовых документов",         desc:"В первый рабочий день новичок подписывает трудовые отношения с работодателем.", who:"Наставник, новичок, менеджер УАП", note:"День 1" },
+  { id:"a8", cat:"ob",  done:false, title:'Адаптационный курс "Welcome"',           desc:"Новичок знакомится с Банком: корпоративная культура, история, миссия и другое.", who:"Новичок" },
+  { id:"a9", cat:"ob",  done:false, title:'Курс "Письменные коммуникации"',         desc:"Новичок изучает правила письменной коммуникации в Банке.", who:"Новичок" },
+  { id:"a10",cat:"ob",  done:false, title:'Курс "Управление временем"',             desc:"Новичок учится эффективно управлять рабочим временем.", who:"Новичок" },
+  { id:"a11",cat:"ob",  done:false, title:'Встреча с руководителем "One-to-one"',   desc:"В течение испытательного срока проходят встречи с руководителем для погружения в рабочие процессы.", who:"Начальник, новичок" },
+  { id:"a12",cat:"ob",  done:false, title:"Мотивационное интервью",                 desc:"Проводится интервью для понимания, как проходит адаптация, выявить возможные сложности и зоны развития.", who:"Начальник управления ДУП, новичок" },
+  { id:"a13",cat:"ind", done:false, title:"Welcome Training (офлайн)",              desc:"Эмоциональное включение новичков в работу Банка. Проходит один раз в два месяца.", who:"Бизнес-тренеры, новички", note:"1 раз в 2 месяца" },
+  { id:"a14",cat:"feed",done:false, title:"Опрос по итогам испытательного срока",   desc:"Обратная связь по итогам испытательного срока, оценивается эффективность адаптации.", who:"Наставник, начальник, новичок" },
 ];
 
 const OB_IT_SECTIONS = [
@@ -404,6 +404,7 @@ export default function App() {
   const [obGoals,        setObGoals]        = useState(OB_GOALS_INIT);
   const [obSurveys,      setObSurveys]      = useState({ employee:{}, manager:{}, mentor:{} });
   const [newGoalText,    setNewGoalText]    = useState("");
+  const [obActivities,   setObActivities]   = useState(OB_ACTIVITIES_INIT);
   const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
   const [obItSec,        setObItSec]        = useState("pre");
   const [obItTab,        setObItTab]        = useState("general"); // "general" | "it"
@@ -1474,11 +1475,13 @@ export default function App() {
 
                   {/* ACTIVITY CARDS — collapsible */}
                   {[
-                    { key:"pre",  badge:"PRE", label:"Pre-boarding",  items: OB_ACTIVITIES.filter(a=>a.cat==="pre")  },
-                    { key:"ob",   badge:"ONB", label:"Onboarding",    items: OB_ACTIVITIES.filter(a=>a.cat==="ob")   },
-                    { key:"ind",  badge:"IND", label:"Induction",     items: OB_ACTIVITIES.filter(a=>a.cat==="ind")  },
-                    { key:"feed", badge:"FBK", label:"Feedback",      items: OB_ACTIVITIES.filter(a=>a.cat==="feed") },
-                  ].map(sec => (
+                    { key:"pre",  badge:"PRE", label:"Pre-boarding",  items: obActivities.filter(a=>a.cat==="pre")  },
+                    { key:"ob",   badge:"ONB", label:"Onboarding",    items: obActivities.filter(a=>a.cat==="ob")   },
+                    { key:"ind",  badge:"IND", label:"Induction",     items: obActivities.filter(a=>a.cat==="ind")  },
+                    { key:"feed", badge:"FBK", label:"Feedback",      items: obActivities.filter(a=>a.cat==="feed") },
+                  ].map(sec => {
+                    const doneCount = sec.items.filter(a=>a.done).length;
+                    return (
                     <div key={sec.key} style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
                       <button onClick={() => setObExpanded(p=>({...p,[sec.key]:!p[sec.key]}))} style={{
                         width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
@@ -1487,20 +1490,28 @@ export default function App() {
                         <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>{sec.badge}</div>
                         <div style={{ flex:1 }}>
                           <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>{sec.label}</div>
-                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{sec.items.length} активностей</div>
+                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{doneCount}/{sec.items.length} выполнено</div>
                         </div>
                         <span style={{ fontSize:16, color:C.green, transition:"transform .2s",
                           display:"inline-block", transform: obExpanded[sec.key] ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                       </button>
                       {obExpanded[sec.key] && (
                         <div style={{ background:C.white, padding:"4px 0", borderTop:`1px solid ${C.gray300}` }}>
-                          {sec.items.map((a,i) => (
-                            <div key={a.id} style={{ padding:"12px 18px", borderBottom:`1px solid ${C.gray100}` }}>
-                              <div style={{ fontSize:13, fontWeight:600, color:C.dark, marginBottom:3 }}>{a.title}</div>
-                              <div style={{ fontSize:12, color:C.gray500, marginBottom:a.who||a.note?4:0 }}>{a.desc}</div>
-                              <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                                {a.who  && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.who}</span>}
-                                {a.note && <span style={{ fontSize:11, background:C.gray100, color:C.gray500, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.note}</span>}
+                          {sec.items.map(a => (
+                            <div key={a.id} onClick={() => setObActivities(prev=>prev.map(x=>x.id===a.id?{...x,done:!x.done}:x))}
+                              style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"11px 18px", borderBottom:`1px solid ${C.gray100}`, cursor:"pointer",
+                                background: a.done ? C.greenPale : C.white }}>
+                              <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:a.done?C.green:C.white,
+                                display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
+                                {a.done?"✓":""}
+                              </div>
+                              <div style={{ flex:1 }}>
+                                <div style={{ fontSize:13, fontWeight:a.done?400:600, color:a.done?C.gray500:C.dark, textDecoration:a.done?"line-through":"none", marginBottom:2 }}>{a.title}</div>
+                                <div style={{ fontSize:11, color:C.gray500, marginBottom:a.who||a.note?4:0 }}>{a.desc}</div>
+                                <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                                  {a.who  && <span style={{ fontSize:11, background:C.greenPale, color:C.green, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.who}</span>}
+                                  {a.note && <span style={{ fontSize:11, background:C.gray100, color:C.gray500, borderRadius:6, padding:"2px 8px", fontWeight:600 }}>{a.note}</span>}
+                                </div>
                               </div>
                             </div>
                           ))}
@@ -1587,7 +1598,7 @@ export default function App() {
                         </div>
                       )}
                     </div>
-                  ))}
+                  ); })}
 
                   {/* Phase progress */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
