@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "5.9";
+const _v = "6.0";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -441,7 +441,7 @@ export default function App() {
   const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
   const [obItSec,        setObItSec]        = useState("pre");
   const [obItTab,        setObItTab]        = useState("general"); // "general" | "it"
-  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false, goals:false, survey:true, princ:false, vals:false, health:false, comm:false });
+  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false, goals:false, survey:false, princ:false, vals:false, health:false, comm:false });
   const [obSpasibo,      setObSpasibo]      = useState(12);
   const [obStreak,       setObStreak]       = useState(3);
   const [obToast,        setObToast]        = useState(null);
@@ -2098,32 +2098,10 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Manager: Goals editor */}
-                  <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Цели на испытательный срок</div>
-                    <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>Поставьте цели для Алия Сейткали на период испытательного срока</div>
-                    {obGoals.map(goal => (
-                      <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 0", borderBottom:`1px solid ${C.gray100}` }}>
-                        <div style={{ fontSize:12, color:C.dark, flex:1 }}>{goal.text}</div>
-                        <button onClick={() => setObGoals(prev=>prev.filter(g=>g.id!==goal.id))} style={{
-                          background:"none", border:"none", cursor:"pointer", color:C.red, fontSize:14, padding:"0 4px", fontWeight:700 }}>×</button>
-                      </div>
-                    ))}
-                    <div style={{ display:"flex", gap:8, marginTop:10 }}>
-                      <input value={newGoalText} onChange={e=>setNewGoalText(e.target.value)}
-                        placeholder="Добавить цель..."
-                        style={{ flex:1, border:`1px solid ${C.gray300}`, borderRadius:6, padding:"7px 10px", fontSize:12, fontFamily:"inherit", outline:"none" }}
-                      />
-                      <button onClick={()=>{if(newGoalText.trim()){setObGoals(prev=>[...prev,{id:Date.now(),text:newGoalText.trim(),done:false}]);setNewGoalText("");}}} style={{
-                        padding:"7px 14px", background:C.green, color:C.white, border:"none", borderRadius:6, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit"
-                      }}>+ Добавить</button>
-                    </div>
-                  </div>
-
                   {/* Pre-boarding manager tasks */}
                   <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"20px 24px", marginBottom:14 }}>
                     <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>Pre-boarding — ваши задачи</div>
-                    <div style={{ fontSize:12, color:C.orange, fontWeight:600, marginBottom:12 }}>Выполните за 1–3 дня до первого рабочего дня сотрудника</div>
+                    <div style={{ fontSize:12, color:C.green, fontWeight:600, marginBottom:12 }}>Выполните за 1–3 дня до первого рабочего дня сотрудника</div>
                     {obManagerTasks.filter(t=>t.phase==="pre").map(task => (
                       <TaskRow key={task.id} task={task}
                         onToggle={id => setObManagerTasks(prev => prev.map(t => t.id===id ? {...t,done:!t.done} : t))}
@@ -2142,37 +2120,30 @@ export default function App() {
                         />
                         {task.isGoals && (
                           <div style={{ marginLeft:32, marginBottom:8 }}>
-                            {!task.done && (
-                              <div style={{ fontSize:12, color:C.gray500, padding:"8px 12px", background:C.gray100, borderRadius:8 }}>
-                                Отметьте задачу выполненной — откроется редактор целей ИС
-                              </div>
-                            )}
-                            {task.done && (
-                              <div style={{ background:C.greenPale, border:`1px solid ${C.green}40`, borderRadius:10, padding:"14px 16px" }}>
-                                <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:10 }}>Цели на испытательный срок</div>
-                                {obGoals.map(goal => (
-                                  <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 10px", borderRadius:6, marginBottom:4,
-                                    background:goal.done?C.green+"15":C.white, border:`1px solid ${goal.done?C.green+"30":C.gray300}` }}>
-                                    <button onClick={e => { e.stopPropagation(); setObGoals(prev=>prev.map(g=>g.id===goal.id?{...g,done:!g.done}:g)); }} style={{
-                                      width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:goal.done?C.green:C.white,
-                                      display:"flex", alignItems:"center", justifyContent:"center", color:C.white, fontSize:11, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
-                                      {goal.done?"✓":""}
-                                    </button>
-                                    <span style={{ fontSize:13, flex:1, color:goal.done?C.gray500:C.dark, textDecoration:goal.done?"line-through":"none" }}>{goal.text}</span>
-                                  </div>
-                                ))}
-                                <div style={{ display:"flex", gap:8, marginTop:10 }}>
-                                  <input value={newGoalText} onChange={e=>setNewGoalText(e.target.value)}
-                                    onClick={e=>e.stopPropagation()}
-                                    placeholder="Добавить цель..."
-                                    style={{ flex:1, border:`1px solid ${C.gray300}`, borderRadius:6, padding:"7px 10px", fontSize:12, fontFamily:"inherit", outline:"none" }}
-                                  />
-                                  <button onClick={e=>{e.stopPropagation();if(newGoalText.trim()){setObGoals(prev=>[...prev,{id:Date.now(),text:newGoalText.trim(),done:false}]);setNewGoalText("");}}} style={{
-                                    padding:"7px 14px", background:C.green, color:C.white, border:"none", borderRadius:6, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit"
-                                  }}>+ Добавить</button>
+                            <div style={{ background:C.greenPale, border:`1px solid ${C.green}40`, borderRadius:10, padding:"14px 16px" }}>
+                              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:10 }}>Цели на испытательный срок</div>
+                              {obGoals.map(goal => (
+                                <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 10px", borderRadius:6, marginBottom:4,
+                                  background:goal.done?C.green+"15":C.white, border:`1px solid ${goal.done?C.green+"30":C.gray300}` }}>
+                                  <button onClick={e => { e.stopPropagation(); setObGoals(prev=>prev.map(g=>g.id===goal.id?{...g,done:!g.done}:g)); }} style={{
+                                    width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:goal.done?C.green:C.white,
+                                    display:"flex", alignItems:"center", justifyContent:"center", color:C.white, fontSize:11, fontWeight:700, cursor:"pointer", flexShrink:0 }}>
+                                    {goal.done?"✓":""}
+                                  </button>
+                                  <span style={{ fontSize:13, flex:1, color:goal.done?C.gray500:C.dark, textDecoration:goal.done?"line-through":"none" }}>{goal.text}</span>
                                 </div>
+                              ))}
+                              <div style={{ display:"flex", gap:8, marginTop:10 }}>
+                                <input value={newGoalText} onChange={e=>setNewGoalText(e.target.value)}
+                                  onClick={e=>e.stopPropagation()}
+                                  placeholder="Добавить цель..."
+                                  style={{ flex:1, border:`1px solid ${C.gray300}`, borderRadius:6, padding:"7px 10px", fontSize:12, fontFamily:"inherit", outline:"none" }}
+                                />
+                                <button onClick={e=>{e.stopPropagation();if(newGoalText.trim()){setObGoals(prev=>[...prev,{id:Date.now(),text:newGoalText.trim(),done:false}]);setNewGoalText("");}}} style={{
+                                  padding:"7px 14px", background:C.green, color:C.white, border:"none", borderRadius:6, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit"
+                                }}>+ Добавить</button>
                               </div>
-                            )}
+                            </div>
                           </div>
                         )}
                       </div>
