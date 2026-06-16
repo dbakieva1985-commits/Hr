@@ -1,32 +1,21 @@
 import { useState } from "react";
-const _v = "2.4";
+const _v = "2.5";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
-  bg:       "#F4F6F9",
+  bg:       "#F5F5F5",
   white:    "#FFFFFF",
   dark:     "#111827",
-  green:    "#0CAD56",   // Halyk brand green
-  greenDark:"#098840",
-  greenMid: "#10C463",
-  greenPale:"#E1F7EC",
+  green:    "#1AAD55",   // Halyk brand green (exact)
+  greenDark:"#138A40",
+  greenMid: "#22C563",
+  greenPale:"#EDF8F2",   // barely visible — used only for subtle tint
   gray700:  "#374151",
   gray500:  "#6B7280",
-  gray300:  "#D1D5DB",
+  gray300:  "#E0E0E0",
   gray100:  "#F9FAFB",
   orange:   "#EA7C1E",
   blue:     "#1D5CB4",
   red:      "#DC2626",
-};
-
-// ── Category accent colors (for icon circles) ───────────────────────────────
-const CAT_COLORS = {
-  "Кадровое администрирование": "#E8F0FE",
-  "Подбор персонала":           "#F0EAFF",
-  "Compensation & Benefits":    "#FEF3E2",
-  "Обучение и развитие":        "#FCE8F3",
-  "HR Analytics":               "#E2F5F9",
-  "Оценка и Performance":       "#FEE8E8",
-  "Онбординг":                  "#E1F7EC",
 };
 
 // ── Data ───────────────────────────────────────────────────────────────────
@@ -58,10 +47,10 @@ const Badge = ({ text, color = C.green }) => (
 
 const Pill = ({ text, active, onClick }) => (
   <button onClick={onClick} style={{
-    background: active ? C.green : C.white, color: active ? C.white : C.gray500,
+    background: active ? C.green : C.white, color: active ? C.white : C.gray700,
     border: `1px solid ${active ? C.green : C.gray300}`, borderRadius: 20,
-    padding: "5px 14px", fontSize: 12, cursor: "pointer", transition: "all .15s",
-    fontFamily: "inherit"
+    padding: "6px 16px", fontSize: 13, cursor: "pointer", transition: "all .15s",
+    fontFamily: "inherit", fontWeight: active ? 600 : 400
   }}>{text}</button>
 );
 
@@ -340,13 +329,13 @@ const OB_ACTIVITIES = [
 ];
 
 const OB_IT_SECTIONS = [
-  { id:"pre",      icon:"📦", label:"Pre-boarding",                    sub:"До выхода",  color:"#1F7A5C" },
-  { id:"setup",    icon:"💻", label:"Setup среды и инструментов",      sub:"Неделя 1",   color:"#1D4ED8" },
-  { id:"arch",     icon:"🏗",  label:"Погружение в архитектуру",       sub:"Неделя 1–2", color:"#7c3aed" },
-  { id:"security", icon:"🔐", label:"Security & Compliance",           sub:"Параллельно",color:"#DC2626" },
-  { id:"code",     icon:"📝",  label:"Кодовая база и стандарты",       sub:"Неделя 2–3", color:"#d97706" },
-  { id:"tasks",    icon:"✅",  label:"First tasks",                    sub:"Неделя 2–4", color:"#059669" },
-  { id:"perf",     icon:"📊",  label:"Performance & Feedback",         sub:"30–60–90 дн",color:"#0891b2" },
+  { id:"pre",      icon:"📦", label:"Pre-boarding",                    sub:"До выхода"  },
+  { id:"setup",    icon:"💻", label:"Setup среды и инструментов",      sub:"Неделя 1"   },
+  { id:"arch",     icon:"🏗",  label:"Погружение в архитектуру",       sub:"Неделя 1–2" },
+  { id:"security", icon:"🔐", label:"Security & Compliance",           sub:"Параллельно"},
+  { id:"code",     icon:"📝",  label:"Кодовая база и стандарты",       sub:"Неделя 2–3" },
+  { id:"tasks",    icon:"✅",  label:"First tasks",                    sub:"Неделя 2–4" },
+  { id:"perf",     icon:"📊",  label:"Performance & Feedback",         sub:"30–60–90 дн"},
 ];
 
 const OB_IT_TASKS_INIT = [
@@ -684,19 +673,14 @@ export default function App() {
             </div>
 
             {/* Quick actions — Halyk-style compact grid */}
-            <div style={{ background: C.white, borderRadius: 20, padding: isMobile ? "16px 8px" : "20px 16px", marginBottom: 20, boxShadow: "0 2px 14px #0000000B" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: isMobile ? 4 : 8 }}>
+            <div style={{ background: C.white, borderRadius: 16, padding: isMobile ? "14px 4px" : "18px 12px", marginBottom: 20, boxShadow: "0 1px 6px #0000000A" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0 }}>
                 {SERVICES.slice(0,8).map(s => (
                   <div key={s.id} onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}
-                    style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: isMobile ? "10px 4px" : "14px 8px", cursor: "pointer", borderRadius: 12 }}>
-                    <div style={{ width: isMobile ? 50 : 58, height: isMobile ? 50 : 58, borderRadius: 16,
-                      background: CAT_COLORS[s.cat] || C.greenPale,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: isMobile ? 24 : 28, marginBottom: 7 }}>
-                      {s.icon}
-                    </div>
-                    <div style={{ fontSize: isMobile ? 10 : 11, fontWeight: 600, color: C.dark, textAlign: "center", lineHeight: 1.3 }}>
-                      {s.title.length > 14 ? s.title.slice(0,13)+"…" : s.title}
+                    style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: isMobile ? "10px 2px" : "12px 8px", cursor: "pointer" }}>
+                    <div style={{ fontSize: isMobile ? 30 : 34, marginBottom: 6, lineHeight: 1 }}>{s.icon}</div>
+                    <div style={{ fontSize: isMobile ? 10 : 11, fontWeight: 500, color: C.dark, textAlign: "center", lineHeight: 1.3 }}>
+                      {s.title.length > 12 ? s.title.slice(0,11)+"…" : s.title}
                     </div>
                   </div>
                 ))}
@@ -750,26 +734,24 @@ export default function App() {
             </div>
 
             {/* Service cards */}
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 10 : 14 }}>
-              {filteredServices.map(s => {
-                const catBg = CAT_COLORS[s.cat] || C.greenPale;
-                return (
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
+              {filteredServices.map(s => (
                 <div key={s.id} style={{
-                  background: C.white, borderRadius: 18, border:"none",
-                  padding: "18px 18px 16px", cursor: "pointer", transition: "box-shadow .15s",
-                  boxShadow: "0 1px 6px #0000000C", display: "flex", flexDirection: "column"
+                  background: C.white, borderRadius: 16, border:`1px solid ${C.gray300}`,
+                  padding: "16px", cursor: "pointer", transition: "box-shadow .15s",
+                  display: "flex", flexDirection: "column"
                 }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 18px #0000001A"}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 6px #0000000C"}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                    <div style={{ width: 48, height: 48, borderRadius: 14, background: catBg,
+                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 14px #0000000F"}
+                  onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                    <div style={{ width: 44, height: 44, borderRadius: 12, background: C.greenPale,
                       display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
                       {s.icon}
                     </div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>{s.cat}</div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: C.green, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>{s.cat}</div>
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 6 }}>{s.title}</div>
-                  <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 14, lineHeight: 1.5 }}>{s.desc}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 5 }}>{s.title}</div>
+                  <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 12, lineHeight: 1.5 }}>{s.desc}</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</span>
                     <Btn small onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}>
@@ -777,8 +759,7 @@ export default function App() {
                     </Btn>
                   </div>
                 </div>
-                );
-              })}
+              ))}
             </div>
           </div>
         )}
@@ -1437,7 +1418,7 @@ export default function App() {
               {(obView === "employee" || obView === "it") && (
                 <>
                   {/* Welcome */}
-                  <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px 24px", marginBottom:14, color:C.white }}>
+                  <div style={{ background:`linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`, borderRadius:16, padding:"20px 24px", marginBottom:14, color:C.white, boxShadow:`0 4px 16px ${C.green}44` }}>
                     <div style={{ fontSize:20, fontWeight:800, marginBottom:4 }}>Добро пожаловать в Халык Банк! 🎉</div>
                     <div style={{ fontSize:13, opacity:0.9, marginBottom:10 }}>Руководитель: <b>Нуржан Касымов</b> · Наставник: <b>Айгерим Бекова</b></div>
                     <div style={{ background:"rgba(255,255,255,0.15)", borderRadius:10, padding:"10px 14px", fontSize:13 }}>
@@ -1463,14 +1444,14 @@ export default function App() {
                   {(obView === "employee" || (obView === "it" && obItTab === "general")) && (<>
 
                   {/* BENEFITS — collapsible */}
-                  <div style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${C.green}40` }}>
+                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}` }}>
                     <button onClick={() => setObExpanded(p=>({...p, ben:!p.ben}))} style={{
                       width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
-                      background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                      background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                     }}>
                       <span style={{ fontSize:22 }}>🎁</span>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:14, fontWeight:700, color:C.green }}>Льготы</div>
+                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Льготы</div>
                         <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{BENEFITS.length} льгот</div>
                       </div>
                       <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s",
@@ -1500,21 +1481,21 @@ export default function App() {
                     { key:"ind",  icon:"🎓", label:"Induction",     items: OB_ACTIVITIES.filter(a=>a.cat==="ind")  },
                     { key:"feed", icon:"📋", label:"Feedback",      items: OB_ACTIVITIES.filter(a=>a.cat==="feed") },
                   ].map(sec => (
-                    <div key={sec.key} style={{ marginBottom:10, borderRadius:14, overflow:"hidden", border:`1px solid ${C.green}40` }}>
+                    <div key={sec.key} style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}` }}>
                       <button onClick={() => setObExpanded(p=>({...p,[sec.key]:!p[sec.key]}))} style={{
                         width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
-                        background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                        background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                       }}>
                         <span style={{ fontSize:22 }}>{sec.icon}</span>
                         <div style={{ flex:1 }}>
-                          <div style={{ fontSize:14, fontWeight:700, color:C.green }}>{sec.label}</div>
+                          <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>{sec.label}</div>
                           <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{sec.items.length} активностей</div>
                         </div>
                         <span style={{ fontSize:16, color:C.green, transition:"transform .2s",
                           display:"inline-block", transform: obExpanded[sec.key] ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                       </button>
                       {obExpanded[sec.key] && (
-                        <div style={{ background:C.white, padding:"4px 0" }}>
+                        <div style={{ background:C.white, padding:"4px 0", borderTop:`1px solid ${C.gray300}` }}>
                           {sec.items.map((a,i) => (
                             <div key={a.id} style={{ padding:"12px 18px", borderBottom:`1px solid ${C.gray100}` }}>
                               <div style={{ fontSize:13, fontWeight:600, color:C.dark, marginBottom:3 }}>{a.title}</div>
@@ -1529,14 +1510,14 @@ export default function App() {
                           {/* Documents + Address inside Pre-boarding — each collapsible */}
                           {sec.key === "pre" && (<>
                             {/* Docs sub-card */}
-                            <div style={{ borderTop:`2px solid ${C.gray100}` }}>
+                            <div style={{ borderTop:`1px solid ${C.gray300}` }}>
                               <button onClick={e=>{e.stopPropagation();setObExpanded(p=>({...p,docs:!p.docs}));}} style={{
                                 width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
-                                background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                                background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                               }}>
                                 <span style={{ fontSize:18 }}>📋</span>
                                 <div style={{ flex:1 }}>
-                                  <div style={{ fontSize:13, fontWeight:700, color:C.green }}>Перечень документов</div>
+                                  <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>Перечень документов</div>
                                   <div style={{ fontSize:11, color:C.gray500 }}>⚠ Принести в первый день в 09:00</div>
                                 </div>
                                 <span style={{ fontSize:14, color:C.green, display:"inline-block", transition:"transform .2s",
@@ -1569,14 +1550,14 @@ export default function App() {
                               )}
                             </div>
                             {/* Address sub-card */}
-                            <div style={{ borderTop:`2px solid ${C.gray100}` }}>
+                            <div style={{ borderTop:`1px solid ${C.gray300}` }}>
                               <button onClick={e=>{e.stopPropagation();setObExpanded(p=>({...p,addr:!p.addr}));}} style={{
                                 width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
-                                background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                                background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                               }}>
                                 <span style={{ fontSize:18 }}>📍</span>
                                 <div style={{ flex:1 }}>
-                                  <div style={{ fontSize:13, fontWeight:700, color:C.green }}>Куда прийти</div>
+                                  <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>Куда прийти</div>
                                   <div style={{ fontSize:11, color:C.gray500 }}>{hrAddress}</div>
                                 </div>
                                 <span style={{ fontSize:14, color:C.green, display:"inline-block", transition:"transform .2s",
@@ -1726,8 +1707,8 @@ export default function App() {
                             const isAct = sec.id === obItSec;
                             return (
                               <button key={sec.id} onClick={() => setObItSec(sec.id)} style={{
-                                background: isAct ? sec.color : C.white, color: isAct ? C.white : C.dark,
-                                border:`2px solid ${isAct ? sec.color : C.gray300}`, borderRadius:12,
+                                background: isAct ? C.green : C.white, color: isAct ? C.white : C.dark,
+                                border:`2px solid ${isAct ? C.green : C.gray300}`, borderRadius:12,
                                 padding:"12px 10px", cursor:"pointer", fontFamily:"inherit", textAlign:"center", transition:"all .15s"
                               }}>
                                 <div style={{ fontSize:20, marginBottom:4 }}>{sec.icon}</div>
@@ -1739,8 +1720,8 @@ export default function App() {
                           })}
                         </div>
 
-                        <div style={{ background:C.white, boxShadow:"0 2px 12px #0000000D", borderRadius:16, border:"none", padding:"18px 20px" }}>
-                          <div style={{ fontSize:14, fontWeight:700, color:curSec?.color||C.dark, marginBottom:14 }}>
+                        <div style={{ background:C.white, border:`1px solid ${C.gray300}`, borderRadius:16, padding:"18px 20px" }}>
+                          <div style={{ fontSize:14, fontWeight:700, color:C.green, marginBottom:14 }}>
                             {curSec?.icon} {curSec?.label} <span style={{ fontSize:12, color:C.gray500, fontWeight:400 }}>— {curSec?.sub}</span>
                           </div>
                           {secTasks.map(task => (
