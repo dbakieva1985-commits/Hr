@@ -1,5 +1,5 @@
 import { useState } from "react";
-const _v = "5.6";
+const _v = "5.7";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -441,7 +441,7 @@ export default function App() {
   const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
   const [obItSec,        setObItSec]        = useState("pre");
   const [obItTab,        setObItTab]        = useState("general"); // "general" | "it"
-  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false, goals:false, survey:false, princ:false, vals:false, health:false });
+  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false, goals:false, survey:true, princ:false, vals:false, health:false, comm:false });
   const [obSpasibo,      setObSpasibo]      = useState(12);
   const [obStreak,       setObStreak]       = useState(3);
   const [obToast,        setObToast]        = useState(null);
@@ -1493,6 +1493,45 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* COMMUNITIES */}
+                  {obView === "employee" && (
+                    <div style={{ marginBottom:14, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
+                      <button onClick={() => setObExpanded(p=>({...p, comm:!p.comm}))} style={{
+                        width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
+                        background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                      }}>
+                        <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>🤝</div>
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Записывайся в наши сообщества</div>
+                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Клубы, команды и каналы Halyk</div>
+                        </div>
+                        <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s", transform: obExpanded.comm ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                      </button>
+                      {obExpanded.comm && (
+                        <div style={{ background:C.white, padding:"4px 18px 14px", borderTop:`1px solid ${C.gray100}` }}>
+                          {[
+                            { icon:"💬", name:"Halyk Family",        desc:"Главный Telegram-канал сотрудников Halyk Group", link:"t.me/halykfamily" },
+                            { icon:"⚽", name:"Halyk Sport Club",    desc:"Футбол, волейбол, бег — записывайся в команду",  link:"t.me/halyk_sport" },
+                            { icon:"📚", name:"Книжный клуб",        desc:"Читаем и обсуждаем книги раз в месяц",           link:"t.me/halyk_books" },
+                            { icon:"🌱", name:"Halyk Care",           desc:"Волонтёрское движение и экопроекты Банка",        link:"t.me/halyk_care"  },
+                            { icon:"🎨", name:"Клуб творчества",      desc:"Рисование, фото, кино — для всех желающих",      link:"t.me/halyk_art"   },
+                          ].map((c, i, arr) => (
+                            <div key={c.name} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 0", borderBottom: i<arr.length-1 ? `1px solid ${C.gray100}` : "none" }}>
+                              <div style={{ width:36, height:36, borderRadius:10, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>{c.icon}</div>
+                              <div style={{ flex:1 }}>
+                                <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>{c.name}</div>
+                                <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>{c.desc}</div>
+                              </div>
+                              <button style={{ fontSize:11, fontWeight:600, color:C.green, background:C.greenPale, border:`1px solid ${C.green}`, borderRadius:8, padding:"5px 12px", cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>
+                                Вступить
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* GAMIFICATION HUD */}
                   {(obView === "employee") && (() => {
                     const actDone  = obActivities.filter(a=>a.done).length;
@@ -1820,6 +1859,34 @@ export default function App() {
                           })}
 
                           {/* Documents + Address inside Pre-boarding — each collapsible */}
+                          {sec.key === "ind" && (
+                            <div style={{ borderTop:`1px solid ${C.gray300}` }}>
+                              <button onClick={e=>{e.stopPropagation();setObExpanded(p=>({...p,goals:!p.goals}));}} style={{
+                                width:"100%", display:"flex", alignItems:"center", gap:10, padding:"12px 18px",
+                                background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
+                              }}>
+                                <div style={{ width:28, height:28, borderRadius:6, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:800, color:C.green, flexShrink:0 }}>ЦЕЛ</div>
+                                <div style={{ flex:1 }}>
+                                  <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>Цели на испытательный срок</div>
+                                  <div style={{ fontSize:11, color:C.gray500 }}>Руководитель: Нуржан Касымов</div>
+                                </div>
+                                <span style={{ fontSize:14, color:C.green, display:"inline-block", transition:"transform .2s", transform: obExpanded.goals ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                              </button>
+                              {obExpanded.goals && (
+                                <div style={{ padding:"0 18px 12px" }}>
+                                  {obGoals.map(goal => (
+                                    <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                                      <div style={{ width:18, height:18, borderRadius:"50%", background:goal.done?C.green:C.white, border:`2px solid ${goal.done?C.green:C.gray300}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, color:C.white }}>
+                                        {goal.done?"✓":""}
+                                      </div>
+                                      <div style={{ fontSize:13, color:goal.done?C.gray500:C.dark, textDecoration:goal.done?"line-through":"none" }}>{goal.text}</div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
                           {sec.key === "pre" && (<>
                             {/* Docs sub-card */}
                             <div style={{ borderTop:`1px solid ${C.gray300}` }}>
@@ -1919,46 +1986,23 @@ export default function App() {
                   ); })}
 
 
-                  {/* Goals */}
-                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
-                    <button onClick={() => setObExpanded(p=>({...p, goals:!p.goals}))} style={{
-                      width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
-                      background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
-                    }}>
-                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>ЦЕЛ</div>
-                      <div style={{ flex:1 }}>
-                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Цели на испытательный срок</div>
-                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Руководитель: Нуржан Касымов</div>
-                      </div>
-                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s",
-                        transform: obExpanded.goals ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
-                    </button>
-                    {obExpanded.goals && (
-                      <div style={{ background:C.white, padding:"4px 18px 12px", borderTop:`1px solid ${C.gray300}` }}>
-                        {obGoals.map(goal => (
-                          <div key={goal.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.gray100}` }}>
-                            <div style={{ width:18, height:18, borderRadius:"50%", background:goal.done?C.green:C.white, border:`2px solid ${goal.done?C.green:C.gray300}`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, color:C.white }}>
-                              {goal.done?"✓":""}
-                            </div>
-                            <div style={{ fontSize:13, color:goal.done?C.gray500:C.dark, textDecoration:goal.done?"line-through":"none" }}>{goal.text}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Survey */}
-                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${C.gray300}`, borderLeft:`4px solid ${C.green}` }}>
+                  {/* Survey — mandatory */}
+                  <div style={{ marginBottom:8, borderRadius:14, overflow:"hidden", border:`1px solid ${obSurveys.employeeSubmitted ? C.gray300 : C.orange}`, borderLeft:`4px solid ${obSurveys.employeeSubmitted ? C.green : C.orange}` }}>
                     <button onClick={() => setObExpanded(p=>({...p, survey:!p.survey}))} style={{
                       width:"100%", display:"flex", alignItems:"center", gap:12, padding:"14px 18px",
                       background:C.white, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left"
                     }}>
-                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${C.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:C.green, flexShrink:0 }}>ОПР</div>
+                      <div style={{ width:36, height:36, borderRadius:8, background:C.white, border:`1.5px solid ${obSurveys.employeeSubmitted ? C.green : C.orange}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:800, color:obSurveys.employeeSubmitted ? C.green : C.orange, flexShrink:0 }}>ОПР</div>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>Опрос адаптации — 2 месяца</div>
-                        <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{obSurveys.employeeSubmitted ? "✓ Заполнен" : "HR собирает обратную связь"}</div>
+                        <div style={{ fontSize:14, fontWeight:600, color:C.dark, display:"flex", alignItems:"center", gap:8 }}>
+                          Опрос адаптации — 2 месяца
+                          {!obSurveys.employeeSubmitted && <span style={{ fontSize:9, fontWeight:800, color:C.white, background:C.orange, borderRadius:4, padding:"2px 6px" }}>ОБЯЗАТЕЛЬНО</span>}
+                        </div>
+                        <div style={{ fontSize:11, color:obSurveys.employeeSubmitted ? C.green : C.orange, marginTop:2, fontWeight:600 }}>
+                          {obSurveys.employeeSubmitted ? "✓ Заполнен" : "Заполните опрос — это обязательно"}
+                        </div>
                       </div>
-                      <span style={{ fontSize:16, color:C.green, display:"inline-block", transition:"transform .2s",
+                      <span style={{ fontSize:16, color:obSurveys.employeeSubmitted ? C.green : C.orange, display:"inline-block", transition:"transform .2s",
                         transform: obExpanded.survey ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
                     </button>
                     {obExpanded.survey && (
