@@ -1,20 +1,32 @@
 import { useState } from "react";
-const _v = "2.3";
+const _v = "2.4";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
-  bg:       "#F5F6F8",
+  bg:       "#F4F6F9",
   white:    "#FFFFFF",
-  dark:     "#0D2318",
-  green:    "#00A651",
-  greenMid: "#00C060",
-  greenPale:"#E6F8EE",
-  gray700:  "#2D3748",
-  gray500:  "#718096",
-  gray300:  "#CBD5E0",
-  gray100:  "#F7FAFC",
-  orange:   "#DD6B20",
-  blue:     "#2B6CB0",
-  red:      "#C53030",
+  dark:     "#111827",
+  green:    "#0CAD56",   // Halyk brand green
+  greenDark:"#098840",
+  greenMid: "#10C463",
+  greenPale:"#E1F7EC",
+  gray700:  "#374151",
+  gray500:  "#6B7280",
+  gray300:  "#D1D5DB",
+  gray100:  "#F9FAFB",
+  orange:   "#EA7C1E",
+  blue:     "#1D5CB4",
+  red:      "#DC2626",
+};
+
+// ── Category accent colors (for icon circles) ───────────────────────────────
+const CAT_COLORS = {
+  "Кадровое администрирование": "#E8F0FE",
+  "Подбор персонала":           "#F0EAFF",
+  "Compensation & Benefits":    "#FEF3E2",
+  "Обучение и развитие":        "#FCE8F3",
+  "HR Analytics":               "#E2F5F9",
+  "Оценка и Performance":       "#FEE8E8",
+  "Онбординг":                  "#E1F7EC",
 };
 
 // ── Data ───────────────────────────────────────────────────────────────────
@@ -583,36 +595,55 @@ export default function App() {
         </div>
       </div>
 
-      {/* Mobile bottom nav */}
+      {/* Mobile bottom nav — Halyk style */}
       {isMobile && (
-        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:58, background:C.white,
-          borderTop:`1px solid ${C.gray300}`, display:"flex", zIndex:200, boxShadow:"0 -2px 10px #0000000F" }}>
-          {NAV.map(n => (
-            <button key={n.id} onClick={() => { setPage(n.id); setDetail(null); }} style={{
-              flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-              background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
-              color: page===n.id ? C.green : C.gray500, padding:"6px 0",
-            }}>
-              <span style={{ fontSize:20, lineHeight:1 }}>{n.icon}</span>
-              <span style={{ fontSize:9, fontWeight: page===n.id ? 700 : 400, marginTop:3 }}>{n.label}</span>
-            </button>
-          ))}
+        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:62, background:C.white,
+          borderTop:`1px solid #EBEBEB`, display:"flex", zIndex:200, boxShadow:"0 -3px 16px #00000012" }}>
+          {NAV.map((n, i) => {
+            const isMid = i === 2;
+            return (
+              <button key={n.id} onClick={() => { setPage(n.id); setDetail(null); }} style={{
+                flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+                background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
+                color: page===n.id ? C.green : C.gray500, padding:"4px 0",
+                position: isMid ? "relative" : "static",
+              }}>
+                {isMid ? (
+                  <div style={{ width:52, height:52, borderRadius:"50%", background:C.green, display:"flex",
+                    alignItems:"center", justifyContent:"center", fontSize:22, color:C.white,
+                    position:"absolute", bottom:6, boxShadow:`0 4px 14px ${C.green}55` }}>
+                    {n.icon}
+                  </div>
+                ) : (
+                  <>
+                    <span style={{ fontSize:22, lineHeight:1 }}>{n.icon}</span>
+                    <span style={{ fontSize:9, fontWeight: page===n.id ? 700 : 400, marginTop:3 }}>{n.label}</span>
+                  </>
+                )}
+              </button>
+            );
+          })}
         </nav>
       )}
 
-      {/* Mobile top header */}
+      {/* Mobile top header — Halyk style (white) */}
       {isMobile && (
-        <div style={{ position:"fixed", top:0, left:0, right:0, height:52, background:C.dark,
+        <div style={{ position:"fixed", top:0, left:0, right:0, height:56, background:C.white,
           display:"flex", alignItems:"center", justifyContent:"space-between",
-          padding:"0 16px", zIndex:200 }}>
-          <div>
-            <div style={{ fontSize:10, fontWeight:700, color:C.green, letterSpacing:2 }}>HALYK BANK</div>
-            <div style={{ fontSize:12, fontWeight:700, color:C.white }}>HR Service Portal</div>
-          </div>
+          padding:"0 16px", zIndex:200, borderBottom:`1px solid #F0F0F0`,
+          boxShadow:"0 1px 8px #0000000A" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <div style={{ width:34, height:34, borderRadius:10, background:C.green,
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, color:C.white, fontWeight:800 }}>H</div>
+            <div>
+              <div style={{ fontSize:11, fontWeight:800, color:C.dark, letterSpacing:0.5 }}>HR Portal</div>
+              <div style={{ fontSize:9, color:C.gray500 }}>Halyk Bank · ДУП</div>
+            </div>
+          </div>
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
             <select value={currentRole} onChange={e => setCurrentRole(e.target.value)}
-              style={{ background:"#FFFFFF15", color:C.white, border:"1px solid #FFFFFF30",
-                borderRadius:6, padding:"4px 8px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none" }}>
+              style={{ background:C.gray100, color:C.dark, border:`1px solid ${C.gray300}`,
+                borderRadius:8, padding:"5px 8px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none" }}>
               {[
                 { id:"recruiter", label:"Рекрутер ДО" },
                 { id:"do",        label:"Рук-ль ДО" },
@@ -621,10 +652,10 @@ export default function App() {
                 { id:"hr_dir",    label:"HRD ГБ" },
                 { id:"do_date",   label:"ДО (дата)" },
                 { id:"uap",       label:"УАП ГБ" },
-              ].map(r => <option key={r.id} value={r.id} style={{ background:C.dark }}>{r.label}</option>)}
+              ].map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
             </select>
-            <div style={{ width:30, height:30, borderRadius:"50%", background:C.green,
-              display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:C.white, fontWeight:700 }}>Ф</div>
+            <div style={{ width:32, height:32, borderRadius:"50%", background:C.greenPale, border:`2px solid ${C.green}`,
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:C.green, fontWeight:800 }}>Ф</div>
           </div>
         </div>
       )}
@@ -644,7 +675,7 @@ export default function App() {
             </div>
 
             {/* Онбординг banner */}
-            <div onClick={() => setPage("onboarding")} style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:14, padding:"16px 22px", marginBottom:20, cursor:"pointer", color:C.white, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+            <div onClick={() => setPage("onboarding")} style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:20, padding:"18px 22px", marginBottom:20, cursor:"pointer", color:C.white, display:"flex", justifyContent:"space-between", alignItems:"center", boxShadow:`0 6px 20px ${C.green}44` }}>
               <div>
                 <div style={{ fontSize:15, fontWeight:800, marginBottom:2 }}>🎉 Трек онбординга нового сотрудника</div>
                 <div style={{ fontSize:12, opacity:0.9 }}>Задачи, документы, адрес HR, схема проезда, парковка, цели ИС</div>
@@ -652,39 +683,42 @@ export default function App() {
               <div style={{ fontSize:22, marginLeft:16 }}>→</div>
             </div>
 
-            {/* Quick actions */}
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: isMobile ? 10 : 14, marginBottom: 24 }}>
-              {SERVICES.slice(0,4).map(s => (
-                <div key={s.id} onClick={() => { setSelected(s); setPage("form"); }}
-                  style={{ background: C.white, boxShadow:"0 2px 12px #0000000D",
-                    borderRadius: 16, border:"none", padding: "18px 16px", cursor: "pointer",
-                    transition: "box-shadow .15s" }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 16px #0000001A"}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px #0000000A"}>
-                  <div style={{ fontSize: 26, marginBottom: 8 }}>{s.icon}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark, marginBottom: 4 }}>{s.title}</div>
-                  <div style={{ fontSize: 11, color: C.gray500 }}>SLA: {s.sla}</div>
-                  <div style={{ height: 2, background: C.green, borderRadius: 2, marginTop: 12, width: 32 }} />
-                </div>
-              ))}
+            {/* Quick actions — Halyk-style compact grid */}
+            <div style={{ background: C.white, borderRadius: 20, padding: isMobile ? "16px 8px" : "20px 16px", marginBottom: 20, boxShadow: "0 2px 14px #0000000B" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: isMobile ? 4 : 8 }}>
+                {SERVICES.slice(0,8).map(s => (
+                  <div key={s.id} onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}
+                    style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: isMobile ? "10px 4px" : "14px 8px", cursor: "pointer", borderRadius: 12 }}>
+                    <div style={{ width: isMobile ? 50 : 58, height: isMobile ? 50 : 58, borderRadius: 16,
+                      background: CAT_COLORS[s.cat] || C.greenPale,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: isMobile ? 24 : 28, marginBottom: 7 }}>
+                      {s.icon}
+                    </div>
+                    <div style={{ fontSize: isMobile ? 10 : 11, fontWeight: 600, color: C.dark, textAlign: "center", lineHeight: 1.3 }}>
+                      {s.title.length > 14 ? s.title.slice(0,13)+"…" : s.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Recent requests */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 700, color: C.dark, margin: 0 }}>Последние заявки</h2>
-              <Btn variant="ghost" small onClick={() => setPage("my")}>Все заявки →</Btn>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <h2 style={{ fontSize: 15, fontWeight: 700, color: C.dark, margin: 0 }}>Последние заявки</h2>
+              <Btn variant="ghost" small onClick={() => setPage("my")}>Все →</Btn>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {requests.slice(0,3).map(r => (
+            <div style={{ background: C.white, borderRadius: 18, overflow: "hidden", boxShadow: "0 2px 12px #0000000A" }}>
+              {requests.slice(0,3).map((r, i) => (
                 <div key={r.id} onClick={() => { setDetail(r); setPage("my"); }}
-                  style={{ background: C.white, border: `1px solid ${C.gray300}`,
-                    borderRadius: 10, padding: "14px 18px", display: "flex",
+                  style={{ padding: "13px 18px", display: "flex",
                     alignItems: "center", gap: 14, cursor: "pointer",
-                    boxShadow: "0 1px 3px #0000000A" }}>
-                  <span style={{ fontSize: 22 }}>{r.icon}</span>
+                    borderBottom: i < 2 ? `1px solid ${C.gray100}` : "none" }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 12, background: C.greenPale,
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{r.icon}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{r.title}</div>
-                    <div style={{ fontSize: 11, color: C.gray500 }}>{r.id} · {r.date}</div>
+                    <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{r.id} · {r.date}</div>
                   </div>
                   <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
                 </div>
@@ -717,19 +751,25 @@ export default function App() {
 
             {/* Service cards */}
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 10 : 14 }}>
-              {filteredServices.map(s => (
+              {filteredServices.map(s => {
+                const catBg = CAT_COLORS[s.cat] || C.greenPale;
+                return (
                 <div key={s.id} style={{
-                  background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none",
-                  padding: "20px", cursor: "pointer", transition: "box-shadow .15s",
-                  boxShadow: "0 1px 4px #0000000A", display: "flex", flexDirection: "column"
+                  background: C.white, borderRadius: 18, border:"none",
+                  padding: "18px 18px 16px", cursor: "pointer", transition: "box-shadow .15s",
+                  boxShadow: "0 1px 6px #0000000C", display: "flex", flexDirection: "column"
                 }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 16px #0000001A"}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px #0000000A"}>
-                  <div style={{ height: 3, background: C.green, borderRadius: 2, marginBottom: 14 }} />
-                  <div style={{ fontSize: 10, fontWeight: 700, color: C.green, letterSpacing: 1, marginBottom: 6, textTransform: "uppercase" }}>{s.cat}</div>
-                  <div style={{ fontSize: 16, marginBottom: 6 }}>{s.icon}</div>
+                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 18px #0000001A"}
+                  onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 6px #0000000C"}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 14, background: catBg,
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
+                      {s.icon}
+                    </div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>{s.cat}</div>
+                  </div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 6 }}>{s.title}</div>
-                  <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 14 }}>{s.desc}</div>
+                  <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 14, lineHeight: 1.5 }}>{s.desc}</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</span>
                     <Btn small onClick={() => { if(s.isOnboarding){ setPage("onboarding"); } else { setSelected(s); setPage("form"); } }}>
@@ -737,7 +777,8 @@ export default function App() {
                     </Btn>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -1110,14 +1151,10 @@ export default function App() {
               <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>История всех ваших обращений в HR Service Center</p>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {requests.map(r => (
+            <div style={{ background: C.white, borderRadius: 18, overflow: "hidden", boxShadow: "0 2px 12px #0000000A" }}>
+              {requests.map((r, ri) => (
                 <div key={r.id} onClick={() => setDetail(r)}
-                  style={{ background: C.white, boxShadow:"0 2px 12px #0000000D",
-                    borderRadius: 16, border:"none", padding: "16px 20px", cursor: "pointer",
-                    transition: "box-shadow .15s" }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 12px #0000001A"}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px #0000000A"}>
+                  style={{ padding: "14px 18px", cursor: "pointer", borderBottom: ri < requests.length-1 ? `1px solid ${C.gray100}` : "none" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                     <div style={{ width: 40, height: 40, borderRadius: 10, background: C.greenPale,
                       display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{r.icon}</div>
