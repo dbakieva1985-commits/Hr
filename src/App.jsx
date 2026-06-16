@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-const _v = "6.2";
+const _v = "6.3";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -456,11 +456,13 @@ export default function App() {
   const [spasiboSent,    setSpasiboSent]    = useState(false);
   const [joinedComms,    setJoinedComms]    = useState([]);
   const [valQuiz,        setValQuiz]        = useState({ idx:0, picked:null, score:0, done:false });
-  const hashToPage = h => ["home","catalog","requests","onboarding","analytics"].includes(h.replace("#","")) ? h.replace("#","") : "home";
-  const [page, setPage] = useState(() => hashToPage(window.location.hash));
+  const VALID_PAGES = ["home","catalog","requests","onboarding","analytics"];
+  const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
+  const [page, setPage] = useState("home");
   const navigate = p => { window.location.hash = p; setPage(p); };
   useEffect(() => {
-    const onHash = () => setPage(hashToPage(window.location.hash));
+    setPage(readHash());
+    const onHash = () => setPage(readHash());
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
