@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-const _v = "6.3";
+const _v = "6.4";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -449,7 +449,7 @@ export default function App() {
   const [obItTasks,      setObItTasks]      = useState(OB_IT_TASKS_INIT);
   const [obItSec,        setObItSec]        = useState("pre");
   const [obItTab,        setObItTab]        = useState("general"); // "general" | "it"
-  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false, goals:false, survey:false, princ:false, vals:false, health:false, comm:false });
+  const [obExpanded,     setObExpanded]     = useState({ pre:false, ob:false, ind:false, feed:false, docs:false, addr:false, ben:false, goals:false, survey:false, princ:false, vals:false, health:false, comm:false, sport:false });
   const [obSpasibo,      setObSpasibo]      = useState(12);
   const [obStreak,       setObStreak]       = useState(3);
   const [obToast,        setObToast]        = useState(null);
@@ -1529,25 +1529,68 @@ export default function App() {
                       {obExpanded.comm && (
                         <div style={{ background:C.white, padding:"4px 18px 14px", borderTop:`1px solid ${C.gray100}` }}>
                           {[
-                            { icon:"💬", name:"Halyk Family",        desc:"Главный Telegram-канал сотрудников Halyk Group", link:"t.me/halykfamily" },
-                            { icon:"⚽", name:"Halyk Sport Club",    desc:"Футбол, волейбол, бег — записывайся в команду",  link:"t.me/halyk_sport" },
-                            { icon:"📚", name:"Книжный клуб",        desc:"Читаем и обсуждаем книги раз в месяц",           link:"t.me/halyk_books" },
-                            { icon:"🌱", name:"Halyk Care",           desc:"Волонтёрское движение и экопроекты Банка",        link:"t.me/halyk_care"  },
-                            { icon:"🎨", name:"Клуб творчества",      desc:"Рисование, фото, кино — для всех желающих",      link:"t.me/halyk_art"   },
-                          ].map((c, i, arr) => (
-                            <div key={c.name} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 0", borderBottom: i<arr.length-1 ? `1px solid ${C.gray100}` : "none" }}>
+                            { icon:"💬", name:"Halyk Family",   desc:"Главный Telegram-канал сотрудников Halyk Group" },
+                            { icon:"📚", name:"Книжный клуб",   desc:"Читаем и обсуждаем книги раз в месяц" },
+                            { icon:"🌱", name:"Halyk Care",      desc:"Волонтёрское движение и экопроекты Банка" },
+                            { icon:"🎨", name:"Клуб творчества", desc:"Рисование, фото, кино — для всех желающих" },
+                          ].map((c, i) => (
+                            <div key={c.name} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 0", borderBottom:`1px solid ${C.gray100}` }}>
                               <div style={{ width:36, height:36, borderRadius:10, background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>{c.icon}</div>
                               <div style={{ flex:1 }}>
                                 <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>{c.name}</div>
                                 <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>{c.desc}</div>
                               </div>
-                              <button
-                                onClick={() => setJoinedComms(p => p.includes(c.name) ? p.filter(x=>x!==c.name) : [...p, c.name])}
-                                style={{ fontSize:11, fontWeight:600, whiteSpace:"nowrap", cursor:"pointer", fontFamily:"inherit", borderRadius:8, padding:"5px 12px", border:`1px solid ${joinedComms.includes(c.name) ? C.green : C.green}`, background:joinedComms.includes(c.name) ? C.green : C.greenPale, color:joinedComms.includes(c.name) ? C.white : C.green }}>
+                              <button onClick={() => setJoinedComms(p => p.includes(c.name) ? p.filter(x=>x!==c.name) : [...p, c.name])}
+                                style={{ fontSize:11, fontWeight:600, whiteSpace:"nowrap", cursor:"pointer", fontFamily:"inherit", borderRadius:8, padding:"5px 12px", border:`1px solid ${C.green}`, background:joinedComms.includes(c.name)?C.green:C.greenPale, color:joinedComms.includes(c.name)?C.white:C.green }}>
                                 {joinedComms.includes(c.name) ? "Вы в клубе ✓" : "Вступить"}
                               </button>
                             </div>
                           ))}
+
+                          {/* ── Halyk Sport Club — вложенный подблок ── */}
+                          <div style={{ borderRadius:10, border:`1px solid ${C.green}30`, marginTop:4, overflow:"hidden" }}>
+                            <button onClick={() => setObExpanded(p=>({...p, sport:!p.sport}))}
+                              style={{ width:"100%", display:"flex", alignItems:"center", gap:12, padding:"10px 14px", background:C.greenPale, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
+                              <div style={{ width:36, height:36, borderRadius:10, background:C.white, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🏅</div>
+                              <div style={{ flex:1 }}>
+                                <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Halyk Sport Club</div>
+                                <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Выбери свой вид спорта и вступи в команду</div>
+                              </div>
+                              <span style={{ fontSize:14, color:C.green, display:"inline-block", transition:"transform .2s", transform: obExpanded.sport?"rotate(180deg)":"rotate(0deg)" }}>▾</span>
+                            </button>
+                            {obExpanded.sport && (
+                              <div style={{ padding:"8px 14px 12px", background:C.white }}>
+                                <div style={{ fontSize:11, color:C.gray500, marginBottom:10 }}>Отметь виды спорта, в которых хочешь участвовать:</div>
+                                {[
+                                  { icon:"⚽", name:"Футбол" },
+                                  { icon:"🏐", name:"Волейбол" },
+                                  { icon:"🏀", name:"Баскетбол" },
+                                  { icon:"🎾", name:"Теннис" },
+                                  { icon:"🏓", name:"Настольный теннис" },
+                                  { icon:"🏸", name:"Бадминтон" },
+                                  { icon:"🏊", name:"Плавание" },
+                                  { icon:"🏃", name:"Бег / Running" },
+                                  { icon:"🚴", name:"Велоспорт" },
+                                  { icon:"🧘", name:"Йога" },
+                                  { icon:"🥊", name:"Бокс / Единоборства" },
+                                  { icon:"⛷️", name:"Лыжи / Сноуборд" },
+                                ].map(s => {
+                                  const key = "sport_"+s.name;
+                                  const joined = joinedComms.includes(key);
+                                  return (
+                                    <div key={s.name} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                                      <span style={{ fontSize:20, width:28, textAlign:"center", flexShrink:0 }}>{s.icon}</span>
+                                      <span style={{ flex:1, fontSize:13, color:C.dark, fontWeight:500 }}>{s.name}</span>
+                                      <button onClick={() => setJoinedComms(p => joined ? p.filter(x=>x!==key) : [...p, key])}
+                                        style={{ fontSize:11, fontWeight:600, whiteSpace:"nowrap", cursor:"pointer", fontFamily:"inherit", borderRadius:8, padding:"5px 12px", border:`1px solid ${C.green}`, background:joined?C.green:C.white, color:joined?C.white:C.green }}>
+                                        {joined ? "Записан ✓" : "Записаться"}
+                                      </button>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
