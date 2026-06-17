@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-const _v = "6.4";
+const _v = "6.5";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#FFFFFF",
@@ -1573,7 +1573,6 @@ export default function App() {
                                   { icon:"🚴", name:"Велоспорт" },
                                   { icon:"🧘", name:"Йога" },
                                   { icon:"🥊", name:"Бокс / Единоборства" },
-                                  { icon:"⛷️", name:"Лыжи / Сноуборд" },
                                 ].map(s => {
                                   const key = "sport_"+s.name;
                                   const joined = joinedComms.includes(key);
