@@ -17,6 +17,23 @@ const C = {
   purpleLight: "#F3EEFF",
 };
 
+// ── Helper: is the candidate from Russia or Kazakhstan? ────────────────────
+function isRfKz(c) {
+  const raw = (c.country || "").toLowerCase();
+  return (
+    raw.includes("россия") ||
+    raw.includes("москва") ||
+    raw.includes("\u{1F1F7}\u{1F1FA}") ||
+    raw.includes("\u{1F1F0}\u{1F1FF}") ||
+    raw.includes("казахстан") ||
+    raw.includes("алматы") ||
+    /\bрф\b/.test(raw) ||
+    /\bкз\b/.test(raw) ||
+    /\bru\b/.test(raw) ||
+    /\bkz\b/.test(raw)
+  );
+}
+
 // ── All candidates (pre-populated from Excel) ──────────────────────────────
 const CANDIDATES = [
   // ── Зарубежные: Revolut ──
@@ -59,25 +76,26 @@ const CANDIDATES = [
   { id:"valentin-morozov",      level:1, company:"Kuda",                      country:"🇦🇿 Баку",             name:"Valentin Morozov",          title:"CEO / Board Member",                      url:null,                                                      status:null,                                     desc:"Оператор банков на развивающихся рынках, бэкграунд McKinsey." },
   { id:"jonathan-g",            level:1, company:"ex-HSBC / Bank of England", country:"🇬🇧 Лондон",           name:"Jonathan G.",               title:"Head of Wise UK",                         url:"https://www.linkedin.com/in/jonathan-beaney-10b3b75b/",  status:null,                                     desc:null },
   { id:"aziz-tulaganov",        level:1, company:"ex-Yandex / ex-PwC",        country:"🇩🇪 Берлин",           name:"Aziz Tulaganov",            title:"Discovery, Growth & AI — CSPO, CSM, PMP", url:"https://www.linkedin.com/in/aziz-tulaganov/",             status:null,                                     desc:null },
-  // ── РФ и КЗ: T-Bank ──
-  { id:"pavel-fedorov",         level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Pavel Fedorov",             title:"Экс-вице-президент",                      url:"https://www.linkedin.com/in/pavel-fedorov/",              status:null,                                     desc:"Один из крупнейших цифровых банков: банкинг, страхование и инвестиции без отделений." },
+  // ── Зарубежные: T-Bank Dubai (не РФ/КЗ по стране) ──
   { id:"dmitry-vorobey",        level:2, company:"T-Bank",                    country:"🇦🇪 Дубай",            name:"Dmitry Vorobey",            title:"CPO, Tinkoff Travel",                     url:"https://www.linkedin.com/in/dmitry-vorobey-334b991b4/",  status:"написала в LinkedIn, готова встречаться", desc:null },
+  // ── Кандидаты РФ и КЗ: T-Bank ──
+  { id:"pavel-fedorov",         level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Pavel Fedorov",             title:"Экс-вице-президент",                      url:"https://www.linkedin.com/in/pavel-fedorov/",              status:null,                                     desc:"Один из крупнейших цифровых банков: банкинг, страхование и инвестиции без отделений." },
   { id:"maxim-savchenko",       level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Maxim Savchenko",           title:"CPO, T-Data & Transactions",              url:"https://www.linkedin.com/in/maxim-savchenko-5b1a6196/",  status:"написала в LinkedIn",                    desc:null },
   { id:"fedor-moroz",           level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Федор Мороз",               title:"Head of Business Protection",             url:"https://www.linkedin.com/in/fedor-moroz-29b20781/",       status:"написала в LinkedIn",                    desc:null },
   { id:"dmitriy-bogachev",      level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Dmitriy Bogachev",          title:"CPO of Loyalty and Cashback",             url:"https://www.linkedin.com/in/dmitriy-bogachev/",           status:null,                                     desc:null },
-  // ── РФ и КЗ: Yandex ──
+  // ── Кандидаты РФ и КЗ: Yandex ──
   { id:"timur-shalekenov",      level:2, company:"Yandex Qazaqstan",          country:"🇰🇿 Алматы",           name:"Timur Shalekenov",          title:"CEO",                                     url:"https://www.linkedin.com/in/timur-shalekenov-80a07037/",  status:null,                                     desc:null },
   { id:"yerzhan-bazarbay",      level:2, company:"Yandex Delivery KZ",        country:"🇰🇿 Алматы",           name:"Yerzhan Bazarbay",          title:"General Manager",                         url:"https://www.linkedin.com/in/bazarbayyerzhan/",            status:null,                                     desc:null },
   { id:"alex-zakharov",         level:2, company:"Yandex",                    country:"🇷🇺 Россия",           name:"Алексей Захаров",           title:"CPO",                                     url:"https://www.linkedin.com/in/alex-zakharov-/",             status:"написала в LinkedIn",                    desc:null },
   { id:"goran-groza",           level:2, company:"Yandex Eats",               country:"🇰🇿 Казахстан",        name:"Goran Groza",               title:"General Manager",                         url:"https://www.linkedin.com/in/goran-groza/",                status:"написала в LinkedIn",                    desc:null },
   { id:"mikhail-chizhikov",     level:2, company:"Avito / ex-VK / ex-Yandex", country:"🇷🇺 Москва",           name:"Mikhail Chizhikov",         title:"Chief Product Officer",                   url:"https://www.linkedin.com/in/mikhail-chizhikov-48b792a8/", status:null,                                     desc:null },
   { id:"kirill-n",              level:2, company:"Ozon Bank | ex-Yandex",     country:"🇷🇺 Россия",           name:"Kirill N.",                 title:"Коммерческий директор",                   url:"https://www.linkedin.com/in/kirillnepomnyashchiy/",       status:"написала в LinkedIn",                    desc:null },
-  // ── РФ и КЗ: прочие РФ ──
+  // ── Кандидаты РФ и КЗ: прочие РФ ──
   { id:"mike-zharchev",         level:2, company:"ex-Revolut / VividMoney",   country:"🇷🇺 Россия",           name:"Mike Zharchev",             title:"CPO at MWS AI | Co-Founder Untitled Bank", url:"https://www.linkedin.com/in/mike-zharchev-24b92094/",    status:null,                                     desc:null },
   { id:"artem-suslov",          level:2, company:"ex-MTS Fintech / Raiffeisen",country:"🇷🇺 Москва",           name:"Artem Suslov",              title:"Head of PMO",                             url:"https://www.linkedin.com/in/artem-suslov-898b9a27/",      status:null,                                     desc:null },
   { id:"maxim-ivanov",          level:2, company:"Untitled Bank",             country:"🇷🇺 Россия",           name:"Maxim Ivanov",              title:"CBDO / CSO",                              url:"https://www.linkedin.com/in/mike-zharchev-24b92094/",    status:null,                                     desc:null },
   { id:"alexander-nedospasov",  level:2, company:"ex-T-Bank / Yandex",        country:"🇷🇺 Россия",           name:"Alexander Nedospasov",      title:"CPO",                                     url:"https://www.linkedin.com/in/alexandernedospasov/",        status:null,                                     desc:null },
-  // ── РФ и КЗ: Казахстан ──
+  // ── Кандидаты РФ и КЗ: Казахстан ──
   { id:"andrey-timchenko",      level:2, company:"Bereke Bank",               country:"🇰🇿 Казахстан",        name:"Andrey Timchenko",          title:"CEO",                                     url:"https://www.linkedin.com/in/andrey-timchenko-4371676/",  status:null,                                     desc:null },
   { id:"zhumabek-m",            level:2, company:"Halyk Group / DNA Payments", country:"🇰🇿 Казахстан",       name:"Zhumabek M.",               title:null,                                      url:null,                                                      status:null,                                     desc:null },
   { id:"ali-rakhymov",          level:2, company:"Yandex Lavka KZ",           country:"🇰🇿 Алматы",           name:"Ali Rakhymov",              title:"Head of Fresh",                           url:"https://www.linkedin.com/in/ali-rakhymov-087502200/",    status:null,                                     desc:null },
@@ -119,10 +137,12 @@ export default function App() {
   const totalSelected = CANDIDATES.filter(c => data[c.id]?.selected).length;
   const totalComments = CANDIDATES.filter(c => data[c.id]?.comment?.trim()).length;
 
+  const rfkzCount = CANDIDATES.filter(c => isRfKz(c)).length;
+  const zarubezhCount = CANDIDATES.filter(c => !isRfKz(c)).length;
+
   const displayed = CANDIDATES.filter(c => {
-    if (filter === "selected" && !data[c.id]?.selected) return false;
-    if (filter === "l1" && c.level !== 1) return false;
-    if (filter === "l2" && c.level !== 2) return false;
+    if (filter === "rfkz"     && !isRfKz(c)) return false;
+    if (filter === "zarubezh" &&  isRfKz(c)) return false;
     if (!search.trim()) return true;
     const q = search.toLowerCase();
     return [c.name, c.company, c.country, c.title].some(v => v?.toLowerCase().includes(q));
@@ -179,10 +199,9 @@ export default function App() {
           {/* Filter tabs */}
           <div style={{ display:"flex", gap:6, marginBottom:14, overflowX:"auto", paddingBottom:2 }}>
             {[
-              { key:"all",      label:`Все (${CANDIDATES.length})` },
-              { key:"selected", label:`Избранные${totalSelected ? ` (${totalSelected})` : ""}` },
-              { key:"l1",       label:"🌍 Зарубежные" },
-              { key:"l2",       label:"🇷🇺🇰🇿 РФ и КЗ" },
+              { key:"all",       label:`Все (${CANDIDATES.length})` },
+              { key:"zarubezh", label:`🌍 Зарубежные (${zarubezhCount})` },
+              { key:"rfkz",     label:`🇷🇺🇰🇿 Кандидаты РФ и КЗ (${rfkzCount})` },
             ].map(tab => (
               <button key={tab.key} onClick={() => setFilter(tab.key)} style={{
                 background: filter === tab.key ? C.green : C.white,
@@ -208,18 +227,8 @@ export default function App() {
 
           {displayed.length === 0 && (
             <div style={{ textAlign:"center", padding:"50px 20px", color:C.gray2 }}>
-              <div style={{ fontSize:36, marginBottom:10 }}>
-                {filter === "selected" ? "⭐" : "🔍"}
-              </div>
-              <div style={{ fontSize:15, fontWeight:600 }}>
-                {filter === "selected" && totalSelected === 0
-                  ? "Нет избранных кандидатов"
-                  : "Ничего не найдено"}
-              </div>
-              {filter === "selected" && totalSelected === 0 &&
-                <div style={{ fontSize:13, color:C.gray4, marginTop:6 }}>
-                  Отметьте кандидатов галочкой ✓
-                </div>}
+              <div style={{ fontSize:36, marginBottom:10 }}>🔍</div>
+              <div style={{ fontSize:15, fontWeight:600 }}>Ничего не найдено</div>
             </div>
           )}
         </div>
