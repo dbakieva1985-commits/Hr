@@ -17,94 +17,463 @@ const C = {
   purpleLight: "#F3EEFF",
 };
 
-// ── Helper: is the candidate from Russia or Kazakhstan? ────────────────────
-function isRfKz(c) {
+// ── Country helpers ────────────────────────────────────────────────────────
+function isRu(c) {
   const raw = (c.country || "").toLowerCase();
   return (
     raw.includes("россия") ||
     raw.includes("москва") ||
     raw.includes("\u{1F1F7}\u{1F1FA}") ||
-    raw.includes("\u{1F1F0}\u{1F1FF}") ||
+    /\bрф\b/.test(raw) ||
+    /\bru\b/.test(raw)
+  );
+}
+function isKz(c) {
+  const raw = (c.country || "").toLowerCase();
+  return (
     raw.includes("казахстан") ||
     raw.includes("алматы") ||
-    /\bрф\b/.test(raw) ||
+    raw.includes("\u{1F1F0}\u{1F1FF}") ||
     /\bкз\b/.test(raw) ||
-    /\bru\b/.test(raw) ||
     /\bkz\b/.test(raw)
   );
 }
+function isRfKz(c) { return isRu(c) || isKz(c); }
 
-// ── All candidates (pre-populated from Excel) ──────────────────────────────
+// ── All candidates ─────────────────────────────────────────────────────────
 const CANDIDATES = [
   // ── Зарубежные: Revolut ──
-  { id:"vlad-yatsenko",         level:1, company:"Revolut",                   country:"🇬🇧 Великобритания",  name:"Vlad Yatsenko",            title:"Co-founder & CTO",                        url:"https://www.linkedin.com/in/yatsenko/",                   status:null,                                     desc:"Глобальный необанк: банкинг, инвестиции, криптовалюта, международные платежи." },
-  { id:"ilya-vorobiev",         level:1, company:"Revolut",                   country:"🇺🇸 Калифорния",       name:"Ilya Vorobiev",             title:"CPO / CTO",                               url:"https://www.linkedin.com/in/ivorobiev/",                  status:"написала в LinkedIn",                    desc:null },
-  { id:"nik-storonsky",         level:1, company:"Revolut",                   country:"🇬🇧 Лондон",           name:"Nik Storonsky",             title:"Founder & CEO",                           url:"https://www.linkedin.com/in/nstoronsky/",                 status:null,                                     desc:null },
-  { id:"siddhartha-jajodia",    level:1, company:"Revolut",                   country:"🇬🇧 Великобритания",  name:"Siddhartha Jajodia",        title:"Group Chief Banking Officer",             url:"https://www.linkedin.com/in/siddhartha-jajodia-09a6421/", status:null,                                     desc:null },
-  { id:"dmytro-strelchuk",      level:1, company:"Revolut",                   country:"🇬🇧 Лондон",           name:"Dmytro Strelchuk",          title:null,                                      url:"https://www.linkedin.com/in/dmytro-strelchuk/",           status:null,                                     desc:null },
-  { id:"paulo-pereira",         level:1, company:"Revolut",                   country:"🇬🇧 Лондон",           name:"Paulo Pereira",             title:"Director, Global Head of Product",        url:"https://www.linkedin.com/in/paulo-gpereira/",             status:"написала в LinkedIn",                    desc:null },
-  { id:"michal-laube",          level:1, company:"Revolut",                   country:"🇱🇺 Люксембург",       name:"Michal Laube",              title:"COO",                                     url:"https://www.linkedin.com/in/michals/",                    status:null,                                     desc:null },
-  { id:"matt-baxby",            level:1, company:"Revolut",                   country:"🇦🇺 Австралия",        name:"Matt Baxby",                title:"Partner, CEO Australia / NZ & APAC",      url:"https://www.linkedin.com/in/mattbaxby/",                  status:null,                                     desc:null },
-  { id:"carlos-selonke",        level:1, company:"Revolut",                   country:"🇬🇧 Лондон",           name:"Carlos Selonke",            title:"Chief Information Officer",               url:"https://www.linkedin.com/in/carlosselonke/",              status:null,                                     desc:null },
-  { id:"donato-lucia",          level:1, company:"Revolut",                   country:"🇬🇧 Великобритания",  name:"Donato Lucia",              title:"Partner & VP of Technology",              url:"https://www.linkedin.com/in/donatolucia/",                status:null,                                     desc:null },
-  { id:"francesca-carlesi",     level:1, company:"Revolut",                   country:"🇬🇧 Великобритания",  name:"Francesca Carlesi",         title:"CEO",                                     url:"https://www.linkedin.com/in/francesca-carlesi-b326922/",  status:null,                                     desc:null },
-  { id:"beatrice-cossa",        level:1, company:"Revolut",                   country:"🇫🇷 Париж",            name:"Beatrice Cossa-Dumurgier",  title:"CEO Western Europe",                      url:"https://www.linkedin.com/in/beatrice-cossa-dumurgier-b30b2b7/", status:null,                             desc:null },
-  { id:"nicola-vicino",         level:1, company:"Revolut",                   country:"🇮🇹 Милан",            name:"Nicola Vicino",             title:"General Manager Italy",                   url:"https://www.linkedin.com/in/nicolavicino/",               status:null,                                     desc:null },
-  { id:"james-gibson",          level:1, company:"Revolut",                   country:"🇬🇧 Великобритания",  name:"James Gibson",              title:"Head of Revolut Business & Partner",      url:"https://www.linkedin.com/in/james-gibson-94364b65/",      status:null,                                     desc:null },
-  { id:"yana-shkrebenkova",     level:1, company:"Revolut",                   country:"🇬🇧 Великобритания",  name:"Yana Shkrebenkova",         title:"Head of Wealth & Trading UK",             url:"https://www.linkedin.com/in/shkrebenkova/",               status:null,                                     desc:null },
-  { id:"jonathan-beaney-rev",   level:1, company:"Revolut | Ex-Amazon",       country:"🇪🇸 Испания",          name:"Jonathan Beaney",           title:null,                                      url:"https://www.linkedin.com/in/jonathan-beaney-10b3b75b/",  status:null,                                     desc:null },
+  {
+    id:"vlad-yatsenko", level:1, company:"Revolut", country:"🇬🇧 Великобритания",
+    name:"Vlad Yatsenko", title:"Co-founder & CTO",
+    url:"https://www.linkedin.com/in/yatsenko/", status:null,
+    desc:"Глобальный необанк: банкинг, инвестиции, криптовалюта, международные платежи.",
+    bio:"Сооснователь и технический директор Revolut — одной из самых дорогих финтех-компаний Европы. Выходец из Goldman Sachs, создал с нуля технологическую платформу, которой сегодня пользуются 50+ млн человек."
+  },
+  {
+    id:"ilya-vorobiev", level:1, company:"Revolut", country:"🇺🇸 Калифорния",
+    name:"Ilya Vorobiev", title:"CPO / CTO",
+    url:"https://www.linkedin.com/in/ivorobiev/", status:"написала в LinkedIn",
+    desc:null,
+    bio:"Продуктовый и технологический лидер Revolut в США. Строит мобильный банкинг нового поколения для американского рынка, используя опыт топовых кремниевых технологических компаний."
+  },
+  {
+    id:"nik-storonsky", level:1, company:"Revolut", country:"🇬🇧 Лондон",
+    name:"Nik Storonsky", title:"Founder & CEO",
+    url:"https://www.linkedin.com/in/nstoronsky/", status:null,
+    desc:null,
+    bio:"Основатель и CEO Revolut — финтех-компании с оценкой $45 млрд. Бывший трейдер Credit Suisse и Lehman Brothers, создал самый быстрорастущий цифровой банк в мире за 10 лет."
+  },
+  {
+    id:"siddhartha-jajodia", level:1, company:"Revolut", country:"🇬🇧 Великобритания",
+    name:"Siddhartha Jajodia", title:"Group Chief Banking Officer",
+    url:"https://www.linkedin.com/in/siddhartha-jajodia-09a6421/", status:null,
+    desc:null,
+    bio:"Главный банковский директор Revolut. Более 20 лет опыта в банковском секторе — руководил банковскими операциями в Barclays и Standard Chartered перед переходом в финтех."
+  },
+  {
+    id:"dmytro-strelchuk", level:1, company:"Revolut", country:"🇬🇧 Лондон",
+    name:"Dmytro Strelchuk", title:null,
+    url:"https://www.linkedin.com/in/dmytro-strelchuk/", status:null,
+    desc:null,
+    bio:"Топ-менеджер Revolut с глубоким опытом в масштабировании технологических команд. Участвует в построении глобальной инфраструктуры одного из крупнейших необанков мира."
+  },
+  {
+    id:"paulo-pereira", level:1, company:"Revolut", country:"🇬🇧 Лондон",
+    name:"Paulo Pereira", title:"Director, Global Head of Product",
+    url:"https://www.linkedin.com/in/paulo-gpereira/", status:"написала в LinkedIn",
+    desc:null,
+    bio:"Глобальный директор по продукту Revolut. Отвечает за продуктовую стратегию всего банковского и платёжного портфеля на 40+ рынках, ранее работал в Google и ведущих европейских финтех-компаниях."
+  },
+  {
+    id:"michal-laube", level:1, company:"Revolut", country:"🇱🇺 Люксембург",
+    name:"Michal Laube", title:"COO",
+    url:"https://www.linkedin.com/in/michals/", status:null,
+    desc:null,
+    bio:"Операционный директор Revolut. Выстраивает операционную модель для масштабирования бизнеса на рынках ЕС, обеспечивая соответствие регуляторным требованиям при работе с банковской лицензией."
+  },
+  {
+    id:"matt-baxby", level:1, company:"Revolut", country:"🇦🇺 Австралия",
+    name:"Matt Baxby", title:"Partner, CEO Australia / NZ & APAC",
+    url:"https://www.linkedin.com/in/mattbaxby/", status:null,
+    desc:null,
+    bio:"Генеральный директор Revolut в Австралии, Новой Зеландии и Азиатско-Тихоокеанском регионе. Построил один из самых быстрорастущих цифровых банков в APAC, до Revolut — руководил в Virgin Money."
+  },
+  {
+    id:"carlos-selonke", level:1, company:"Revolut", country:"🇬🇧 Лондон",
+    name:"Carlos Selonke", title:"Chief Information Officer",
+    url:"https://www.linkedin.com/in/carlosselonke/", status:null,
+    desc:null,
+    bio:"Директор по информационным технологиям Revolut. Отвечает за кибербезопасность, IT-инфраструктуру и технологическую устойчивость системы, обслуживающей 50+ млн пользователей."
+  },
+  {
+    id:"donato-lucia", level:1, company:"Revolut", country:"🇬🇧 Великобритания",
+    name:"Donato Lucia", title:"Partner & VP of Technology",
+    url:"https://www.linkedin.com/in/donatolucia/", status:null,
+    desc:null,
+    bio:"Вице-президент по технологиям Revolut. Строит высоконагруженные системы обработки платежей и backend-инфраструктуру для одной из наиболее технологичных финтех-компаний в мире."
+  },
+  {
+    id:"francesca-carlesi", level:1, company:"Revolut", country:"🇬🇧 Великобритания",
+    name:"Francesca Carlesi", title:"CEO",
+    url:"https://www.linkedin.com/in/francesca-carlesi-b326922/", status:null,
+    desc:null,
+    bio:"CEO Revolut UK (банковская лицензия). Опытный банковский руководитель с карьерой в McKinsey и ведущих европейских банках — возглавила регулируемое банковское направление Revolut."
+  },
+  {
+    id:"beatrice-cossa", level:1, company:"Revolut", country:"🇫🇷 Париж",
+    name:"Beatrice Cossa-Dumurgier", title:"CEO Western Europe",
+    url:"https://www.linkedin.com/in/beatrice-cossa-dumurgier-b30b2b7/", status:null,
+    desc:null,
+    bio:"CEO Revolut для Западной Европы. Руководит ростом бизнеса во Франции, Испании, Германии и Италии — до Revolut занимала руководящие позиции в Credit Agricole и Orange Bank."
+  },
+  {
+    id:"nicola-vicino", level:1, company:"Revolut", country:"🇮🇹 Милан",
+    name:"Nicola Vicino", title:"General Manager Italy",
+    url:"https://www.linkedin.com/in/nicolavicino/", status:null,
+    desc:null,
+    bio:"Генеральный директор Revolut в Италии. Вывел Revolut в топ-3 самых скачиваемых финансовых приложений Италии, выстраивая локальные партнёрства и продуктовую адаптацию."
+  },
+  {
+    id:"james-gibson", level:1, company:"Revolut", country:"🇬🇧 Великобритания",
+    name:"James Gibson", title:"Head of Revolut Business & Partner",
+    url:"https://www.linkedin.com/in/james-gibson-94364b65/", status:null,
+    desc:null,
+    bio:"Руководитель B2B направления Revolut Business. Развивает банковский продукт для малого и среднего бизнеса с 500 000+ корпоративных клиентов по всему миру."
+  },
+  {
+    id:"yana-shkrebenkova", level:1, company:"Revolut", country:"🇬🇧 Великобритания",
+    name:"Yana Shkrebenkova", title:"Head of Wealth & Trading UK",
+    url:"https://www.linkedin.com/in/shkrebenkova/", status:null,
+    desc:null,
+    bio:"Руководитель направления Wealth & Trading в Revolut UK. Развивает инвестиционные продукты — акции, ETF, золото и криптовалюту — для миллионов розничных инвесторов."
+  },
+  {
+    id:"jonathan-beaney-rev", level:1, company:"Revolut | Ex-Amazon", country:"🇪🇸 Испания",
+    name:"Jonathan Beaney", title:null,
+    url:"https://www.linkedin.com/in/jonathan-beaney-10b3b75b/", status:null,
+    desc:null,
+    bio:"Топ-менеджер с опытом в Amazon и Revolut. Объединяет экспертизу в e-commerce и цифровом банкинге, работал над продуктами для глобальных рынков."
+  },
+
   // ── Зарубежные: Wise ──
-  { id:"harsh-sinha",           level:1, company:"Wise",                      country:"🇬🇧 Великобритания",  name:"Harsh Sinha",               title:"Chief Technology Officer",                url:"https://www.linkedin.com/in/harshsinha/",                 status:null,                                     desc:"Международная платформа для дешёвых трансграничных переводов и мультивалютных счетов." },
-  { id:"diana-avila",           level:1, company:"Wise",                      country:"🇬🇧 Лондон",           name:"Diana Avila",               title:"Chief Banking and Expansion Officer",      url:"https://www.linkedin.com/in/diana-avila-g/",              status:null,                                     desc:null },
+  {
+    id:"harsh-sinha", level:1, company:"Wise", country:"🇬🇧 Великобритания",
+    name:"Harsh Sinha", title:"Chief Technology Officer",
+    url:"https://www.linkedin.com/in/harshsinha/", status:null,
+    desc:"Международная платформа для дешёвых трансграничных переводов и мультивалютных счетов.",
+    bio:"Технический директор Wise (бывш. TransferWise). Построил глобальную платёжную инфраструктуру, через которую ежегодно проходит более $100 млрд, до этого — CTO PayPal."
+  },
+  {
+    id:"diana-avila", level:1, company:"Wise", country:"🇬🇧 Лондон",
+    name:"Diana Avila", title:"Chief Banking and Expansion Officer",
+    url:"https://www.linkedin.com/in/diana-avila-g/", status:null,
+    desc:null,
+    bio:"Директор по банкингу и развитию Wise. Отвечает за получение банковских лицензий и регуляторное расширение на новые рынки, обеспечивая рост Wise в 80+ странах."
+  },
+
   // ── Зарубежные: Yandex (США) ──
-  { id:"madina-seisengaliyeva", level:1, company:"Yandex",                    country:"🇺🇸 США",              name:"Madina Seisengaliyeva",     title:"Commercial Strategy Leader, FMCG & AdTech", url:"https://www.linkedin.com/in/madina-seisengaliyeva/",    status:"написала, встреча с 29.06",              desc:null },
-  // ── Зарубежные: Нeobanks ──
-  { id:"maximilian-tayenthal",  level:1, company:"N26",                       country:"🇩🇪 Берлин",           name:"Maximilian Tayenthal",      title:"Co-founder",                              url:"https://www.linkedin.com/in/maximilian-tayenthal/",       status:null,                                     desc:"Мобильный банк для простого управления личными финансами в Европе." },
-  { id:"andy-smart",            level:1, company:"Monzo",                     country:"🇬🇧 Великобритания",  name:"Andy Smart",                title:"Chief Product Officer",                   url:"https://www.linkedin.com/in/andysmart/",                  status:null,                                     desc:"Цифровой банк с акцентом на мобильное приложение и бюджетирование." },
-  { id:"joe-gordon",            level:1, company:"Starling Bank",             country:"🇬🇧 Великобритания",  name:"Joe Gordon",                title:"Chief Operating Officer",                 url:"https://www.linkedin.com/in/joe-gordon/",                 status:null,                                     desc:"Необанк с банковской лицензией для физических лиц и бизнеса." },
-  { id:"bianca-zwart",          level:1, company:"bunq",                      country:"🇳🇱 Амстердам",        name:"Bianca Zwart",              title:"Chief Strategy Officer",                  url:"https://www.linkedin.com/in/bianca-zwart/",               status:null,                                     desc:"Европейский мобильный банк с мультивалютными счетами." },
-  { id:"cristina-junqueira",    level:1, company:"Nubank",                    country:"🇧🇷 Сан-Паулу",        name:"Cristina Junqueira",        title:"Co-founder",                              url:"https://www.linkedin.com/in/crisjunqueira/",              status:null,                                     desc:"Крупнейший цифровой банк Латинской Америки с десятками миллионов клиентов." },
-  { id:"ryan-king",             level:1, company:"Chime",                     country:"🇺🇸 Сан-Франциско",   name:"Ryan King",                 title:"Co-founder",                              url:"https://www.linkedin.com/in/ryanaking/",                  status:null,                                     desc:"Популярная цифровая банковская платформа для повседневных финансов." },
-  { id:"jason-zhang",           level:1, company:"Mercury",                   country:"🇺🇸 Сан-Франциско",   name:"Jason Zhang",               title:"Co-founder & COO",                        url:"https://www.linkedin.com/in/jason-zhang-5645a860/",       status:null,                                     desc:"Цифровая банковская платформа для стартапов и технологических компаний." },
-  { id:"pedro-franceschi",      level:1, company:"Brex",                      country:"🇺🇸 Сан-Франциско",   name:"Pedro Franceschi",          title:"Founder",                                 url:"https://www.linkedin.com/in/pfranceschi/",                status:null,                                     desc:"Финансовая платформа для бизнеса: корпоративные карты и управление расходами." },
-  { id:"trevor-marshall",       level:1, company:"Current",                   country:"🇺🇸 Нью-Йорк",        name:"Trevor Marshall",           title:"Chief Technology Officer",                url:"https://www.linkedin.com/in/trevor-kurth-marshall/",      status:null,                                     desc:"Мобильный необанк для молодой аудитории и персональных финансов." },
-  { id:"soren-kyhl",            level:1, company:"Lunar",                     country:"🇩🇰 Копенгаген",       name:"Søren Kyhl",                title:"Chief Operating Officer",                 url:"https://www.linkedin.com/in/soerenkyhl/",                 status:null,                                     desc:"Крупнейший цифровой банк Скандинавии." },
-  { id:"gavin-michael",         level:1, company:"Varo Bank",                 country:"🇺🇸 США",              name:"Gavin Michael",             title:"President",                               url:"https://www.linkedin.com/in/gavincmichael/",              status:null,                                     desc:"Один из первых необанков США с собственной банковской лицензией." },
-  { id:"lauren-stafford-webb",  level:1, company:"SoFi",                      country:"🇺🇸 Сан-Франциско",   name:"Lauren Stafford Webb",      title:"Chief Marketing Officer",                 url:"https://www.linkedin.com/in/lauren-stafford-webb/",       status:null,                                     desc:"Финтех: банкинг, инвестиции, кредиты и финансовое планирование." },
-  { id:"david-sandstrom",       level:1, company:"Klarna",                    country:"🇸🇪 Стокгольм",        name:"David Sandström",           title:"Chief Marketing Officer",                 url:"https://www.linkedin.com/in/davidsandstrom/",             status:null,                                     desc:"Глобальный финтех-лидер в сфере BNPL и онлайн-платежей." },
+  {
+    id:"madina-seisengaliyeva", level:1, company:"Yandex", country:"🇺🇸 США",
+    name:"Madina Seisengaliyeva", title:"Commercial Strategy Leader, FMCG & AdTech",
+    url:"https://www.linkedin.com/in/madina-seisengaliyeva/", status:"написала, встреча с 29.06",
+    desc:null,
+    bio:"Руководитель коммерческой стратегии Yandex в сегментах FMCG и AdTech. Связывает крупнейшие потребительские бренды с рекламной экосистемой Яндекса на рынках СНГ, ранее работала в P&G."
+  },
+
+  // ── Зарубежные: Neobanks ──
+  {
+    id:"maximilian-tayenthal", level:1, company:"N26", country:"🇩🇪 Берлин",
+    name:"Maximilian Tayenthal", title:"Co-founder",
+    url:"https://www.linkedin.com/in/maximilian-tayenthal/", status:null,
+    desc:"Мобильный банк для простого управления личными финансами в Европе.",
+    bio:"Сооснователь N26 — одного из ведущих европейских необанков с 8 млн клиентами. Юрист по образованию, построил с нуля полностью цифровой банк с банковской лицензией ЕС."
+  },
+  {
+    id:"andy-smart", level:1, company:"Monzo", country:"🇬🇧 Великобритания",
+    name:"Andy Smart", title:"Chief Product Officer",
+    url:"https://www.linkedin.com/in/andysmart/", status:null,
+    desc:"Цифровой банк с акцентом на мобильное приложение и бюджетирование.",
+    bio:"Директор по продукту Monzo — одного из самых любимых банков Великобритании с 10+ млн клиентов. Создаёт инновационные функции бюджетирования и аналитики расходов для нового поколения пользователей."
+  },
+  {
+    id:"joe-gordon", level:1, company:"Starling Bank", country:"🇬🇧 Великобритания",
+    name:"Joe Gordon", title:"Chief Operating Officer",
+    url:"https://www.linkedin.com/in/joe-gordon/", status:null,
+    desc:"Необанк с банковской лицензией для физических лиц и бизнеса.",
+    bio:"Операционный директор Starling Bank — многократного победителя UK Banking Awards. Отвечает за операции прибыльного необанка с полной банковской лицензией и 3+ млн клиентов."
+  },
+  {
+    id:"bianca-zwart", level:1, company:"bunq", country:"🇳🇱 Амстердам",
+    name:"Bianca Zwart", title:"Chief Strategy Officer",
+    url:"https://www.linkedin.com/in/bianca-zwart/", status:null,
+    desc:"Европейский мобильный банк с мультивалютными счетами.",
+    bio:"Директор по стратегии bunq — европейского «банка свободы» с акцентом на устойчивое развитие. Формирует долгосрочное позиционирование bunq как второй банковской лицензии ЕС для эспатов и цифровых кочевников."
+  },
+  {
+    id:"cristina-junqueira", level:1, company:"Nubank", country:"🇧🇷 Сан-Паулу",
+    name:"Cristina Junqueira", title:"Co-founder",
+    url:"https://www.linkedin.com/in/crisjunqueira/", status:null,
+    desc:"Крупнейший цифровой банк Латинской Америки с десятками миллионов клиентов.",
+    bio:"Сооснователь Nubank — крупнейшего цифрового банка в мире по числу клиентов (100+ млн). Бывший директор Itaú Unibanco, создала банк, который перевернул финансовую систему Латинской Америки."
+  },
+  {
+    id:"ryan-king", level:1, company:"Chime", country:"🇺🇸 Сан-Франциско",
+    name:"Ryan King", title:"Co-founder",
+    url:"https://www.linkedin.com/in/ryanaking/", status:null,
+    desc:"Популярная цифровая банковская платформа для повседневных финансов.",
+    bio:"Сооснователь Chime — одного из крупнейших необанков США с 22+ млн клиентами. Построил платформу, ориентированную на рабочий класс Америки, с оценкой $25 млрд."
+  },
+  {
+    id:"jason-zhang", level:1, company:"Mercury", country:"🇺🇸 Сан-Франциско",
+    name:"Jason Zhang", title:"Co-founder & COO",
+    url:"https://www.linkedin.com/in/jason-zhang-5645a860/", status:null,
+    desc:"Цифровая банковская платформа для стартапов и технологических компаний.",
+    bio:"Сооснователь и операционный директор Mercury. Создал цифровой банк, ставший стандартом для стартапов Кремниевой долины, — оборот $50+ млрд, более 200 000 клиентов-компаний."
+  },
+  {
+    id:"pedro-franceschi", level:1, company:"Brex", country:"🇺🇸 Сан-Франциско",
+    name:"Pedro Franceschi", title:"Founder",
+    url:"https://www.linkedin.com/in/pfranceschi/", status:null,
+    desc:"Финансовая платформа для бизнеса: корпоративные карты и управление расходами.",
+    bio:"Основатель Brex — ведущей финансовой платформы для корпоративных клиентов с оценкой $12 млрд. Создал компанию в 19 лет, превратив её в обязательный инструмент для американских стартапов."
+  },
+  {
+    id:"trevor-marshall", level:1, company:"Current", country:"🇺🇸 Нью-Йорк",
+    name:"Trevor Marshall", title:"Chief Technology Officer",
+    url:"https://www.linkedin.com/in/trevor-kurth-marshall/", status:null,
+    desc:"Мобильный необанк для молодой аудитории и персональных финансов.",
+    bio:"Технический директор Current — мобильного банка нового поколения. Строит продукты для молодёжной аудитории, включая платёжные карты для подростков и быстрые переводы без комиссий."
+  },
+  {
+    id:"soren-kyhl", level:1, company:"Lunar", country:"🇩🇰 Копенгаген",
+    name:"Søren Kyhl", title:"Chief Operating Officer",
+    url:"https://www.linkedin.com/in/soerenkyhl/", status:null,
+    desc:"Крупнейший цифровой банк Скандинавии.",
+    bio:"Операционный директор Lunar — крупнейшего скандинавского необанка с операциями в Дании, Швеции и Норвегии. Прежде занимал позиции в Danske Bank и Saxo Bank."
+  },
+  {
+    id:"gavin-michael", level:1, company:"Varo Bank", country:"🇺🇸 США",
+    name:"Gavin Michael", title:"President",
+    url:"https://www.linkedin.com/in/gavincmichael/", status:null,
+    desc:"Один из первых необанков США с собственной банковской лицензией.",
+    bio:"Президент Varo Bank — первого потребительского необанка в США, получившего полную национальную банковскую лицензию. Экс-CTO Citigroup и Accenture, специализируется на цифровой трансформации в банкинге."
+  },
+  {
+    id:"lauren-stafford-webb", level:1, company:"SoFi", country:"🇺🇸 Сан-Франциско",
+    name:"Lauren Stafford Webb", title:"Chief Marketing Officer",
+    url:"https://www.linkedin.com/in/lauren-stafford-webb/", status:null,
+    desc:"Финтех: банкинг, инвестиции, кредиты и финансовое планирование.",
+    bio:"Директор по маркетингу SoFi — американского финансового суперприложения с банковской лицензией. Выстраивает бренд, охватывающий банкинг, инвестиции, студенческие кредиты и ипотеку."
+  },
+  {
+    id:"david-sandstrom", level:1, company:"Klarna", country:"🇸🇪 Стокгольм",
+    name:"David Sandström", title:"Chief Marketing Officer",
+    url:"https://www.linkedin.com/in/davidsandstrom/", status:null,
+    desc:"Глобальный финтех-лидер в сфере BNPL и онлайн-платежей.",
+    bio:"Директор по маркетингу Klarna — мирового лидера в сфере BNPL с 150+ млн клиентами. Создал один из самых узнаваемых финтех-брендов мира, сочетая смелый дизайн и культурные коллаборации."
+  },
+
   // ── Зарубежные: прочие ──
-  { id:"valentin-morozov",      level:1, company:"Kuda",                      country:"🇦🇿 Баку",             name:"Valentin Morozov",          title:"CEO / Board Member",                      url:null,                                                      status:null,                                     desc:"Оператор банков на развивающихся рынках, бэкграунд McKinsey." },
-  { id:"jonathan-g",            level:1, company:"ex-HSBC / Bank of England", country:"🇬🇧 Лондон",           name:"Jonathan G.",               title:"Head of Wise UK",                         url:"https://www.linkedin.com/in/jonathan-beaney-10b3b75b/",  status:null,                                     desc:null },
-  { id:"aziz-tulaganov",        level:1, company:"ex-Yandex / ex-PwC",        country:"🇩🇪 Берлин",           name:"Aziz Tulaganov",            title:"Discovery, Growth & AI — CSPO, CSM, PMP", url:"https://www.linkedin.com/in/aziz-tulaganov/",             status:null,                                     desc:null },
-  // ── Зарубежные: T-Bank Dubai (не РФ/КЗ по стране) ──
-  { id:"dmitry-vorobey",        level:2, company:"T-Bank",                    country:"🇦🇪 Дубай",            name:"Dmitry Vorobey",            title:"CPO, Tinkoff Travel",                     url:"https://www.linkedin.com/in/dmitry-vorobey-334b991b4/",  status:"написала в LinkedIn, готова встречаться", desc:null },
+  {
+    id:"valentin-morozov", level:1, company:"Kuda", country:"🇦🇿 Баку",
+    name:"Valentin Morozov", title:"CEO / Board Member",
+    url:null, status:null,
+    desc:"Оператор банков на развивающихся рынках, бэкграунд McKinsey.",
+    bio:"CEO и член совета директоров в сфере банкинга на развивающихся рынках. Консультант McKinsey, специализирующийся на цифровой трансформации финансовых институтов в СНГ и Африке."
+  },
+  {
+    id:"jonathan-g", level:1, company:"ex-HSBC / Bank of England", country:"🇬🇧 Лондон",
+    name:"Jonathan G.", title:"Head of Wise UK",
+    url:"https://www.linkedin.com/in/jonathan-beaney-10b3b75b/", status:null,
+    desc:null,
+    bio:"Руководитель Wise UK с богатым институциональным бэкграундом — HSBC и Банк Англии. Сочетает глубокое понимание регуляторной среды с опытом масштабирования финтех-продукта в Великобритании."
+  },
+  {
+    id:"aziz-tulaganov", level:1, company:"ex-Yandex / ex-PwC", country:"🇩🇪 Берлин",
+    name:"Aziz Tulaganov", title:"Discovery, Growth & AI — CSPO, CSM, PMP",
+    url:"https://www.linkedin.com/in/aziz-tulaganov/", status:null,
+    desc:null,
+    bio:"Сертифицированный продуктовый и проектный лидер (CSPO, CSM, PMP) с опытом в Яндексе и PwC. Специализируется на product discovery, growth-метриках и внедрении ИИ в продуктовые процессы."
+  },
+
+  // ── Зарубежные: T-Bank Dubai ──
+  {
+    id:"dmitry-vorobey", level:2, company:"T-Bank", country:"🇦🇪 Дубай",
+    name:"Dmitry Vorobey", title:"CPO, Tinkoff Travel",
+    url:"https://www.linkedin.com/in/dmitry-vorobey-334b991b4/", status:"написала в LinkedIn, готова встречаться",
+    desc:null,
+    bio:"Директор по продукту Tinkoff Travel — одной из крупнейших тревел-платформ России в экосистеме Т-Банка. Сейчас базируется в Дубае, строит международные продуктовые команды."
+  },
+
   // ── Кандидаты РФ и КЗ: T-Bank ──
-  { id:"pavel-fedorov",         level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Pavel Fedorov",             title:"Экс-вице-президент",                      url:"https://www.linkedin.com/in/pavel-fedorov/",              status:null,                                     desc:"Один из крупнейших цифровых банков: банкинг, страхование и инвестиции без отделений." },
-  { id:"maxim-savchenko",       level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Maxim Savchenko",           title:"CPO, T-Data & Transactions",              url:"https://www.linkedin.com/in/maxim-savchenko-5b1a6196/",  status:"написала в LinkedIn",                    desc:null },
-  { id:"fedor-moroz",           level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Федор Мороз",               title:"Head of Business Protection",             url:"https://www.linkedin.com/in/fedor-moroz-29b20781/",       status:"написала в LinkedIn",                    desc:null },
-  { id:"dmitriy-bogachev",      level:2, company:"T-Bank",                    country:"🇷🇺 Россия",           name:"Dmitriy Bogachev",          title:"CPO of Loyalty and Cashback",             url:"https://www.linkedin.com/in/dmitriy-bogachev/",           status:null,                                     desc:null },
-  // ── Кандидаты РФ и КЗ: Yandex ──
-  { id:"timur-shalekenov",      level:2, company:"Yandex Qazaqstan",          country:"🇰🇿 Алматы",           name:"Timur Shalekenov",          title:"CEO",                                     url:"https://www.linkedin.com/in/timur-shalekenov-80a07037/",  status:null,                                     desc:null },
-  { id:"yerzhan-bazarbay",      level:2, company:"Yandex Delivery KZ",        country:"🇰🇿 Алматы",           name:"Yerzhan Bazarbay",          title:"General Manager",                         url:"https://www.linkedin.com/in/bazarbayyerzhan/",            status:null,                                     desc:null },
-  { id:"alex-zakharov",         level:2, company:"Yandex",                    country:"🇷🇺 Россия",           name:"Алексей Захаров",           title:"CPO",                                     url:"https://www.linkedin.com/in/alex-zakharov-/",             status:"написала в LinkedIn",                    desc:null },
-  { id:"goran-groza",           level:2, company:"Yandex Eats",               country:"🇰🇿 Казахстан",        name:"Goran Groza",               title:"General Manager",                         url:"https://www.linkedin.com/in/goran-groza/",                status:"написала в LinkedIn",                    desc:null },
-  { id:"mikhail-chizhikov",     level:2, company:"Avito / ex-VK / ex-Yandex", country:"🇷🇺 Москва",           name:"Mikhail Chizhikov",         title:"Chief Product Officer",                   url:"https://www.linkedin.com/in/mikhail-chizhikov-48b792a8/", status:null,                                     desc:null },
-  { id:"kirill-n",              level:2, company:"Ozon Bank | ex-Yandex",     country:"🇷🇺 Россия",           name:"Kirill N.",                 title:"Коммерческий директор",                   url:"https://www.linkedin.com/in/kirillnepomnyashchiy/",       status:"написала в LinkedIn",                    desc:null },
-  // ── Кандидаты РФ и КЗ: прочие РФ ──
-  { id:"mike-zharchev",         level:2, company:"ex-Revolut / VividMoney",   country:"🇷🇺 Россия",           name:"Mike Zharchev",             title:"CPO at MWS AI | Co-Founder Untitled Bank", url:"https://www.linkedin.com/in/mike-zharchev-24b92094/",    status:null,                                     desc:null },
-  { id:"artem-suslov",          level:2, company:"ex-MTS Fintech / Raiffeisen",country:"🇷🇺 Москва",           name:"Artem Suslov",              title:"Head of PMO",                             url:"https://www.linkedin.com/in/artem-suslov-898b9a27/",      status:null,                                     desc:null },
-  { id:"maxim-ivanov",          level:2, company:"Untitled Bank",             country:"🇷🇺 Россия",           name:"Maxim Ivanov",              title:"CBDO / CSO",                              url:"https://www.linkedin.com/in/mike-zharchev-24b92094/",    status:null,                                     desc:null },
-  { id:"alexander-nedospasov",  level:2, company:"ex-T-Bank / Yandex",        country:"🇷🇺 Россия",           name:"Alexander Nedospasov",      title:"CPO",                                     url:"https://www.linkedin.com/in/alexandernedospasov/",        status:null,                                     desc:null },
-  // ── Кандидаты РФ и КЗ: Казахстан ──
-  { id:"andrey-timchenko",      level:2, company:"Bereke Bank",               country:"🇰🇿 Казахстан",        name:"Andrey Timchenko",          title:"CEO",                                     url:"https://www.linkedin.com/in/andrey-timchenko-4371676/",  status:null,                                     desc:null },
-  { id:"zhumabek-m",            level:2, company:"Halyk Group / DNA Payments", country:"🇰🇿 Казахстан",       name:"Zhumabek M.",               title:null,                                      url:null,                                                      status:null,                                     desc:null },
-  { id:"ali-rakhymov",          level:2, company:"Yandex Lavka KZ",           country:"🇰🇿 Алматы",           name:"Ali Rakhymov",              title:"Head of Fresh",                           url:"https://www.linkedin.com/in/ali-rakhymov-087502200/",    status:null,                                     desc:null },
-  { id:"anastassiya-maistrenko",level:2, company:"Yandex Lavka Qazaqstan",    country:"🇰🇿 Алматы",           name:"Anastassiya Maistrenko",    title:"Head of Commerce & Category",             url:"https://www.linkedin.com/in/anastassiyamaistrenko/",      status:null,                                     desc:null },
-  { id:"tigran-manukyan",       level:2, company:"Yandex Kazakhstan",         country:"🇰🇿 Казахстан",        name:"Tigran Manukyan",           title:"CCO",                                     url:"https://www.linkedin.com/in/tigran-manukyan-b204b0139/", status:null,                                     desc:null },
-  { id:"vitaly-tumanov",        level:2, company:"ex-Google / Yandex / Avito",country:"🇰🇿 Казахстан",        name:"Vitaly Tumanov",            title:"CEO",                                     url:"https://www.linkedin.com/in/vitaly-tumanov-291ab746/",    status:null,                                     desc:null },
-  { id:"igor-boyko",            level:2, company:"Freedom Travel",            country:"🇰🇿 Казахстан",        name:"Igor Boyko",                title:null,                                      url:"https://www.linkedin.com/in/igor-boyko/",                 status:null,                                     desc:null },
-  { id:"kseniya-sokolova",      level:2, company:"Freedom Ticketon",          country:"🇰🇿 Казахстан",        name:"Ксения Соколова",           title:"CEO",                                     url:"https://www.linkedin.com/in/roksu/",                      status:null,                                     desc:null },
-  { id:"dmitriy-gue-khao",      level:2, company:"Freedom Lifestyle",         country:"🇰🇿 Казахстан",        name:"Дмитрий Гуэ-Хао",          title:"Управляющий директор",                    url:"https://www.linkedin.com/in/dmitriy-gue-khao-584522162/",status:null,                                     desc:null },
+  {
+    id:"pavel-fedorov", level:2, company:"T-Bank", country:"🇷🇺 Россия",
+    name:"Pavel Fedorov", title:"Экс-вице-президент",
+    url:"https://www.linkedin.com/in/pavel-fedorov/", status:null,
+    desc:"Один из крупнейших цифровых банков: банкинг, страхование и инвестиции без отделений.",
+    bio:"Бывший вице-президент Т-Банка — одного из крупнейших цифровых банков России с 40+ млн клиентов. Отвечал за масштабирование ключевых банковских продуктов и стратегическое развитие."
+  },
+  {
+    id:"maxim-savchenko", level:2, company:"T-Bank", country:"🇷🇺 Россия",
+    name:"Maxim Savchenko", title:"CPO, T-Data & Transactions",
+    url:"https://www.linkedin.com/in/maxim-savchenko-5b1a6196/", status:"написала в LinkedIn",
+    desc:null,
+    bio:"Директор по продукту в направлении Data & Transactions Т-Банка. Отвечает за продуктовую стратегию в области данных и транзакционных сервисов для десятков миллионов активных пользователей."
+  },
+  {
+    id:"fedor-moroz", level:2, company:"T-Bank", country:"🇷🇺 Россия",
+    name:"Федор Мороз", title:"Head of Business Protection",
+    url:"https://www.linkedin.com/in/fedor-moroz-29b20781/", status:"написала в LinkedIn",
+    desc:null,
+    bio:"Руководитель направления защиты бизнеса в Т-Банке. Выстраивает систему противодействия мошенничеству и управления рисками для одного из наиболее технологически зрелых банков России."
+  },
+  {
+    id:"dmitriy-bogachev", level:2, company:"T-Bank", country:"🇷🇺 Россия",
+    name:"Dmitriy Bogachev", title:"CPO of Loyalty and Cashback",
+    url:"https://www.linkedin.com/in/dmitriy-bogachev/", status:null,
+    desc:null,
+    bio:"Директор по продукту программ лояльности и кэшбэка Т-Банка. Создаёт одну из самых популярных программ вознаграждений в России — более 30 млн активных участников."
+  },
+
+  // ── Кандидаты КЗ: Yandex ──
+  {
+    id:"timur-shalekenov", level:2, company:"Yandex Qazaqstan", country:"🇰🇿 Алматы",
+    name:"Timur Shalekenov", title:"CEO",
+    url:"https://www.linkedin.com/in/timur-shalekenov-80a07037/", status:null,
+    desc:null,
+    bio:"Генеральный директор Yandex Qazaqstan. Руководит всей экосистемой Яндекса в Казахстане — от поиска и карт до такси и e-commerce."
+  },
+  {
+    id:"yerzhan-bazarbay", level:2, company:"Yandex Delivery KZ", country:"🇰🇿 Алматы",
+    name:"Yerzhan Bazarbay", title:"General Manager",
+    url:"https://www.linkedin.com/in/bazarbayyerzhan/", status:null,
+    desc:null,
+    bio:"Генеральный менеджер Yandex Delivery в Казахстане. Развивает логистическую платформу последней мили в казахстанских городах, интегрируя её с ритейл-партнёрами и e-commerce."
+  },
+  {
+    id:"alex-zakharov", level:2, company:"Yandex", country:"🇷🇺 Россия",
+    name:"Алексей Захаров", title:"CPO",
+    url:"https://www.linkedin.com/in/alex-zakharov-/", status:"написала в LinkedIn",
+    desc:null,
+    bio:"Директор по продукту Яндекса. Один из ключевых продуктовых лидеров компании с 100+ млн ежемесячных пользователей — формирует продуктовую стратегию для всей экосистемы сервисов."
+  },
+  {
+    id:"goran-groza", level:2, company:"Yandex Eats", country:"🇰🇿 Казахстан",
+    name:"Goran Groza", title:"General Manager",
+    url:"https://www.linkedin.com/in/goran-groza/", status:"написала в LinkedIn",
+    desc:null,
+    bio:"Генеральный менеджер Яндекс Еды в Казахстане. Масштабирует food-delivery платформу на казахстанском рынке, выстраивая партнёрства с ресторанами и сети доставки."
+  },
+  {
+    id:"mikhail-chizhikov", level:2, company:"Avito / ex-VK / ex-Yandex", country:"🇷🇺 Москва",
+    name:"Mikhail Chizhikov", title:"Chief Product Officer",
+    url:"https://www.linkedin.com/in/mikhail-chizhikov-48b792a8/", status:null,
+    desc:null,
+    bio:"Директор по продукту Avito — крупнейшего сайта объявлений России. Прежде занимал продуктовые позиции в ВКонтакте и Яндексе, формируя опыт на топовых платформах рунета."
+  },
+  {
+    id:"kirill-n", level:2, company:"Ozon Bank | ex-Yandex", country:"🇷🇺 Россия",
+    name:"Kirill N.", title:"Коммерческий директор",
+    url:"https://www.linkedin.com/in/kirillnepomnyashchiy/", status:"написала в LinkedIn",
+    desc:null,
+    bio:"Коммерческий директор Ozon Bank, экс-Яндекс. Строит банковскую вертикаль внутри крупнейшего российского маркетплейса, интегрируя финансовые сервисы с e-commerce экосистемой."
+  },
+
+  // ── Кандидаты РФ: прочие ──
+  {
+    id:"mike-zharchev", level:2, company:"ex-Revolut / VividMoney", country:"🇷🇺 Россия",
+    name:"Mike Zharchev", title:"CPO at MWS AI | Co-Founder Untitled Bank",
+    url:"https://www.linkedin.com/in/mike-zharchev-24b92094/", status:null,
+    desc:null,
+    bio:"Директор по продукту MWS AI и сооснователь Untitled Bank. Экс-Revolut, специализируется на ИИ-продуктах и строит следующее поколение цифрового банкинга для российского рынка."
+  },
+  {
+    id:"artem-suslov", level:2, company:"ex-MTS Fintech / Raiffeisen", country:"🇷🇺 Москва",
+    name:"Artem Suslov", title:"Head of PMO",
+    url:"https://www.linkedin.com/in/artem-suslov-898b9a27/", status:null,
+    desc:null,
+    bio:"Руководитель PMO с опытом в MTS Fintech и Raiffeisen Bank. Специализируется на управлении крупными цифровыми трансформациями в банковском секторе России."
+  },
+  {
+    id:"maxim-ivanov", level:2, company:"Untitled Bank", country:"🇷🇺 Россия",
+    name:"Maxim Ivanov", title:"CBDO / CSO",
+    url:"https://www.linkedin.com/in/mike-zharchev-24b92094/", status:null,
+    desc:null,
+    bio:"Директор по развитию бизнеса и стратегии Untitled Bank — нового цифрового банка. Строит бизнес-модель и коммерческие партнёрства для стартапа нового поколения банкинга."
+  },
+  {
+    id:"alexander-nedospasov", level:2, company:"ex-T-Bank / Yandex", country:"🇷🇺 Россия",
+    name:"Alexander Nedospasov", title:"CPO",
+    url:"https://www.linkedin.com/in/alexandernedospasov/", status:null,
+    desc:null,
+    bio:"Директор по продукту с опытом в Т-Банке и Яндексе. Строил продуктовые функции в двух ведущих цифровых компаниях России, специализируясь на финансовых и потребительских сервисах."
+  },
+
+  // ── Кандидаты КЗ ──
+  {
+    id:"andrey-timchenko", level:2, company:"Bereke Bank", country:"🇰🇿 Казахстан",
+    name:"Andrey Timchenko", title:"CEO",
+    url:"https://www.linkedin.com/in/andrey-timchenko-4371676/", status:null,
+    desc:null,
+    bio:"Генеральный директор Bereke Bank — системообразующего казахстанского банка. Ведёт цифровую трансформацию банка с фокусом на развитие мобильного банкинга и транзакционного бизнеса."
+  },
+  {
+    id:"zhumabek-m", level:2, company:"Halyk Group / DNA Payments", country:"🇰🇿 Казахстан",
+    name:"Zhumabek M.", title:null,
+    url:null, status:null,
+    desc:null,
+    bio:"Финтех-руководитель в экосистеме Halyk Group и DNA Payments. Работает над развитием платёжной инфраструктуры Казахстана изнутри крупнейшей банковской группы страны."
+  },
+  {
+    id:"ali-rakhymov", level:2, company:"Yandex Lavka KZ", country:"🇰🇿 Алматы",
+    name:"Ali Rakhymov", title:"Head of Fresh",
+    url:"https://www.linkedin.com/in/ali-rakhymov-087502200/", status:null,
+    desc:null,
+    bio:"Руководитель направления Fresh в Яндекс Лавке Казахстан. Управляет категорией свежих продуктов в быстрорастущем сегменте экспресс-доставки продуктов питания."
+  },
+  {
+    id:"anastassiya-maistrenko", level:2, company:"Yandex Lavka Qazaqstan", country:"🇰🇿 Алматы",
+    name:"Anastassiya Maistrenko", title:"Head of Commerce & Category",
+    url:"https://www.linkedin.com/in/anastassiyamaistrenko/", status:null,
+    desc:null,
+    bio:"Руководитель коммерческого направления и категорийного менеджмента Яндекс Лавки в Казахстане. Формирует ассортиментную стратегию и развивает партнёрские отношения с поставщиками."
+  },
+  {
+    id:"tigran-manukyan", level:2, company:"Yandex Kazakhstan", country:"🇰🇿 Казахстан",
+    name:"Tigran Manukyan", title:"CCO",
+    url:"https://www.linkedin.com/in/tigran-manukyan-b204b0139/", status:null,
+    desc:null,
+    bio:"Коммерческий директор Яндекс Казахстан. Отвечает за монетизацию и партнёрства по всему портфелю продуктов Яндекса на казахстанском рынке."
+  },
+  {
+    id:"vitaly-tumanov", level:2, company:"ex-Google / Yandex / Avito", country:"🇰🇿 Казахстан",
+    name:"Vitaly Tumanov", title:"CEO",
+    url:"https://www.linkedin.com/in/vitaly-tumanov-291ab746/", status:null,
+    desc:null,
+    bio:"Серийный tech-руководитель с опытом в Google, Яндексе и Avito. Сейчас строит бизнес в Казахстане, привнося международный опыт в развитие цифровых продуктов региона."
+  },
+  {
+    id:"igor-boyko", level:2, company:"Freedom Travel", country:"🇰🇿 Казахстан",
+    name:"Igor Boyko", title:null,
+    url:"https://www.linkedin.com/in/igor-boyko/", status:null,
+    desc:null,
+    bio:"Руководитель Freedom Travel в составе Freedom Group. Развивает онлайн-трэвел платформу в Казахстане в рамках экосистемы одного из крупнейших финансовых холдингов страны."
+  },
+  {
+    id:"kseniya-sokolova", level:2, company:"Freedom Ticketon", country:"🇰🇿 Казахстан",
+    name:"Ксения Соколова", title:"CEO",
+    url:"https://www.linkedin.com/in/roksu/", status:null,
+    desc:null,
+    bio:"Генеральный директор Freedom Ticketon — ведущей казахстанской платформы продажи билетов на события и развлечения. Обеспечивает цифровизацию тикетинга в Entertainment-сегменте страны."
+  },
+  {
+    id:"dmitriy-gue-khao", level:2, company:"Freedom Lifestyle", country:"🇰🇿 Казахстан",
+    name:"Дмитрий Гуэ-Хао", title:"Управляющий директор",
+    url:"https://www.linkedin.com/in/dmitriy-gue-khao-584522162/", status:null,
+    desc:null,
+    bio:"Управляющий директор Freedom Lifestyle — подразделения по premium-сервисам и стилю жизни в Freedom Group. Выстраивает экосистему lifestyle-продуктов для состоятельной аудитории Казахстана."
+  },
 ];
 
 // ── Storage ────────────────────────────────────────────────────────────────
@@ -137,15 +506,17 @@ export default function App() {
   const totalSelected = CANDIDATES.filter(c => data[c.id]?.selected).length;
   const totalComments = CANDIDATES.filter(c => data[c.id]?.comment?.trim()).length;
 
-  const rfkzCount = CANDIDATES.filter(c => isRfKz(c)).length;
+  const ruCount       = CANDIDATES.filter(c => isRu(c)).length;
+  const kzCount       = CANDIDATES.filter(c => isKz(c)).length;
   const zarubezhCount = CANDIDATES.filter(c => !isRfKz(c)).length;
 
   const displayed = CANDIDATES.filter(c => {
-    if (filter === "rfkz"     && !isRfKz(c)) return false;
-    if (filter === "zarubezh" &&  isRfKz(c)) return false;
+    if (filter === "zarubezh" && isRfKz(c))  return false;
+    if (filter === "ru"       && !isRu(c))   return false;
+    if (filter === "kz"       && !isKz(c))   return false;
     if (!search.trim()) return true;
     const q = search.toLowerCase();
-    return [c.name, c.company, c.country, c.title].some(v => v?.toLowerCase().includes(q));
+    return [c.name, c.company, c.country, c.title, c.bio].some(v => v?.toLowerCase().includes(q));
   });
 
   return (
@@ -201,7 +572,8 @@ export default function App() {
             {[
               { key:"all",       label:`Все (${CANDIDATES.length})` },
               { key:"zarubezh", label:`🌍 Зарубежные (${zarubezhCount})` },
-              { key:"rfkz",     label:`🇷🇺🇰🇿 Кандидаты РФ и КЗ (${rfkzCount})` },
+              { key:"ru",       label:`🇷🇺 Россия (${ruCount})` },
+              { key:"kz",       label:`🇰🇿 Казахстан (${kzCount})` },
             ].map(tab => (
               <button key={tab.key} onClick={() => setFilter(tab.key)} style={{
                 background: filter === tab.key ? C.green : C.white,
@@ -242,10 +614,11 @@ export default function App() {
 // CANDIDATE CARD
 // ══════════════════════════════════════════════════════════════════════════
 function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle, onCommentChange, onToggleComment }) {
-  const ini       = initials(c.name);
+  const [bioOpen, setBioOpen] = useState(false);
+  const ini        = initials(c.name);
   const hasComment = comment.trim().length > 0;
-  const lvlColor  = C.green;
-  const avatarBg  = `linear-gradient(135deg,${C.green},${C.greenDark})`;
+  const lvlColor   = C.green;
+  const avatarBg   = `linear-gradient(135deg,${C.green},${C.greenDark})`;
 
   return (
     <div style={{ background: selected ? C.greenLight : C.white, borderRadius:16, marginBottom:10,
@@ -273,10 +646,8 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
             <div style={{ fontSize:12, color:C.gray2, marginTop:2, marginBottom:5, lineHeight:1.3 }}>{c.title}</div>
           )}
           <div style={{ display:"flex", flexWrap:"wrap", gap:4, alignItems:"center" }}>
-            <span style={{ fontSize:11, fontWeight:600,
-              color: C.green,
-              background: C.greenLight,
-              borderRadius:6, padding:"2px 8px" }}>{c.company}</span>
+            <span style={{ fontSize:11, fontWeight:600, color:C.green,
+              background:C.greenLight, borderRadius:6, padding:"2px 8px" }}>{c.company}</span>
             {c.country && (
               <span style={{ fontSize:11, color:C.gray2 }}>{c.country}</span>
             )}
@@ -285,6 +656,35 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
             <div style={{ fontSize:11, color:C.gray2, lineHeight:1.4, marginTop:5,
               borderLeft:`2px solid ${C.gray4}`, paddingLeft:8, fontStyle:"italic" }}>
               {c.desc}
+            </div>
+          )}
+
+          {/* Bio toggle */}
+          {c.bio && (
+            <div style={{ marginTop:7 }}>
+              <button onClick={() => setBioOpen(v => !v)} style={{
+                background:"transparent", border:"none", padding:0, cursor:"pointer",
+                fontSize:11, fontWeight:600, color:C.blue, fontFamily:"inherit",
+                display:"flex", alignItems:"center", gap:3
+              }}>
+                <span>{bioOpen ? "▲" : "▼"}</span>
+                <span>{bioOpen ? "Скрыть профиль" : "Мини-профиль"}</span>
+              </button>
+              {bioOpen && (
+                <div style={{ marginTop:6, padding:"9px 11px", background:C.bg,
+                  borderRadius:10, fontSize:12, color:C.dark, lineHeight:1.55 }}>
+                  {c.bio}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Status badge */}
+          {c.status && (
+            <div style={{ marginTop:6, display:"inline-flex", alignItems:"center", gap:4,
+              background:"#FFF3CD", borderRadius:8, padding:"3px 8px",
+              fontSize:10, fontWeight:600, color:"#856404" }}>
+              📩 {c.status}
             </div>
           )}
         </div>
