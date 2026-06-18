@@ -293,9 +293,11 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
         background: selected ? "#D1FAE5" : C.bg }}>
         {c.url ? (
           <a href={c.url} target="_blank" rel="noopener noreferrer"
-            style={{ flex:1, textAlign:"center", padding:"10px 8px", fontSize:10, fontWeight:400,
-              color:C.gray2, textDecoration:"none", borderRight:`1px solid rgba(0,0,0,0.08)` }}>
-            нажмите чтоб посмотреть
+            style={{ flex:1, textAlign:"center", padding:"8px 8px", fontSize:12, fontWeight:600,
+              color:C.blue, textDecoration:"none", borderRight:`1px solid rgba(0,0,0,0.08)`,
+              display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+            <span>LinkedIn ↗</span>
+            <span style={{ fontSize:9, fontWeight:400, color:C.gray2 }}>нажмите чтоб посмотреть</span>
           </a>
         ) : (
           <div style={{ flex:1, textAlign:"center", padding:"10px 8px", fontSize:12, color:C.gray4 }}>
@@ -303,9 +305,13 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
           </div>
         )}
         <button onClick={onToggleComment} style={{ flex:1, border:"none", background:"transparent",
-          padding:"10px 8px", fontSize:10, fontWeight:400, cursor:"pointer", fontFamily:"inherit",
-          color: hasComment ? C.green : C.gray2 }}>
-          {commentOpen ? "закрыть" : "нажмите, чтоб оставить комментарий"}{hasComment ? " ✓" : ""}
+          padding:"8px 8px", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
+          color: hasComment ? C.green : commentOpen ? C.dark : C.gray2,
+          display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+          <span>{hasComment ? "💬 Комментарий ✓" : "💬 Комментарий"}</span>
+          <span style={{ fontSize:9, fontWeight:400, color:C.gray2 }}>
+            {commentOpen ? "нажмите чтоб закрыть" : "нажмите, чтоб оставить комментарий"}
+          </span>
         </button>
       </div>
 
