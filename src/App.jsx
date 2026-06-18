@@ -233,10 +233,8 @@ export default function App() {
 function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle, onCommentChange, onToggleComment }) {
   const ini       = initials(c.name);
   const hasComment = comment.trim().length > 0;
-  const lvlColor  = c.level === 1 ? C.green : C.purple;
-  const avatarBg  = c.level === 1
-    ? `linear-gradient(135deg,${C.green},${C.greenDark})`
-    : `linear-gradient(135deg,${C.purple},#5B21B6)`;
+  const lvlColor  = C.green;
+  const avatarBg  = `linear-gradient(135deg,${C.green},${C.greenDark})`;
 
   return (
     <div style={{ background: selected ? C.greenLight : C.white, borderRadius:16, marginBottom:10,
@@ -265,8 +263,8 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
           )}
           <div style={{ display:"flex", flexWrap:"wrap", gap:4, alignItems:"center" }}>
             <span style={{ fontSize:11, fontWeight:600,
-              color: c.level === 1 ? C.green : C.purple,
-              background: c.level === 1 ? C.greenLight : C.purpleLight,
+              color: C.green,
+              background: C.greenLight,
               borderRadius:6, padding:"2px 8px" }}>{c.company}</span>
             {c.country && (
               <span style={{ fontSize:11, color:C.gray2 }}>{c.country}</span>
@@ -276,14 +274,6 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
             <div style={{ fontSize:11, color:C.gray2, lineHeight:1.4, marginTop:5,
               borderLeft:`2px solid ${C.gray4}`, paddingLeft:8, fontStyle:"italic" }}>
               {c.desc}
-            </div>
-          )}
-          {c.status && (
-            <div style={{ marginTop:5 }}>
-              <span style={{ fontSize:10, fontWeight:600, color:C.orange,
-                background:"#FFF7ED", borderRadius:6, padding:"2px 8px" }}>
-                {c.status}
-              </span>
             </div>
           )}
         </div>
@@ -303,9 +293,9 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
         background: selected ? "#D1FAE5" : C.bg }}>
         {c.url ? (
           <a href={c.url} target="_blank" rel="noopener noreferrer"
-            style={{ flex:1, textAlign:"center", padding:"10px 8px", fontSize:12, fontWeight:600,
-              color:C.blue, textDecoration:"none", borderRight:`1px solid rgba(0,0,0,0.08)` }}>
-            LinkedIn ↗
+            style={{ flex:1, textAlign:"center", padding:"10px 8px", fontSize:10, fontWeight:400,
+              color:C.gray2, textDecoration:"none", borderRight:`1px solid rgba(0,0,0,0.08)` }}>
+            нажмите чтоб посмотреть
           </a>
         ) : (
           <div style={{ flex:1, textAlign:"center", padding:"10px 8px", fontSize:12, color:C.gray4 }}>
@@ -313,9 +303,9 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
           </div>
         )}
         <button onClick={onToggleComment} style={{ flex:1, border:"none", background:"transparent",
-          padding:"10px 8px", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
-          color: hasComment ? C.green : commentOpen ? C.dark : C.gray2 }}>
-          {hasComment ? "💬 Изменить ✓" : commentOpen ? "💬 Закрыть" : "💬 Комментарий"}
+          padding:"10px 8px", fontSize:10, fontWeight:400, cursor:"pointer", fontFamily:"inherit",
+          color: hasComment ? C.green : C.gray2 }}>
+          {commentOpen ? "закрыть" : "нажмите, чтоб оставить комментарий"}{hasComment ? " ✓" : ""}
         </button>
       </div>
 
