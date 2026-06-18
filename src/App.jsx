@@ -502,18 +502,35 @@ export default function App() {
   function setComment(id, v) {
     setData(prev => ({ ...prev, [id]: { ...(prev[id] || {}), comment: v } }));
   }
+  function moveSelectedToReady() {
+    setData(prev => {
+      const next = { ...prev };
+      CANDIDATES.forEach(c => {
+        if (next[c.id]?.selected) {
+          next[c.id] = { ...next[c.id], stage: "ready", selected: false };
+        }
+      });
+      return next;
+    });
+  }
+  function removeFromReady(id) {
+    setData(prev => ({ ...prev, [id]: { ...(prev[id] || {}), stage: null } }));
+  }
 
   const totalSelected = CANDIDATES.filter(c => data[c.id]?.selected).length;
   const totalComments = CANDIDATES.filter(c => data[c.id]?.comment?.trim()).length;
+  const readyCount    = CANDIDATES.filter(c => data[c.id]?.stage === "ready").length;
 
   const ruCount       = CANDIDATES.filter(c => isRu(c)).length;
   const kzCount       = CANDIDATES.filter(c => isKz(c)).length;
   const zarubezhCount = CANDIDATES.filter(c => !isRfKz(c)).length;
 
   const displayed = CANDIDATES.filter(c => {
-    if (filter === "zarubezh" && isRfKz(c))  return false;
-    if (filter === "ru"       && !isRu(c))   return false;
-    if (filter === "kz"       && !isKz(c))   return false;
+    if (filter === "ready")                  return data[c.id]?.stage === "ready";
+    if (data[c.id]?.stage === "ready")       return false;
+    if (filter === "zarubezh" && isRfKz(c)) return false;
+    if (filter === "ru"       && !isRu(c))  return false;
+    if (filter === "kz"       && !isKz(c))  return false;
     if (!search.trim()) return true;
     const q = search.toLowerCase();
     return [c.name, c.company, c.country, c.title, c.bio].some(v => v?.toLowerCase().includes(q));
@@ -533,7 +550,7 @@ export default function App() {
               <div style={{ fontSize:10, fontWeight:700, color:"rgba(255,255,255,0.65)", letterSpacing:2 }}>HALYK BANK</div>
               <div style={{ fontSize:22, fontWeight:800, color:C.white, lineHeight:1.1 }}>Candidate Review</div>
               <div style={{ fontSize:12, color:"rgba(255,255,255,0.8)", marginTop:3 }}>
-                {CANDIDATES.length} кандидатов · {totalSelected} выбрано · {totalComments} с комментарием
+                {CANDIDATES.length} кандидатов · {totalSelected} выбрано · {readyCount > 0 ? `${readyCount} готовы пообщаться` : `${totalComments} с комментарием`}
               </div>
             </div>
             {totalSelected > 0 && (
@@ -570,40 +587,86 @@ export default function App() {
           {/* Filter tabs */}
           <div style={{ display:"flex", gap:6, marginBottom:14, overflowX:"auto", paddingBottom:2 }}>
             {[
-              { key:"all",       label:`Все (${CANDIDATES.length})` },
+              { key:"all",      label:`Все (${CANDIDATES.length - readyCount})` },
               { key:"zarubezh", label:`🌍 Зарубежные (${zarubezhCount})` },
               { key:"ru",       label:`🇷🇺 Россия (${ruCount})` },
               { key:"kz",       label:`🇰🇿 Казахстан (${kzCount})` },
+              { key:"ready",    label:`✅ Готова пообщаться${readyCount > 0 ? ` (${readyCount})` : ""}` },
             ].map(tab => (
               <button key={tab.key} onClick={() => setFilter(tab.key)} style={{
-                background: filter === tab.key ? C.green : C.white,
-                color:      filter === tab.key ? C.white : C.gray2,
-                border:     `1px solid ${filter === tab.key ? C.green : C.gray4}`,
+                background: filter === tab.key ? (tab.key === "ready" ? C.greenDark : C.green) : C.white,
+                color:      filter === tab.key ? C.white : (tab.key === "ready" && readyCount > 0 ? C.greenDark : C.gray2),
+                border:     `1px solid ${filter === tab.key ? (tab.key === "ready" ? C.greenDark : C.green) : (tab.key === "ready" && readyCount > 0 ? C.greenDark : C.gray4)}`,
                 borderRadius:20, padding:"6px 14px", fontSize:12, fontWeight:600,
                 cursor:"pointer", fontFamily:"inherit", whiteSpace:"nowrap", flexShrink:0,
               }}>{tab.label}</button>
             ))}
           </div>
 
+          {/* "Готова пообщаться" section header */}
+          {filter === "ready" && (
+            <div style={{ marginBottom:12, padding:"10px 14px", background:C.greenLight,
+              borderRadius:12, border:`1px solid ${C.green}40` }}>
+              <div style={{ fontSize:13, fontWeight:700, color:C.greenDark }}>✅ Готова пообщаться</div>
+              <div style={{ fontSize:11, color:C.gray2, marginTop:2 }}>
+                {readyCount > 0 ? `${readyCount} кандидатов отобрано для общения` : "Пока никого не добавлено"}
+              </div>
+            </div>
+          )}
+
           {/* Card list */}
           {displayed.map(c => (
             <CandidateCard key={c.id} candidate={c}
               selected={!!data[c.id]?.selected}
+              isReady={data[c.id]?.stage === "ready"}
               comment={data[c.id]?.comment || ""}
               commentOpen={openComment === c.id}
               onToggle={() => toggle(c.id)}
               onCommentChange={v => setComment(c.id, v)}
               onToggleComment={() => setOpenComment(openComment === c.id ? null : c.id)}
+              onRemoveReady={() => removeFromReady(c.id)}
             />
           ))}
 
-          {displayed.length === 0 && (
+          {displayed.length === 0 && filter !== "ready" && (
             <div style={{ textAlign:"center", padding:"50px 20px", color:C.gray2 }}>
               <div style={{ fontSize:36, marginBottom:10 }}>🔍</div>
               <div style={{ fontSize:15, fontWeight:600 }}>Ничего не найдено</div>
             </div>
           )}
+          {displayed.length === 0 && filter === "ready" && (
+            <div style={{ textAlign:"center", padding:"50px 20px", color:C.gray2 }}>
+              <div style={{ fontSize:36, marginBottom:10 }}>📋</div>
+              <div style={{ fontSize:15, fontWeight:600 }}>Список пуст</div>
+              <div style={{ fontSize:13, marginTop:6 }}>Отметьте кандидатов галочкой и нажмите «Перевести»</div>
+            </div>
+          )}
         </div>
+
+        {/* ── Floating action bar (appears when candidates are selected) ── */}
+        {totalSelected > 0 && (
+          <div style={{
+            position:"sticky", bottom:0, left:0, right:0,
+            background:`linear-gradient(160deg,${C.green},${C.greenDark})`,
+            padding:"12px 16px", display:"flex", alignItems:"center", gap:12,
+            boxShadow:"0 -4px 20px rgba(0,177,86,0.35)"
+          }}>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:13, fontWeight:700, color:C.white }}>
+                Выбрано: {totalSelected} кандидат{totalSelected === 1 ? "" : totalSelected < 5 ? "а" : "ов"}
+              </div>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,0.75)" }}>нажмите, чтобы перевести на следующий этап</div>
+            </div>
+            <button onClick={moveSelectedToReady} style={{
+              background:C.white, border:"none", borderRadius:12,
+              padding:"10px 16px", fontSize:13, fontWeight:700,
+              color:C.greenDark, cursor:"pointer", fontFamily:"inherit",
+              whiteSpace:"nowrap"
+            }}>
+              Готова пообщаться →
+            </button>
+          </div>
+        )}
 
       </div>
     </div>
@@ -613,16 +676,15 @@ export default function App() {
 // ══════════════════════════════════════════════════════════════════════════
 // CANDIDATE CARD
 // ══════════════════════════════════════════════════════════════════════════
-function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle, onCommentChange, onToggleComment }) {
+function CandidateCard({ candidate: c, selected, isReady, comment, commentOpen, onToggle, onCommentChange, onToggleComment, onRemoveReady }) {
   const [bioOpen, setBioOpen] = useState(false);
   const ini        = initials(c.name);
   const hasComment = comment.trim().length > 0;
-  const lvlColor   = C.green;
   const avatarBg   = `linear-gradient(135deg,${C.green},${C.greenDark})`;
 
   return (
-    <div style={{ background: selected ? C.greenLight : C.white, borderRadius:16, marginBottom:10,
-      border:`1px solid ${selected ? C.green+"60" : C.gray4}`, overflow:"hidden",
+    <div style={{ background: isReady ? "#F0FFF4" : selected ? C.greenLight : C.white, borderRadius:16, marginBottom:10,
+      border:`1px solid ${isReady ? C.green : selected ? C.green+"60" : C.gray4}`, overflow:"hidden",
       boxShadow:"0 2px 8px rgba(0,0,0,0.06)", transition:"background .2s,border .2s" }}>
 
       {/* Level stripe */}
@@ -679,29 +741,23 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
             </div>
           )}
 
-          {/* Status badge */}
-          {c.status && (
-            <div style={{ marginTop:6, display:"inline-flex", alignItems:"center", gap:4,
-              background:"#FFF3CD", borderRadius:8, padding:"3px 8px",
-              fontSize:10, fontWeight:600, color:"#856404" }}>
-              📩 {c.status}
-            </div>
-          )}
         </div>
 
-        {/* Checkbox */}
-        <div onClick={onToggle} style={{ width:28, height:28, borderRadius:8, flexShrink:0,
-          background: selected ? C.green : C.white,
-          border:`2px solid ${selected ? C.green : C.gray4}`,
-          display:"flex", alignItems:"center", justifyContent:"center",
-          cursor:"pointer", transition:"all .15s", marginTop:2 }}>
-          {selected && <span style={{ color:C.white, fontSize:15, fontWeight:800, lineHeight:1 }}>✓</span>}
-        </div>
+        {/* Checkbox (hidden for ready cards) */}
+        {!isReady && (
+          <div onClick={onToggle} style={{ width:28, height:28, borderRadius:8, flexShrink:0,
+            background: selected ? C.green : C.white,
+            border:`2px solid ${selected ? C.green : C.gray4}`,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            cursor:"pointer", transition:"all .15s", marginTop:2 }}>
+            {selected && <span style={{ color:C.white, fontSize:15, fontWeight:800, lineHeight:1 }}>✓</span>}
+          </div>
+        )}
       </div>
 
       {/* Action bar */}
       <div style={{ display:"flex", borderTop:`1px solid ${C.bg}`,
-        background: selected ? "#D1FAE5" : C.bg }}>
+        background: isReady ? "#DCFCE7" : selected ? "#D1FAE5" : C.bg }}>
         {c.url ? (
           <a href={c.url} target="_blank" rel="noopener noreferrer"
             style={{ flex:1, textAlign:"center", padding:"8px 8px", fontSize:12, fontWeight:600,
@@ -711,19 +767,29 @@ function CandidateCard({ candidate: c, selected, comment, commentOpen, onToggle,
             <span style={{ fontSize:9, fontWeight:400, color:C.gray2 }}>нажмите чтоб посмотреть</span>
           </a>
         ) : (
-          <div style={{ flex:1, textAlign:"center", padding:"10px 8px", fontSize:12, color:C.gray4 }}>
+          <div style={{ flex:1, textAlign:"center", padding:"10px 8px", fontSize:12, color:C.gray4,
+            borderRight:`1px solid rgba(0,0,0,0.08)` }}>
             нет ссылки
           </div>
         )}
         <button onClick={onToggleComment} style={{ flex:1, border:"none", background:"transparent",
           padding:"8px 8px", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
           color: hasComment ? C.green : commentOpen ? C.dark : C.gray2,
-          display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+          display:"flex", flexDirection:"column", alignItems:"center", gap:2,
+          borderRight: isReady ? `1px solid rgba(0,0,0,0.08)` : "none" }}>
           <span>{hasComment ? "💬 Комментарий ✓" : "💬 Комментарий"}</span>
           <span style={{ fontSize:9, fontWeight:400, color:C.gray2 }}>
-            {commentOpen ? "нажмите чтоб закрыть" : "нажмите, чтоб оставить комментарий"}
+            {commentOpen ? "закрыть" : "оставить комментарий"}
           </span>
         </button>
+        {isReady && (
+          <button onClick={onRemoveReady} style={{ flex:1, border:"none", background:"transparent",
+            padding:"8px 8px", fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
+            color:"#DC2626", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+            <span>✕ Убрать</span>
+            <span style={{ fontSize:9, fontWeight:400, color:C.gray2 }}>из списка</span>
+          </button>
+        )}
       </div>
 
       {/* Comment field */}
