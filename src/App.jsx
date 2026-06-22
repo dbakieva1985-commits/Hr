@@ -15,18 +15,57 @@ const C = {
   orange:   "#D97706",
   blue:     "#1D4ED8",
   red:      "#DC2626",
+  purple:   "#7C3AED",
 };
 
 // ── Data ───────────────────────────────────────────────────────────────────
 const SERVICES = [
-  { id: 1, cat: "Кадровое администрирование", icon: "🏖", title: "Заявка на отпуск",        sla: "1 раб. день",  desc: "Оформление ежегодного, учебного или административного отпуска.", who: "Любой сотрудник", docs: "Заявление (заполняется на портале)" },
-  { id: 2, cat: "Кадровое администрирование", icon: "🔄", title: "Заявка на перевод",       sla: "3 раб. дня",   desc: "Перевод на другую должность, в другое подразделение или регион.", who: "Сотрудник / руководитель", docs: "Заявка с обоснованием" },
-  { id: 3, cat: "Кадровое администрирование", icon: "📄", title: "Справка с места работы",  sla: "1 раб. день",  desc: "Официальный документ о должности и зарплате для банка, визы, гос. органов.", who: "Любой сотрудник", docs: "Не требуются" },
-  { id: 4, cat: "Подбор персонала",           icon: "🔍", title: "Заявка на подбор",        sla: "5 раб. дней",  desc: "Открытие вакансии и поиск кандидата силами HR Service Center.", who: "Руководитель подразделения", docs: "Описание вакансии, грейд" },
-  { id: 5, cat: "Compensation & Benefits",    icon: "💰", title: "Заявка на премирование",   sla: "3 раб. дня",   desc: "Единовременная или регулярная премия для сотрудника или команды.", who: "Руководитель подразделения", docs: "Обоснование, сумма" },
-  { id: 6, cat: "Обучение и развитие",        icon: "📚", title: "Заявка на обучение",       sla: "3 раб. дня",   desc: "Запись на внутренний или внешний курс, тренинг или сертификацию.", who: "Любой сотрудник / руководитель", docs: "Название курса, провайдер" },
-  { id: 7, cat: "HR Analytics",               icon: "📊", title: "Запрос HR-отчёта",         sla: "2 раб. дня",   desc: "Любой аналитический отчёт: текучесть, headcount, ФОТ, SLA.", who: "Руководитель / HR", docs: "Описание нужных данных и периода" },
-  { id: 8, cat: "Оценка и Performance",       icon: "🎯", title: "Запуск оценки 360",        sla: "5 раб. дней",  desc: "Организация цикла оценки для сотрудника или команды.", who: "Руководитель / HR", docs: "Список участников оценки" },
+  // ── Кадровое администрирование: Заявки ────────────────────────────────
+  { id: 1,  cat: "Кадровое администрирование", icon: "🔄", title: "Перевод",                                                        sla: "3 раб. дня",  desc: "Перевод на другую должность, в другое подразделение или регион.", who: "Сотрудник / руководитель", docs: "Заявка с обоснованием" },
+  { id: 2,  cat: "Кадровое администрирование", icon: "🏖", title: "Заявка на отпуск",                                               sla: "1 раб. день", desc: "Оформление ежегодного, учебного или административного отпуска.", who: "Любой сотрудник", docs: "Заявление (заполняется на портале)" },
+  { id: 3,  cat: "Кадровое администрирование", icon: "📅", title: "Планируемый график отпусков",                                    sla: "2 раб. дня",  desc: "Формирование и согласование планового графика отпусков подразделения.", who: "Руководитель", docs: "График отпусков по подразделению" },
+  { id: 4,  cat: "Кадровое администрирование", icon: "👶", title: "Отпуск без сохранения заработной платы по уходу за детьми",     sla: "2 раб. дня",  desc: "Оформление отпуска без сохранения заработной платы для ухода за детьми.", who: "Любой сотрудник", docs: "Заявление, свидетельство о рождении ребёнка" },
+  { id: 5,  cat: "Кадровое администрирование", icon: "🤱", title: "Заявка на выход из декретного отпуска",                         sla: "3 раб. дня",  desc: "Оформление досрочного или планового выхода сотрудника из декретного отпуска.", who: "Руководитель", docs: "Заявление сотрудника", tag: "рук" },
+  { id: 6,  cat: "Кадровое администрирование", icon: "📝", title: "Заявка на изменение персональных данных",                       sla: "2 раб. дня",  desc: "Обновление персональных данных сотрудника (ФИО, адрес, документы и др.).", who: "Любой сотрудник", docs: "Подтверждающие документы" },
+  { id: 7,  cat: "Кадровое администрирование", icon: "🔃", title: "Актуализация данных",                                           sla: "2 раб. дня",  desc: "Актуализация сведений о сотруднике в кадровых системах.", who: "Любой сотрудник / HR", docs: "Подтверждающие документы" },
+  { id: 8,  cat: "Кадровое администрирование", icon: "🔁", title: "Заявка на замещение / совмещение / возложение",                 sla: "3 раб. дня",  desc: "Временное замещение, совмещение должностей или возложение обязанностей.", who: "Руководитель", docs: "Обоснование, период замещения", tag: "рук" },
+  { id: 9,  cat: "Кадровое администрирование", icon: "✈️", title: "Заявка на командировку",                                         sla: "2 раб. дня",  desc: "Оформление служебной командировки сотрудника.", who: "Любой сотрудник / руководитель", docs: "Цель командировки, даты, место" },
+  { id: 10, cat: "Кадровое администрирование", icon: "🧾", title: "Авансовый отчёт по командировке",                               sla: "3 раб. дня",  desc: "Подача авансового отчёта по итогам служебной командировки.", who: "Любой сотрудник", docs: "Чеки, билеты, подтверждающие документы" },
+  { id: 11, cat: "Кадровое администрирование", icon: "📆", title: "Заявка на работу в выходные дни",                               sla: "1 раб. день", desc: "Согласование выхода сотрудника на работу в выходной или праздничный день.", who: "Любой сотрудник / руководитель", docs: "Обоснование выхода" },
+  { id: 12, cat: "Кадровое администрирование", icon: "📋", title: "Приказ на выход в выходные / праздничные дни",                  sla: "2 раб. дня",  desc: "Оформление приказа на работу в выходные и праздничные дни.", who: "Руководитель / HR", docs: "Список сотрудников, даты, обоснование" },
+  { id: 13, cat: "Кадровое администрирование", icon: "🚪", title: "Заявка на отсутствие работника на рабочем месте",              sla: "1 раб. день", desc: "Фиксация и согласование отсутствия сотрудника на рабочем месте.", who: "Руководитель", docs: "Причина отсутствия, даты", tag: "рук" },
+  { id: 14, cat: "Кадровое администрирование", icon: "💻", title: "Заявка по определению формата работ",                           sla: "2 раб. дня",  desc: "Определение формата работы сотрудника: офис, удалённо, гибрид.", who: "Руководитель", docs: "Обоснование формата", tag: "рук" },
+  { id: 15, cat: "Кадровое администрирование", icon: "📄", title: "Процесс выдачи справок с места работы",                         sla: "1 раб. день", desc: "Оформление и выдача официальных справок с места работы для различных целей.", who: "Любой сотрудник", docs: "Не требуются" },
+  { id: 16, cat: "Кадровое администрирование", icon: "🗓", title: "График",                                                         sla: "2 раб. дня",  desc: "Формирование и согласование рабочего графика сотрудников.", who: "Руководитель / HR", docs: "Данные по графику работы" },
+  { id: 17, cat: "Кадровое администрирование", icon: "🏛", title: "Заявка на изменение состава Совета Филиала",                    sla: "5 раб. дней", desc: "Внесение изменений в состав Совета Филиала.", who: "Секретарь", docs: "Обоснование изменений, список участников", tag: "секретари" },
+  { id: 18, cat: "Кадровое администрирование", icon: "⭐", title: "Заявка на кадровый резерв",                                      sla: "5 раб. дней", desc: "Включение сотрудника в кадровый резерв компании.", who: "Руководитель / HR", docs: "Профиль кандидата, обоснование" },
+  { id: 19, cat: "Кадровое администрирование", icon: "📑", title: "Обходной лист",                                                  sla: "3 раб. дня",  desc: "Оформление обходного листа при увольнении или переводе сотрудника.", who: "Любой сотрудник", docs: "Не требуются" },
+  { id: 20, cat: "Кадровое администрирование", icon: "👋", title: "Заявка на увольнение",                                           sla: "3 раб. дня",  desc: "Инициирование процедуры увольнения по собственному желанию.", who: "Любой сотрудник", docs: "Заявление об увольнении" },
+  { id: 21, cat: "Кадровое администрирование", icon: "📚", title: "Заявка на обучение",                                             sla: "3 раб. дня",  desc: "Запись на внутренний или внешний курс, тренинг или сертификацию.", who: "Любой сотрудник / руководитель", docs: "Название курса, провайдер" },
+  { id: 22, cat: "Кадровое администрирование", icon: "📊", title: "Мониторинг заявок",                                              sla: "1 раб. день", desc: "Просмотр и контроль статусов текущих заявок в системе.", who: "Любой сотрудник / руководитель / HR", docs: "Не требуются" },
+  { id: 23, cat: "Кадровое администрирование", icon: "🤝", title: "Материальная помощь",                                            sla: "5 раб. дней", desc: "Подача заявления на получение материальной помощи.", who: "Любой сотрудник", docs: "Заявление, подтверждающие документы" },
+  { id: 24, cat: "Кадровое администрирование", icon: "🅿️", title: "Распределение парковочных мест",                               sla: "3 раб. дня",  desc: "Заявка на выделение или изменение парковочного места.", who: "Любой сотрудник", docs: "Данные автомобиля" },
+  { id: 25, cat: "Кадровое администрирование", icon: "💳", title: "Заявка на субсидирование",                                       sla: "5 раб. дней", desc: "Подача заявки на получение субсидии от компании.", who: "Любой сотрудник", docs: "Заявление, подтверждающие документы" },
+  // ── Отчеты ────────────────────────────────────────────────────────────────
+  { id: 26, cat: "Отчеты", icon: "🧮", title: "Расчетный листок",                                   sla: "1 раб. день", desc: "Расчётный листок по заработной плате за выбранный период.", who: "Любой сотрудник", docs: "Не требуются" },
+  { id: 27, cat: "Отчеты", icon: "📈", title: "OTK 3.0",                                            sla: "2 раб. дня",  desc: "Отчёт OTK 3.0 по показателям качества работы.", who: "Руководитель / HR", docs: "Не требуются" },
+  { id: 28, cat: "Отчеты", icon: "🏢", title: "Отчет по трайбам",                                   sla: "2 раб. дня",  desc: "Аналитический отчёт по трайбам для руководителей.", who: "Руководитель", docs: "Не требуются", tag: "рук" },
+  { id: 29, cat: "Отчеты", icon: "🕐", title: "Портал: Отчёт Лимиты отсутствий",                   sla: "1 раб. день", desc: "Отчёт по лимитам и фактическим отсутствиям сотрудников.", who: "Руководитель / HR", docs: "Не требуются" },
+  { id: 30, cat: "Отчеты", icon: "📋", title: "Портал: Отчёт ШДС",                                  sla: "1 раб. день", desc: "Отчёт по штатно-должностному составу (ШДС) подразделения.", who: "Руководитель / HR", docs: "Не требуются" },
+  { id: 31, cat: "Отчеты", icon: "🎓", title: "Портал: Отчёт по обучению работников",              sla: "1 раб. день", desc: "Отчёт по пройденному обучению сотрудников за период.", who: "Руководитель / HR", docs: "Не требуются" },
+  { id: 32, cat: "Отчеты", icon: "✈️", title: "Портал: Отчёт по командировкам",                    sla: "1 раб. день", desc: "Сводный отчёт по командировкам сотрудников.", who: "Руководитель / HR", docs: "Не требуются" },
+  { id: 33, cat: "Отчеты", icon: "🚷", title: "Отчет об отсутствии работника на рабочем месте",    sla: "1 раб. день", desc: "Отчёт о фактическом отсутствии сотрудников на рабочем месте.", who: "Руководитель / HR", docs: "Не требуются" },
+  { id: 34, cat: "Отчеты", icon: "💰", title: "Расчёт среднего заработка",                          sla: "2 раб. дня",  desc: "Расчёт среднего заработка сотрудника для различных целей.", who: "Любой сотрудник / HR", docs: "Не требуются" },
+  { id: 35, cat: "Отчеты", icon: "🗓", title: "Отчет по графикам отпусков",                         sla: "1 раб. день", desc: "Отчёт по плановым и фактическим графикам отпусков.", who: "Руководитель / HR", docs: "Не требуются" },
+  { id: 36, cat: "Отчеты", icon: "👤", title: "Отчет — Персональные данные работника",              sla: "1 раб. день", desc: "Отчёт с персональными данными сотрудника из кадровой системы.", who: "HR / Руководитель", docs: "Не требуются" },
+  // ── Подбор персонала ──────────────────────────────────────────────────────
+  { id: 37, cat: "Подбор персонала",        icon: "🔍", title: "Заявка на подбор",       sla: "5 раб. дней", desc: "Открытие вакансии и поиск кандидата силами HR Service Center.", who: "Руководитель подразделения", docs: "Описание вакансии, грейд" },
+  // ── Compensation & Benefits ───────────────────────────────────────────────
+  { id: 38, cat: "Compensation & Benefits", icon: "💰", title: "Заявка на премирование", sla: "3 раб. дня",  desc: "Единовременная или регулярная премия для сотрудника или команды.", who: "Руководитель подразделения", docs: "Обоснование, сумма" },
+  // ── HR Analytics ─────────────────────────────────────────────────────────
+  { id: 39, cat: "HR Analytics",            icon: "📊", title: "Запрос HR-отчёта",      sla: "2 раб. дня",  desc: "Любой аналитический отчёт: текучесть, headcount, ФОТ, SLA.", who: "Руководитель / HR", docs: "Описание нужных данных и периода" },
+  // ── Оценка и Performance ─────────────────────────────────────────────────
+  { id: 40, cat: "Оценка и Performance",    icon: "🎯", title: "Запуск оценки 360",     sla: "5 раб. дней", desc: "Организация цикла оценки для сотрудника или команды.", who: "Руководитель / HR", docs: "Список участников оценки" },
 ];
 
 const STATUSES = { draft:"Черновик", sent:"Отправлена", review:"Проверка", assigned:"Назначен исполнитель", inwork:"В работе", done:"Выполнено", closed:"Закрыто" };
@@ -41,6 +80,18 @@ const Badge = ({ text, color = C.green }) => (
     {text}
   </span>
 );
+
+const TagBadge = ({ tag }) => {
+  if (!tag) return null;
+  const colors = { "рук": C.purple, "секретари": C.orange };
+  const color = colors[tag] || C.gray500;
+  return (
+    <span style={{ background: color + "18", color, border: `1px solid ${color}40`,
+      borderRadius: 4, padding: "1px 6px", fontSize: 10, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 4 }}>
+      {tag}
+    </span>
+  );
+};
 
 const Pill = ({ text, active, onClick }) => (
   <button onClick={onClick} style={{
@@ -130,6 +181,8 @@ const TOP_SERVICES = [
   { title: "Заявка на премирование", count: 11, pct: 29 },
 ];
 
+const isReport = s => s.cat === "Отчеты";
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════════════════
@@ -137,15 +190,15 @@ export default function App() {
   const [page, setPage] = useState("home");
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState(null);   // service being applied to
+  const [selected, setSelected] = useState(null);
   const [form, setForm] = useState({ name: "", dept: "", comment: "" });
   const [submitted, setSubmitted] = useState(false);
   const [requests, setRequests] = useState([
-    { id: "HR-001", title: "Справка с места работы", status: "inwork",  sla: "1 раб. день", date: "09.06.2026", icon: "📄" },
-    { id: "HR-002", title: "Заявка на отпуск",        status: "closed",  sla: "1 раб. день", date: "02.06.2026", icon: "🏖" },
-    { id: "HR-003", title: "Заявка на подбор",        status: "review",  sla: "5 раб. дней", date: "11.06.2026", icon: "🔍" },
+    { id: "HR-001", title: "Процесс выдачи справок с места работы", status: "inwork",  sla: "1 раб. день", date: "09.06.2026", icon: "📄" },
+    { id: "HR-002", title: "Заявка на отпуск",                       status: "closed",  sla: "1 раб. день", date: "02.06.2026", icon: "🏖" },
+    { id: "HR-003", title: "Заявка на подбор",                        status: "review",  sla: "5 раб. дней", date: "11.06.2026", icon: "🔍" },
   ]);
-  const [detail, setDetail] = useState(null);       // request detail view
+  const [detail, setDetail] = useState(null);
 
   const sideW = 200;
 
@@ -154,6 +207,13 @@ export default function App() {
     const matchSrch = s.title.toLowerCase().includes(search.toLowerCase()) || s.cat.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSrch;
   });
+
+  // group filtered services by category for display
+  const groupedServices = filteredServices.reduce((acc, s) => {
+    if (!acc[s.cat]) acc[s.cat] = [];
+    acc[s.cat].push(s);
+    return acc;
+  }, {});
 
   function submitRequest() {
     const svc = selected;
@@ -169,6 +229,11 @@ export default function App() {
 
   function resetForm() {
     setSelected(null); setForm({ name: "", dept: "", comment: "" }); setSubmitted(false);
+  }
+
+  function openService(s) {
+    setSelected(s);
+    setPage("form");
   }
 
   // ── Layout shell ────────────────────────────────────────────────────────
@@ -225,8 +290,8 @@ export default function App() {
 
             {/* Quick actions */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14, marginBottom: 28 }}>
-              {SERVICES.slice(0,4).map(s => (
-                <div key={s.id} onClick={() => { setSelected(s); setPage("form"); }}
+              {SERVICES.slice(0, 4).map(s => (
+                <div key={s.id} onClick={() => openService(s)}
                   style={{ background: C.white, border: `1px solid ${C.gray300}`,
                     borderRadius: 12, padding: "18px 16px", cursor: "pointer",
                     transition: "box-shadow .15s", boxShadow: "0 1px 4px #0000000A" }}
@@ -246,7 +311,7 @@ export default function App() {
               <Btn variant="ghost" small onClick={() => setPage("my")}>Все заявки →</Btn>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {requests.slice(0,3).map(r => (
+              {requests.slice(0, 3).map(r => (
                 <div key={r.id} onClick={() => { setDetail(r); setPage("my"); }}
                   style={{ background: C.white, border: `1px solid ${C.gray300}`,
                     borderRadius: 10, padding: "14px 18px", display: "flex",
@@ -280,34 +345,65 @@ export default function App() {
                   borderRadius: 8, padding: "8px 14px", fontSize: 13,
                   fontFamily: "inherit", color: C.dark, outline: "none" }} />
             </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 24 }}>
               {["Все", ...CATS].map(c => (
                 <Pill key={c} text={c} active={catFilter === c} onClick={() => setCatFilter(c)} />
               ))}
             </div>
 
-            {/* Service cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
-              {filteredServices.map(s => (
-                <div key={s.id} style={{
-                  background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12,
-                  padding: "20px", cursor: "pointer", transition: "box-shadow .15s",
-                  boxShadow: "0 1px 4px #0000000A", display: "flex", flexDirection: "column"
-                }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 16px #0000001A"}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px #0000000A"}>
-                  <div style={{ height: 3, background: C.green, borderRadius: 2, marginBottom: 14 }} />
-                  <div style={{ fontSize: 10, fontWeight: 700, color: C.green, letterSpacing: 1, marginBottom: 6, textTransform: "uppercase" }}>{s.cat}</div>
-                  <div style={{ fontSize: 16, marginBottom: 6 }}>{s.icon}</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 6 }}>{s.title}</div>
-                  <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 14 }}>{s.desc}</div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</span>
-                    <Btn small onClick={() => { setSelected(s); setPage("form"); }}>Подать заявку</Btn>
-                  </div>
+            {/* Service cards grouped by category */}
+            {Object.entries(groupedServices).map(([cat, services]) => (
+              <div key={cat} style={{ marginBottom: 36 }}>
+                {/* Category header */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                  <div style={{ height: 3, width: 24, background: cat === "Отчеты" ? C.purple : C.green, borderRadius: 2 }} />
+                  <h2 style={{ fontSize: 16, fontWeight: 700, color: C.dark, margin: 0 }}>{cat}</h2>
+                  <span style={{ fontSize: 12, color: C.gray500, background: C.gray100, borderRadius: 10, padding: "2px 8px" }}>
+                    {services.length}
+                  </span>
+                  <div style={{ flex: 1, height: 1, background: C.gray300 }} />
                 </div>
-              ))}
-            </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
+                  {services.map(s => (
+                    <div key={s.id} style={{
+                      background: C.white, border: `1px solid ${C.gray300}`, borderRadius: 12,
+                      padding: "20px", cursor: "pointer", transition: "box-shadow .15s",
+                      boxShadow: "0 1px 4px #0000000A", display: "flex", flexDirection: "column"
+                    }}
+                      onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 16px #0000001A"}
+                      onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 4px #0000000A"}>
+                      <div style={{ height: 3, background: isReport(s) ? C.purple : C.green, borderRadius: 2, marginBottom: 14 }} />
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: isReport(s) ? C.purple : C.green, letterSpacing: 1, textTransform: "uppercase" }}>{s.cat}</span>
+                        {s.tag && <TagBadge tag={s.tag} />}
+                      </div>
+                      <div style={{ fontSize: 16, marginBottom: 6 }}>{s.icon}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 6 }}>{s.title}</div>
+                      <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 14 }}>{s.desc}</div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</span>
+                        <button onClick={() => openService(s)} style={{
+                          background: isReport(s) ? C.purple : C.green,
+                          color: C.white, border: "none", borderRadius: 8,
+                          padding: "6px 14px", fontSize: 12, fontWeight: 600,
+                          cursor: "pointer", fontFamily: "inherit"
+                        }}>
+                          {isReport(s) ? "Получить отчёт" : "Подать заявку"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {filteredServices.length === 0 && (
+              <div style={{ textAlign: "center", padding: "60px 0", color: C.gray500 }}>
+                <div style={{ fontSize: 36, marginBottom: 12 }}>🔍</div>
+                <div style={{ fontSize: 15, fontWeight: 600 }}>Ничего не найдено</div>
+              </div>
+            )}
           </div>
         )}
 
@@ -321,21 +417,29 @@ export default function App() {
             </button>
 
             {/* Service info card */}
-            <div style={{ background: C.greenPale, border: `1px solid ${C.green}30`,
+            <div style={{
+              background: isReport(selected) ? C.purple + "0D" : C.greenPale,
+              border: `1px solid ${isReport(selected) ? C.purple : C.green}30`,
               borderRadius: 12, padding: "16px 20px", marginBottom: 24,
-              display: "flex", gap: 14, alignItems: "flex-start" }}>
+              display: "flex", gap: 14, alignItems: "flex-start"
+            }}>
               <div style={{ fontSize: 28 }}>{selected.icon}</div>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: C.dark }}>{selected.title}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: C.dark }}>{selected.title}</div>
+                  {selected.tag && <TagBadge tag={selected.tag} />}
+                </div>
                 <div style={{ fontSize: 12, color: C.gray500, marginTop: 2 }}>{selected.desc}</div>
                 <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                  <Badge text={`SLA: ${selected.sla}`} />
+                  <Badge text={`SLA: ${selected.sla}`} color={isReport(selected) ? C.purple : C.green} />
                   <Badge text={selected.who} color={C.gray500} />
                 </div>
               </div>
             </div>
 
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 20px" }}>Заполните заявку</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 20px" }}>
+              {isReport(selected) ? "Запросить отчёт" : "Заполните заявку"}
+            </h2>
 
             <Input label="Ваше имя и фамилия" value={form.name} onChange={v => setForm(p => ({...p, name: v}))} placeholder="Иванов Иван Иванович" />
             <Input label="Подразделение" value={form.dept} onChange={v => setForm(p => ({...p, dept: v}))} placeholder="Департамент управления персоналом" />
@@ -351,7 +455,14 @@ export default function App() {
               placeholder="Укажите любые дополнительные детали..." multiline />
 
             <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              <Btn onClick={submitRequest} variant="primary">Отправить заявку</Btn>
+              <button onClick={submitRequest} style={{
+                background: isReport(selected) ? C.purple : C.green,
+                color: C.white, border: "none", borderRadius: 8,
+                padding: "10px 20px", fontSize: 14, fontWeight: 600,
+                cursor: "pointer", fontFamily: "inherit"
+              }}>
+                {isReport(selected) ? "Запросить отчёт" : "Отправить заявку"}
+              </button>
               <Btn onClick={resetForm} variant="ghost">Отмена</Btn>
             </div>
           </div>
@@ -361,10 +472,14 @@ export default function App() {
         {page === "form" && submitted && (
           <div style={{ maxWidth: 500, textAlign: "center", paddingTop: 60 }}>
             <div style={{ fontSize: 56, marginBottom: 16 }}>✅</div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, color: C.dark, margin: "0 0 8px" }}>Заявка отправлена</h2>
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: C.dark, margin: "0 0 8px" }}>
+              {isReport(selected) ? "Запрос отправлен" : "Заявка отправлена"}
+            </h2>
             <p style={{ color: C.gray500, fontSize: 14, marginBottom: 24 }}>
-              Вашу заявку <b>«{selected?.title}»</b> получил HR Service Center.<br />
-              Мы уведомим вас при изменении статуса. SLA: {selected?.sla}.
+              {isReport(selected)
+                ? <>Ваш запрос <b>«{selected?.title}»</b> принят в обработку.<br />Отчёт будет подготовлен в течение {selected?.sla}.</>
+                : <>Вашу заявку <b>«{selected?.title}»</b> получил HR Service Center.<br />Мы уведомим вас при изменении статуса. SLA: {selected?.sla}.</>
+              }
             </p>
             <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
               <Btn onClick={() => { resetForm(); setPage("my"); }}>Мои заявки</Btn>
