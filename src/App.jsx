@@ -22,12 +22,12 @@ const C = {
 const SERVICES = [
   // ── Кадровое администрирование ──────────────────────────────────────────
   { id: 1,  cat: "Кадровое администрирование", icon: "🔄", title: "Перевод",                                                     sla: "3 раб. дня",  desc: "Перевод на другую должность, в другое подразделение или регион.", who: "Сотрудник / руководитель", docs: "Заявка с обоснованием" },
-  { id: 2,  cat: "Кадровое администрирование", icon: "🏖", title: "Заявка на отпуск",                                            sla: "1 раб. день", desc: "Оформление ежегодного, учебного или административного отпуска.", who: "Любой сотрудник", docs: "Заявление (заполняется на портале)" },
-  { id: 3,  cat: "Кадровое администрирование", icon: "📅", title: "Планируемый график отпусков",                                 sla: "2 раб. дня",  desc: "Формирование и согласование планового графика отпусков подразделения.", who: "Руководитель", docs: "График отпусков по подразделению" },
-  { id: 4,  cat: "Кадровое администрирование", icon: "👶", title: "Отпуск без сохранения заработной платы по уходу за детьми",  sla: "2 раб. дня",  desc: "Оформление отпуска без сохранения заработной платы для ухода за детьми.", who: "Любой сотрудник", docs: "Заявление, свидетельство о рождении ребёнка" },
-  { id: 5,  cat: "Кадровое администрирование", icon: "🤱", title: "Заявка на выход из декретного отпуска",                      sla: "3 раб. дня",  desc: "Оформление досрочного или планового выхода сотрудника из декретного отпуска.", who: "Руководитель", docs: "Заявление сотрудника", tag: "рук" },
-  { id: 6,  cat: "Кадровое администрирование", icon: "📝", title: "Заявка на изменение персональных данных",                    sla: "2 раб. дня",  desc: "Обновление персональных данных сотрудника (ФИО, адрес, документы и др.).", who: "Любой сотрудник", docs: "Подтверждающие документы" },
-  { id: 7,  cat: "Кадровое администрирование", icon: "🔃", title: "Актуализация данных",                                        sla: "2 раб. дня",  desc: "Актуализация сведений о сотруднике в кадровых системах.", who: "Любой сотрудник / HR", docs: "Подтверждающие документы" },
+  { id: 2,  cat: "Кадровое администрирование", group: "Отпуска", subgroup: "Ежегодные",   icon: "🏖", title: "Заявка на отпуск",                                            sla: "1 раб. день", desc: "Оформление ежегодного, учебного или административного отпуска.", who: "Любой сотрудник", docs: "Заявление (заполняется на портале)" },
+  { id: 3,  cat: "Кадровое администрирование", group: "Отпуска", subgroup: "Ежегодные",   icon: "📅", title: "Планируемый график отпусков",                                 sla: "2 раб. дня",  desc: "Формирование и согласование планового графика отпусков подразделения.", who: "Руководитель", docs: "График отпусков по подразделению" },
+  { id: 4,  cat: "Кадровое администрирование", group: "Отпуска", subgroup: "Социальные",  icon: "👶", title: "Отпуск без сохранения заработной платы по уходу за детьми",  sla: "2 раб. дня",  desc: "Оформление отпуска без сохранения заработной платы для ухода за детьми.", who: "Любой сотрудник", docs: "Заявление, свидетельство о рождении ребёнка" },
+  { id: 5,  cat: "Кадровое администрирование", group: "Отпуска", subgroup: "Декретные",   icon: "🤱", title: "Заявка на выход из декретного отпуска",                      sla: "3 раб. дня",  desc: "Оформление досрочного или планового выхода сотрудника из декретного отпуска.", who: "Руководитель", docs: "Заявление сотрудника", tag: "рук" },
+  { id: 6,  cat: "Кадровое администрирование", group: "Персональные данные",              icon: "📝", title: "Заявка на изменение персональных данных",                    sla: "2 раб. дня",  desc: "Обновление персональных данных сотрудника (ФИО, адрес, документы и др.).", who: "Любой сотрудник", docs: "Подтверждающие документы" },
+  { id: 7,  cat: "Кадровое администрирование", group: "Персональные данные",              icon: "🔃", title: "Актуализация данных",                                        sla: "2 раб. дня",  desc: "Актуализация сведений о сотруднике в кадровых системах.", who: "Любой сотрудник / HR", docs: "Подтверждающие документы" },
   { id: 8,  cat: "Кадровое администрирование", icon: "🔁", title: "Заявка на замещение / совмещение / возложение",              sla: "3 раб. дня",  desc: "Временное замещение, совмещение должностей или возложение обязанностей.", who: "Руководитель", docs: "Обоснование, период замещения", tag: "рук" },
   { id: 9,  cat: "Кадровое администрирование", icon: "✈️", title: "Заявка на командировку",                                      sla: "2 раб. дня",  desc: "Оформление служебной командировки сотрудника.", who: "Любой сотрудник / руководитель", docs: "Цель командировки, даты, место" },
   { id: 10, cat: "Кадровое администрирование", icon: "🧾", title: "Авансовый отчёт по командировке",                            sla: "3 раб. дня",  desc: "Подача авансового отчёта по итогам служебной командировки.", who: "Любой сотрудник", docs: "Чеки, билеты, подтверждающие документы" },
@@ -504,6 +504,8 @@ export default function App() {
   }, []);
   const [catFilter, setCatFilter] = useState("Все");
   const [search, setSearch] = useState("");
+  const [expandedGroups, setExpandedGroups] = useState({ "Отпуска": true, "Персональные данные": true });
+  const toggleGroup = g => setExpandedGroups(prev => ({ ...prev, [g]: !prev[g] }));
   const [selected, setSelected] = useState(null);   // service being applied to
   const [form, setForm] = useState({ name: "", dept: "", comment: "" });
   const [submitted, setSubmitted] = useState(false);
@@ -850,9 +852,12 @@ export default function App() {
               ))}
             </div>
 
-            {/* Service cards */}
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
-              {filteredServices.map(s => (
+            {/* Service cards — with collapsible groups */}
+            {(() => {
+              const ungrouped = filteredServices.filter(s => !s.group);
+              const groupNames = [...new Set(filteredServices.filter(s => s.group).map(s => s.group))];
+
+              const ServiceCard = ({ s }) => (
                 <div key={s.id} style={{
                   background: C.white, borderRadius: 16, border:`1px solid ${C.gray300}`,
                   padding: "16px", cursor: "pointer", transition: "box-shadow .15s",
@@ -866,7 +871,9 @@ export default function App() {
                       border: `1px solid ${C.green}22` }}>
                       {s.icon}
                     </div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>{s.cat}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>
+                      {s.subgroup || s.group || s.cat}
+                    </div>
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 5 }}>{s.title}</div>
                   <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 12, lineHeight: 1.5 }}>{s.desc}</div>
@@ -877,8 +884,66 @@ export default function App() {
                     </Btn>
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+
+              return (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {/* Collapsible groups */}
+                  {groupNames.map(grp => {
+                    const grpItems = filteredServices.filter(s => s.group === grp);
+                    const subgroups = [...new Set(grpItems.filter(s => s.subgroup).map(s => s.subgroup))];
+                    const isOpen = expandedGroups[grp] !== false;
+                    return (
+                      <div key={grp}>
+                        {/* Group header */}
+                        <button onClick={() => toggleGroup(grp)} style={{
+                          display: "flex", alignItems: "center", gap: 10, width: "100%",
+                          background: C.greenPale, border: `1px solid ${C.green}30`, borderRadius: 12,
+                          padding: "12px 16px", cursor: "pointer", fontFamily: "inherit", marginBottom: isOpen ? 10 : 0
+                        }}>
+                          <span style={{ fontSize: 18 }}>{grp === "Отпуска" ? "🏖" : "📝"}</span>
+                          <span style={{ fontSize: 15, fontWeight: 700, color: C.dark, flex: 1, textAlign: "left" }}>{grp}</span>
+                          <span style={{ fontSize: 12, color: C.gray500, marginRight: 4 }}>{grpItems.length} заявок</span>
+                          <span style={{ fontSize: 14, color: C.green, transition: "transform .2s", display: "inline-block", transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }}>›</span>
+                        </button>
+
+                        {isOpen && (
+                          <div style={{ paddingLeft: isMobile ? 0 : 12 }}>
+                            {subgroups.length > 0
+                              ? subgroups.map(sg => {
+                                  const sgItems = grpItems.filter(s => s.subgroup === sg);
+                                  return (
+                                    <div key={sg} style={{ marginBottom: 14 }}>
+                                      <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8, paddingLeft: 4, borderLeft: `3px solid ${C.green}` }}>
+                                        &nbsp;{sg}
+                                      </div>
+                                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
+                                        {sgItems.map(s => <ServiceCard key={s.id} s={s} />)}
+                                      </div>
+                                    </div>
+                                  );
+                                })
+                              : (
+                                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
+                                  {grpItems.map(s => <ServiceCard key={s.id} s={s} />)}
+                                </div>
+                              )
+                            }
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {/* Ungrouped items */}
+                  {ungrouped.length > 0 && (
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
+                      {ungrouped.map(s => <ServiceCard key={s.id} s={s} />)}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         )}
 
