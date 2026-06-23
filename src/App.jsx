@@ -540,8 +540,7 @@ export default function App() {
     "Штатно-должностной список": "🏢",
     "График работы": "🗓",
   };
-  const [expandedGroups, setExpandedGroups] = useState(Object.fromEntries(Object.keys(GROUP_ICONS).map(g => [g, true])));
-  const toggleGroup = g => setExpandedGroups(prev => ({ ...prev, [g]: !prev[g] }));
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [selected, setSelected] = useState(null);   // service being applied to
   const [form, setForm] = useState({ name: "", dept: "", comment: "" });
   const [submitted, setSubmitted] = useState(false);
@@ -869,14 +868,32 @@ export default function App() {
         {/* ── CATALOG ── */}
         {page === "catalog" && !selected && (
           <div>
-            <div style={{ marginBottom: 22 }}>
-              <h1 style={{ fontSize: 24, fontWeight: 700, color: C.dark, margin: 0 }}>Каталог HR-сервисов</h1>
-              <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>Выберите нужную услугу и подайте заявку</p>
-            </div>
+            {/* Header */}
+            {selectedGroup ? (
+              <div style={{ marginBottom: 22 }}>
+                <button onClick={() => setSelectedGroup(null)} style={{
+                  background: "none", border: "none", color: C.green, fontSize: 13,
+                  fontWeight: 600, cursor: "pointer", padding: 0, fontFamily: "inherit", marginBottom: 10
+                }}>← Все группы</button>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: 14, background: C.greenPale,
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
+                    border: `1px solid ${C.green}22`, flexShrink: 0 }}>
+                    {GROUP_ICONS[selectedGroup] || "📝"}
+                  </div>
+                  <h1 style={{ fontSize: 22, fontWeight: 700, color: C.dark, margin: 0 }}>{selectedGroup}</h1>
+                </div>
+              </div>
+            ) : (
+              <div style={{ marginBottom: 22 }}>
+                <h1 style={{ fontSize: 24, fontWeight: 700, color: C.dark, margin: 0 }}>Каталог HR-сервисов</h1>
+                <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>Выберите нужную услугу и подайте заявку</p>
+              </div>
+            )}
 
             {/* Search + filters */}
             <div style={{ display: "flex", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
-              <input value={search} onChange={e => setSearch(e.target.value)}
+              <input value={search} onChange={e => { setSearch(e.target.value); setSelectedGroup(null); }}
                 placeholder="🔍  Поиск сервиса..."
                 style={{ flex: 1, minWidth: 200, border: `1px solid ${C.gray300}`,
                   borderRadius: 8, padding: "8px 14px", fontSize: 13,
@@ -884,18 +901,14 @@ export default function App() {
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
               {["Все", ...CATS].map(c => (
-                <Pill key={c} text={c} active={catFilter === c} onClick={() => setCatFilter(c)} />
+                <Pill key={c} text={c} active={catFilter === c} onClick={() => { setCatFilter(c); setSelectedGroup(null); }} />
               ))}
             </div>
 
-            {/* Service cards — with collapsible groups */}
             {(() => {
-              const ungrouped = filteredServices.filter(s => !s.group);
-              const groupNames = [...new Set(filteredServices.filter(s => s.group).map(s => s.group))];
-
               const ServiceCard = ({ s }) => (
-                <div key={s.id} style={{
-                  background: C.white, borderRadius: 16, border:`1px solid ${C.gray300}`,
+                <div style={{
+                  background: C.white, borderRadius: 16, border: `1px solid ${C.gray300}`,
                   padding: "16px", cursor: "pointer", transition: "box-shadow .15s",
                   display: "flex", flexDirection: "column"
                 }}
@@ -908,7 +921,7 @@ export default function App() {
                       {s.icon}
                     </div>
                     <div style={{ fontSize: 10, fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>
-                      {s.subgroup || s.group || s.cat}
+                      {s.group || s.cat}
                     </div>
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 5 }}>{s.title}</div>
@@ -922,59 +935,66 @@ export default function App() {
                 </div>
               );
 
+              // Inside a group — show its services
+              if (selectedGroup) {
+                const grpItems = SERVICES.filter(s => s.group === selectedGroup);
+                return (
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
+                    {grpItems.map(s => <ServiceCard key={s.id} s={s} />)}
+                  </div>
+                );
+              }
+
+              // Searching — show flat results
+              if (search) {
+                return (
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
+                    {filteredServices.map(s => <ServiceCard key={s.id} s={s} />)}
+                  </div>
+                );
+              }
+
+              // Default — group tiles + ungrouped services
+              const groupNames = [...new Set(filteredServices.filter(s => s.group).map(s => s.group))];
+              const ungrouped = filteredServices.filter(s => !s.group);
+
               return (
-                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                  {/* Collapsible groups */}
-                  {groupNames.map(grp => {
-                    const grpItems = filteredServices.filter(s => s.group === grp);
-                    const subgroups = [...new Set(grpItems.filter(s => s.subgroup).map(s => s.subgroup))];
-                    const isOpen = expandedGroups[grp] !== false;
-                    return (
-                      <div key={grp}>
-                        {/* Group header */}
-                        <button onClick={() => toggleGroup(grp)} style={{
-                          display: "flex", alignItems: "center", gap: 10, width: "100%",
-                          background: C.greenPale, border: `1px solid ${C.green}30`, borderRadius: 12,
-                          padding: "12px 16px", cursor: "pointer", fontFamily: "inherit", marginBottom: isOpen ? 10 : 0
-                        }}>
-                          <span style={{ fontSize: 18 }}>{GROUP_ICONS[grp] || "📝"}</span>
-                          <span style={{ fontSize: 15, fontWeight: 700, color: C.dark, flex: 1, textAlign: "left" }}>{grp}</span>
-                          <span style={{ fontSize: 12, color: C.gray500, marginRight: 4 }}>{grpItems.length} заявок</span>
-                          <span style={{ fontSize: 14, color: C.green, transition: "transform .2s", display: "inline-block", transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }}>›</span>
-                        </button>
-
-                        {isOpen && (
-                          <div style={{ paddingLeft: isMobile ? 0 : 12 }}>
-                            {subgroups.length > 0
-                              ? subgroups.map(sg => {
-                                  const sgItems = grpItems.filter(s => s.subgroup === sg);
-                                  return (
-                                    <div key={sg} style={{ marginBottom: 14 }}>
-                                      <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8, paddingLeft: 4, borderLeft: `3px solid ${C.green}` }}>
-                                        &nbsp;{sg}
-                                      </div>
-                                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
-                                        {sgItems.map(s => <ServiceCard key={s.id} s={s} />)}
-                                      </div>
-                                    </div>
-                                  );
-                                })
-                              : (
-                                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
-                                  {grpItems.map(s => <ServiceCard key={s.id} s={s} />)}
-                                </div>
-                              )
-                            }
+                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                  {groupNames.length > 0 && (
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(3,1fr)", gap: isMobile ? 10 : 14 }}>
+                      {groupNames.map(grp => {
+                        const count = filteredServices.filter(s => s.group === grp).length;
+                        return (
+                          <div key={grp} onClick={() => setSelectedGroup(grp)}
+                            style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.gray300}`,
+                              padding: isMobile ? "16px 12px" : "20px 18px", cursor: "pointer",
+                              transition: "box-shadow .15s, border-color .15s",
+                              display: "flex", flexDirection: "column", gap: 10 }}
+                            onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 4px 18px ${C.green}22`; e.currentTarget.style.borderColor = `${C.green}55`; }}
+                            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = C.gray300; }}>
+                            <div style={{ width: 52, height: 52, borderRadius: 14, background: C.greenPale,
+                              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
+                              border: `1px solid ${C.green}22` }}>
+                              {GROUP_ICONS[grp] || "📝"}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: C.dark, lineHeight: 1.3, marginBottom: 4 }}>{grp}</div>
+                              <div style={{ fontSize: 12, color: C.gray500 }}>{count} сервисов</div>
+                            </div>
+                            <div style={{ fontSize: 20, color: C.green, textAlign: "right" }}>›</div>
                           </div>
-                        )}
-                      </div>
-                    );
-                  })}
-
-                  {/* Ungrouped items */}
+                        );
+                      })}
+                    </div>
+                  )}
                   {ungrouped.length > 0 && (
-                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
-                      {ungrouped.map(s => <ServiceCard key={s.id} s={s} />)}
+                    <div>
+                      {groupNames.length > 0 && (
+                        <div style={{ fontSize: 13, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 12 }}>Другие сервисы</div>
+                      )}
+                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
+                        {ungrouped.map(s => <ServiceCard key={s.id} s={s} />)}
+                      </div>
                     </div>
                   )}
                 </div>
