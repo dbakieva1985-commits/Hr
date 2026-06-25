@@ -178,9 +178,9 @@ const SERVICES = [
     who: "Все сотрудники, кроме руководителей ГБ/филиалов и ДУП", docs: "Резюме кандидата, реферальная форма", btnText: "Рекомендовать" },
 
   // ── Кадровый резерв ───────────────────────────────────────────────────────
-  { id: 69, cat: "Кадровый резерв", icon: "📋", title: "Для руководителей",                         sla: "5 раб. дней", desc: "Подайте заявку на включение сотрудника в кадровый резерв или просмотрите список утверждённых резервистов своего департамента.", who: "Руководитель", docs: "Профиль сотрудника, обоснование", tag: "рук" },
+  { id: 69, cat: "Кадровый резерв", icon: "📋", title: "Для руководителей",                         sla: "5 раб. дней", desc: "Подайте заявку на включение сотрудника в кадровый резерв или запросите список утверждённых резервистов своего департамента.", who: "Руководитель", docs: "Профиль сотрудника, обоснование", tag: "рук", secondBtnText: "Список резервистов", secondBtnServiceId: 71 },
   { id: 70, cat: "Кадровый резерв", icon: "🙋", title: "Для работников",                            sla: "5 раб. дней", desc: "Хотите в кадровый резерв? Подайте заявку на самовыдвижение. Резервисты получают звёздочки и коины в личном кабинете — копите и обменивайте на привилегии.", who: "Любой сотрудник", docs: "Профиль, мотивационное письмо" },
-  { id: 71, cat: "Кадровый резерв", icon: "👥", title: "Утверждённые резервисты по департаменту",  sla: "1 раб. день", desc: "Просмотр актуального списка утверждённых резервистов своего департамента.", who: "Руководитель", docs: "Не требуются", tag: "рук" },
+  { id: 71, cat: "Кадровый резерв", icon: "👥", title: "Список резервистов по департаменту",        sla: "1 раб. день", desc: "Запрос актуального списка утверждённых резервистов своего департамента.", who: "Руководитель", docs: "Не требуются", tag: "рук", hidden: true },
 ];
 
 const STATUSES = { draft:"Черновик", sent:"Отправлена", review:"Проверка", assigned:"Назначен исполнитель", inwork:"В работе", done:"Выполнено", closed:"Закрыто" };
@@ -716,6 +716,7 @@ export default function App() {
   };
 
   const filteredServices = SERVICES.filter(s => {
+    if (s.hidden) return false;
     const matchCat  = catFilter === "Все" || s.cat === catFilter;
     const matchSrch = s.title.toLowerCase().includes(search.toLowerCase()) || s.cat.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSrch;
@@ -1051,11 +1052,16 @@ export default function App() {
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 5 }}>{s.title}</div>
                   <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 12, lineHeight: 1.5 }}>{s.desc}</div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                     <span style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</span>
-                    {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link, "_blank"); } else { setSelected(s); setPage("form"); } }}>
-                      {s.btnText || (s.isOnboarding || s.link ? "Открыть" : "Подать заявку")}
-                    </Btn>}
+                    <div style={{ display: "flex", gap: 6 }}>
+                      {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link, "_blank"); } else { setSelected(s); setPage("form"); } }}>
+                        {s.btnText || (s.isOnboarding || s.link ? "Открыть" : "Подать заявку")}
+                      </Btn>}
+                      {s.secondBtnText && <Btn small onClick={() => { const sec = SERVICES.find(x => x.id === s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
+                        {s.secondBtnText}
+                      </Btn>}
+                    </div>
                   </div>
                 </div>
               );
