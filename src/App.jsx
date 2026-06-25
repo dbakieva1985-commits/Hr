@@ -140,12 +140,12 @@ const SERVICES = [
   // ── Реферальная программа (внутри Подбор персонала) ──────────────────────
   { id: 81, cat: "Подбор персонала", group: "Реферальная программа", icon: "🌟", title: "Реферальная программа Halyk",
     sla: "Справочно",
-    desc: "Рекомендуйте IT-специалистов и получайте бонусы: 100 000 ₸ за middle, 150 000 ₸ за senior. Как участвовать: 1) Проверьте вакансии в Telegram-канале Halyk Jumys. 2) Отправьте резюме на hr@halykbank.kz с реферальной формой. 3) Получайте бонус после испытательного срока. Вопросы: Икласова Даяна, вн. 07342, Dayana@halykbank.kz.",
-    who: "Все сотрудники, кроме руководителей ГБ/филиалов и сотрудников ДУП", docs: "Не требуются", noBtn: true },
-  { id: 82, cat: "Подбор персонала", group: "Реферальная программа", icon: "📝", title: "Реферальная заявка",
+    desc: "Рекомендуйте IT-специалистов и получайте:\n💰 100 000 ₸ — за middle-специалиста\n💰 150 000 ₸ — за senior-специалиста\n\nКак участвовать: проверьте вакансии в Telegram Halyk Jumys → отправьте резюме кандидата на hr@halykbank.kz с реферальной формой → получайте бонус после испытательного срока.\n\nВопросы: Икласова Даяна, вн. 07342, Dayana@halykbank.kz",
+    who: "Все сотрудники, кроме руководителей ГБ/филиалов и ДУП", docs: "Не требуются", noBtn: true, featured: true },
+  { id: 82, cat: "Подбор персонала", group: "Реферальная программа", icon: "📝", title: "Подать реферальную заявку",
     sla: "5 раб. дней",
-    desc: "Заполните реферальную форму: укажите департамент, управление, табельный номер, данные кандидата (ФИО, телефон, email), рекомендуемую позицию, откуда знаете кандидата и причину рекомендации. Приложите резюме и отправьте на hr@halykbank.kz.",
-    who: "Все сотрудники, кроме руководителей ГБ/филиалов и сотрудников ДУП", docs: "Резюме кандидата, реферальная форма" },
+    desc: "Укажите данные кандидата (ФИО, телефон, email), рекомендуемую позицию и причину рекомендации. Приложите резюме и отправьте на hr@halykbank.kz.",
+    who: "Все сотрудники, кроме руководителей ГБ/филиалов и ДУП", docs: "Резюме кандидата, реферальная форма", btnText: "Рекомендовать" },
 
   // ── Кадровый резерв ───────────────────────────────────────────────────────
   { id: 69, cat: "Кадровый резерв", icon: "📋", title: "Заявка на включение сотрудника в резерв",  sla: "5 раб. дней", desc: "Руководитель подаёт заявку на включение сотрудника в кадровый резерв.", who: "Руководитель", docs: "Профиль сотрудника, обоснование", tag: "рук" },
@@ -971,7 +971,25 @@ export default function App() {
             </div>
 
             {(() => {
-              const ServiceCard = ({ s }) => (
+              const ServiceCard = ({ s }) => s.featured ? (
+                <div style={{
+                  background: C.white, borderRadius: 16, border: `2px solid ${C.green}55`,
+                  overflow: "hidden", boxShadow: `0 4px 20px ${C.green}1A`,
+                  display: "flex", flexDirection: "column"
+                }}>
+                  <div style={{
+                    background: `linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`,
+                    padding: "22px 16px 18px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10
+                  }}>
+                    <div style={{ fontSize: 48, lineHeight: 1 }}>{s.icon}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", textAlign: "center", lineHeight: 1.3 }}>{s.title}</div>
+                  </div>
+                  <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", flex: 1 }}>
+                    <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.7, flex: 1 }}>{s.desc}</div>
+                    <div style={{ marginTop: 10, fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</div>
+                  </div>
+                </div>
+              ) : (
                 <div style={{
                   background: C.white, borderRadius: 16, border: `1px solid ${C.gray300}`,
                   padding: "16px", cursor: "pointer", transition: "box-shadow .15s",
