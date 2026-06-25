@@ -161,7 +161,7 @@ const CATS = [...new Set(SERVICES.map(s => s.cat))];
 // ── Tiny helpers ────────────────────────────────────────────────────────────
 const Badge = ({ text, color = C.green }) => (
   <span style={{ background: color + "18", color, border: `1px solid ${color}40`,
-    borderRadius: 6, padding: "2px 10px", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }}>
+    borderRadius: 6, padding: "2px 10px", fontSize: 11, fontWeight: 700 }}>
     {text}
   </span>
 );
@@ -1099,11 +1099,11 @@ export default function App() {
             <div style={{ background: C.greenPale, border: `1px solid ${C.green}30`,
               borderRadius: 12, padding: "16px 20px", marginBottom: 24,
               display: "flex", gap: 14, alignItems: "flex-start" }}>
-              <div style={{ fontSize: 28 }}>{selected.icon}</div>
-              <div>
+              <div style={{ fontSize: 28, flexShrink: 0 }}>{selected.icon}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 16, fontWeight: 700, color: C.dark }}>{selected.title}</div>
-                <div style={{ fontSize: 12, color: C.gray500, marginTop: 2 }}>{selected.desc}</div>
-                <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+                <div style={{ fontSize: 12, color: C.gray500, marginTop: 2, wordBreak: "break-word" }}>{selected.desc}</div>
+                <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
                   <Badge text={`SLA: ${selected.sla}`} />
                   <Badge text={selected.who} color={C.gray500} />
                 </div>
