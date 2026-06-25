@@ -156,7 +156,17 @@ const SERVICES = [
 const STATUSES = { draft:"Черновик", sent:"Отправлена", review:"Проверка", assigned:"Назначен исполнитель", inwork:"В работе", done:"Выполнено", closed:"Закрыто" };
 const STATUS_COLOR = { draft:C.gray500, sent:C.blue, review:C.orange, assigned:C.green, inwork:C.green, done:C.green, closed:C.gray500 };
 
-const CATS = [...new Set(SERVICES.map(s => s.cat))];
+const CATS = [
+  "Подбор персонала",
+  "Онбординг",
+  "Кадровое администрирование",
+  "Заработная плата и командировки",
+  "Compensation & Benefits",
+  "Обучение и развитие",
+  "Оценка и Performance",
+  "Кадровый резерв",
+  "HR Analytics",
+].filter(c => SERVICES.some(s => s.cat === c));
 
 // ── Tiny helpers ────────────────────────────────────────────────────────────
 const Badge = ({ text, color = C.green }) => (
