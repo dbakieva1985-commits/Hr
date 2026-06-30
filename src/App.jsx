@@ -347,9 +347,11 @@ const NAV = [
   { id: "analytics", icon: "⊡", label: "Аналитика" },
 ];
 const PORTAL_ROLES = [
-  { id: "manager",  icon: "👔", label: "Руководитель", short: "Рук-ль" },
-  { id: "hr",       icon: "👩‍💼", label: "HR",           short: "HR" },
-  { id: "employee", icon: "👤", label: "Сотрудник",    short: "Сотрудник" },
+  { id: "employee", icon: "🆕", label: "Новичок",      short: "Новичок",  obView: "employee" },
+  { id: "worker",   icon: "👤", label: "Сотрудник",    short: "Сотрудник", obView: "employee" },
+  { id: "manager",  icon: "👔", label: "Руководитель", short: "Рук-ль",   obView: "manager"  },
+  { id: "mentor",   icon: "🤝", label: "Наставник",    short: "Наставник", obView: "mentor"   },
+  { id: "hr",       icon: "👩‍💼", label: "HR",           short: "HR",       obView: "hr"       },
 ];
 const COMPANIES = [
   { id: "narodny",    name: "АО «Народный Банк»",         sub: "Головной банк",          icon: "🏦" },
@@ -662,7 +664,8 @@ export default function App() {
   const [portalRole, setPortalRole] = useState("employee");
   const [company, setCompany] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [loginStep, setLoginStep] = useState("select"); // "select" | "confirm"
+  const [loginStep, setLoginStep] = useState("select"); // "select" | "role"
+  const [loginRole, setLoginRole] = useState(null);
   const [obTasks, setObTasks]   = useState(OB_TASKS_INIT);
   const [obDocs,  setObDocs]    = useState(OB_DOCS_INIT);
   const [obPhase, setObPhase]   = useState("week1");
@@ -723,6 +726,7 @@ export default function App() {
   const [approvalTab, setApprovalTab]   = useState("personal");
   const [recruitForm, setRecruitForm]   = useState({
     position: "", management: "", department: "",
+    headcount: "", grade: "", urgency: "", workType: "",
     requirements: "", duties: "", skills: "", comment: "",
   });
   const [listeningField,  setListeningField]  = useState(null);
@@ -866,14 +870,14 @@ export default function App() {
         <div style={{ background:C.white, borderRadius:24, padding:isMobile?"22px 18px":"28px 28px",
           maxWidth:440, width:"100%", boxShadow:"0 20px 60px rgba(0,0,0,0.25)" }}>
 
-          {/* ── ШАГ 1: выбор компании ── */}
+            {/* ── ШАГ 1: выбор компании ── */}
           {loginStep === "select" && (<>
             <div style={{ fontSize:16, fontWeight:700, color:C.dark, marginBottom:3 }}>Выберите организацию</div>
             <div style={{ fontSize:12, color:C.gray500, marginBottom:18 }}>Нажмите на вашу компанию для входа</div>
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
               {COMPANIES.map(c => (
                 <div key={c.id}
-                  onClick={() => { setSelectedCompany(c.id); setLoginStep("confirm"); }}
+                  onClick={() => { setSelectedCompany(c.id); setLoginStep("role"); }}
                   style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 16px",
                     borderRadius:16, cursor:"pointer", transition:"all .15s",
                     border:`2px solid ${C.gray300}`, background:C.white,
@@ -894,34 +898,62 @@ export default function App() {
             </div>
           </>)}
 
-          {/* ── ШАГ 2: подтверждение ── */}
-          {loginStep === "confirm" && co && (<>
-            <button onClick={() => setLoginStep("select")}
+          {/* ── ШАГ 2: выбор роли ── */}
+          {loginStep === "role" && co && (<>
+            <button onClick={() => { setLoginStep("select"); setLoginRole(null); }}
               style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700,
-                cursor:"pointer", fontFamily:"inherit", padding:"0 0 16px", display:"flex", alignItems:"center", gap:4 }}>
+                cursor:"pointer", fontFamily:"inherit", padding:"0 0 14px", display:"flex", alignItems:"center", gap:4 }}>
               ← Назад
             </button>
-
-            {/* Большая карточка выбранной компании */}
-            <div style={{ background:C.greenPale, border:`2px solid ${C.green}`, borderRadius:20,
-              padding:"24px 20px", textAlign:"center", marginBottom:24 }}>
-              <div style={{ width:72, height:72, borderRadius:22, background:C.green,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                fontSize:36, margin:"0 auto 14px" }}>{co.icon}</div>
-              <div style={{ fontSize:11, color:C.gray500, fontWeight:600, textTransform:"uppercase",
-                letterSpacing:1, marginBottom:6 }}>Вы входите как сотрудник</div>
-              <div style={{ fontSize:20, fontWeight:800, color:C.dark, lineHeight:1.2 }}>{co.name}</div>
-              <div style={{ fontSize:13, color:C.green, marginTop:6, fontWeight:600 }}>{co.sub}</div>
+            <div style={{ display:"flex", alignItems:"center", gap:10, background:C.greenPale,
+              borderRadius:12, padding:"10px 14px", marginBottom:16 }}>
+              <span style={{ fontSize:18 }}>{co.icon}</span>
+              <div style={{ fontSize:13, fontWeight:700, color:C.green }}>{co.name}</div>
             </div>
-
+            <div style={{ fontSize:15, fontWeight:700, color:C.dark, marginBottom:3 }}>Выберите вашу роль</div>
+            <div style={{ fontSize:12, color:C.gray500, marginBottom:14 }}>Портал покажет сервисы, нужные именно вам</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:20 }}>
+              {PORTAL_ROLES.filter(r => r.id !== "worker").map(r => {
+                const isActive = loginRole === r.id;
+                return (
+                  <div key={r.id} onClick={() => setLoginRole(r.id)}
+                    style={{ display:"flex", alignItems:"center", gap:12, padding:"13px 14px",
+                      borderRadius:14, cursor:"pointer", transition:"all .15s",
+                      border:`2px solid ${isActive ? C.green : C.gray300}`,
+                      background: isActive ? C.greenPale : C.white,
+                    }}
+                    onMouseEnter={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.green}55`; e.currentTarget.style.background=C.greenPale+"55"; }}}
+                    onMouseLeave={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.gray300}`; e.currentTarget.style.background=C.white; }}}
+                  >
+                    <div style={{ width:42, height:42, borderRadius:12, flexShrink:0,
+                      background: isActive ? C.green : C.gray100,
+                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, transition:"all .15s" }}>
+                      {r.icon}
+                    </div>
+                    <div style={{ fontSize:14, fontWeight:700, color: isActive ? C.green : C.dark }}>{r.label}</div>
+                    {isActive && <span style={{ marginLeft:"auto", color:C.green, fontSize:16, flexShrink:0 }}>✓</span>}
+                  </div>
+                );
+              })}
+            </div>
             <button
-              onClick={() => { setCompany(selectedCompany); navigate("catalog"); }}
-              style={{ width:"100%", background:C.green, color:C.white,
-                border:"none", borderRadius:100, padding:"16px 0",
-                fontSize:16, fontWeight:800, cursor:"pointer", fontFamily:"inherit",
-                boxShadow:`0 6px 20px ${C.green}55`, letterSpacing:0.3,
+              onClick={() => {
+                if (!loginRole) return;
+                const r = PORTAL_ROLES.find(x => x.id === loginRole);
+                setPortalRole(loginRole);
+                if (r?.obView) setObView(r.obView);
+                setCompany(selectedCompany);
+                navigate("catalog");
+              }}
+              disabled={!loginRole}
+              style={{ width:"100%", background: loginRole ? C.green : C.gray300,
+                color: loginRole ? C.white : C.gray500,
+                border:"none", borderRadius:100, padding:"15px 0",
+                fontSize:15, fontWeight:800, cursor: loginRole ? "pointer" : "default",
+                fontFamily:"inherit", transition:"all .2s",
+                boxShadow: loginRole ? `0 6px 20px ${C.green}55` : "none",
               }}>
-              Войти в портал →
+              {loginRole ? "Войти в портал →" : "Выберите роль"}
             </button>
           </>)}
         </div>
@@ -974,7 +1006,7 @@ export default function App() {
           {PORTAL_ROLES.map(r => {
             const isActive = page === "home" && portalRole === r.id;
             return (
-              <button key={r.id} onClick={() => { setPortalRole(r.id); navigate("home"); setDetail(null); }} style={{
+              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate("home"); setDetail(null); }} style={{
                 display: "flex", alignItems: "center", gap: 10, width: "100%",
                 padding: "10px 14px", borderRadius: 12, border: "none",
                 background: isActive ? C.green : "transparent",
@@ -1052,7 +1084,7 @@ export default function App() {
               </div>
             </div>
           ) : null; })()}
-          <button onClick={() => { setCompany(null); setSelectedCompany(null); setLoginStep("select"); }}
+          <button onClick={() => { setCompany(null); setSelectedCompany(null); setLoginStep("select"); setLoginRole(null); }}
             style={{ marginTop:8, width:"100%", background:"rgba(255,255,255,0.07)", color:"#FFFFFF60",
               border:"none", borderRadius:8, padding:"5px 0", fontSize:10, fontWeight:600,
               cursor:"pointer", fontFamily:"inherit", letterSpacing:0.3 }}>
@@ -1061,23 +1093,23 @@ export default function App() {
         </div>
       </div>
 
-      {/* Mobile bottom nav — 3 roles */}
+      {/* Mobile bottom nav — 5 roles */}
       {isMobile && (
-        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:66, background:C.white,
+        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:64, background:C.white,
           display:"flex", zIndex:200, boxShadow:"0 -1px 0 rgba(0,0,0,0.06), 0 -4px 16px rgba(0,0,0,0.06)" }}>
           {PORTAL_ROLES.map(r => {
             const isActive = page === "home" && portalRole === r.id;
             return (
-              <button key={r.id} onClick={() => { setPortalRole(r.id); navigate("home"); setDetail(null); }} style={{
+              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate("home"); setDetail(null); }} style={{
                 flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
                 background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
-                color: isActive ? C.green : C.gray500, padding:"6px 0", gap:4,
+                color: isActive ? C.green : C.gray500, padding:"4px 2px", gap:2,
                 position:"relative",
               }}>
                 {isActive && <div style={{ position:"absolute", top:0, left:"50%", transform:"translateX(-50%)",
-                  width:28, height:3, borderRadius:100, background:C.green }} />}
-                <span style={{ fontSize:22, lineHeight:1 }}>{r.icon}</span>
-                <span style={{ fontSize:10, fontWeight: isActive ? 700 : 500 }}>{r.short}</span>
+                  width:24, height:3, borderRadius:100, background:C.green }} />}
+                <span style={{ fontSize:19, lineHeight:1 }}>{r.icon}</span>
+                <span style={{ fontSize:9, fontWeight: isActive ? 700 : 500, lineHeight:1.2 }}>{r.short}</span>
               </button>
             );
           })}
@@ -1100,7 +1132,7 @@ export default function App() {
             </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <button onClick={() => { setCompany(null); setSelectedCompany(null); setLoginStep("select"); }}
+            <button onClick={() => { setCompany(null); setSelectedCompany(null); setLoginStep("select"); setLoginRole(null); }}
               style={{ background:C.gray100, color:C.gray700, border:"none", borderRadius:100,
                 padding:"6px 10px", fontSize:10, fontFamily:"inherit", cursor:"pointer", fontWeight:600 }}>
               Сменить
@@ -1684,7 +1716,7 @@ export default function App() {
                 letterSpacing:1.2, padding: isMobile ? "0 10px 8px" : "0 16px 10px" }}>
                 Категории
               </div>
-              {["Все", ...CATS].map(c => {
+              {[...CATS, "Все"].map(c => {
                 const isActive = catFilter === c;
                 const short = CAT_SHORT[c] || c;
                 return (
@@ -1856,7 +1888,7 @@ export default function App() {
 
         {/* ── FORM ── */}
         {page === "form" && selected && !submitted && (
-          <div style={{ maxWidth: isMobile ? "100%" : 580 }}>
+          <div style={{ maxWidth: selected.id === 37 ? "100%" : (isMobile ? "100%" : 680) }}>
             <button onClick={() => { setSelected(null); setPage("catalog"); }}
               style={{ background: "none", border: "none", color: C.green, fontSize: 13,
                 cursor: "pointer", marginBottom: 20, padding: 0, fontFamily: "inherit" }}>
@@ -2148,94 +2180,109 @@ export default function App() {
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 6px" }}>Заявка на подбор персонала</h2>
                 <p style={{ fontSize: 13, color: C.gray500, marginBottom: 20 }}>Заполните требования — HR сформирует job description на основе ваших данных</p>
 
-                {/* Позиция */}
-                <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Позиция</div>
-                  <Input label="Должность *" value={recruitForm.position} onChange={v => setRecruitForm(p => ({...p, position: v}))} placeholder="Senior Product Manager" />
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                    <Input label="Управление" value={recruitForm.management} onChange={v => setRecruitForm(p => ({...p, management: v}))} placeholder="Управление цифровых продуктов" />
-                    <Input label="Департамент" value={recruitForm.department} onChange={v => setRecruitForm(p => ({...p, department: v}))} placeholder="Цифровой бизнес" />
-                  </div>
-                </div>
-
-                {/* Требования, Обязанности, Навыки — каждое поле с отдельной кнопкой 🎙 */}
-                {(() => {
-                  const startVoiceFor = (fieldKey) => {
-                    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    if (!SR) { alert("Голосовой ввод не поддерживается в этом браузере"); return; }
-                    const rec = new SR();
-                    rec.lang = "ru-RU"; rec.interimResults = true; rec.continuous = false;
-                    rec.onstart  = () => { setListeningField(fieldKey); setVoiceTranscript(""); };
-                    rec.onend    = () => { setListeningField(null); };
-                    rec.onerror  = () => { setListeningField(null); };
-                    rec.onresult = (e) => {
-                      const t = Array.from(e.results).map(r => r[0].transcript).join(" ");
-                      setVoiceTranscript(t);
-                      setRecruitForm(p => ({ ...p, [fieldKey]: t }));
-                    };
-                    rec.start();
-                  };
-
-                  const VOICE_FIELDS = [
-                    { key:"requirements", label:"Требования к кандидату",  placeholder:"Образование, опыт работы, профессиональные качества..." },
-                    { key:"duties",       label:"Должностные обязанности", placeholder:"Ключевые функции и задачи на данной должности..."        },
-                    { key:"skills",       label:"Навыки и компетенции",    placeholder:"Excel, CRM, английский B2, управление командой..."        },
-                  ];
-
-                  return (
-                    <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, padding: "20px", marginBottom: 16 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 16 }}>
-                        Требования, Обязанности, Навыки
-                      </div>
-                      {VOICE_FIELDS.map(({ key, label, placeholder }) => {
-                        const active = listeningField === key;
-                        return (
-                          <div key={key} style={{ marginBottom: 16 }}>
-                            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: 6 }}>
-                              <label style={{ fontSize:12, fontWeight:600, color: active ? "#DC2626" : C.gray500 }}>
-                                {active ? "🔴 Слушаю..." : label}
-                              </label>
-                              <button
-                                disabled={listeningField !== null && !active}
-                                onClick={() => startVoiceFor(key)}
-                                style={{
-                                  width:34, height:34, borderRadius:"50%", border:"none",
-                                  cursor: (listeningField !== null && !active) ? "default" : "pointer",
-                                  background: active ? "#DC2626" : C.green,
-                                  color:"#fff", fontSize:16, lineHeight:1,
-                                  display:"flex", alignItems:"center", justifyContent:"center",
-                                  flexShrink:0, opacity: (listeningField !== null && !active) ? 0.3 : 1,
-                                  boxShadow: active ? "0 0 0 5px #DC262633" : "none",
-                                  transition:"all .2s",
-                                }}>
-                                {active ? "⏹" : "🎙"}
-                              </button>
-                            </div>
-                            <textarea
-                              value={recruitForm[key]}
-                              onChange={e => setRecruitForm(p => ({ ...p, [key]: e.target.value }))}
-                              placeholder={active ? "Говорите, текст появится здесь..." : placeholder}
-                              style={{
-                                width:"100%", boxSizing:"border-box", resize:"vertical",
-                                minHeight:72, padding:"10px 12px", fontSize:13,
-                                fontFamily:"inherit", color:C.dark, outline:"none",
-                                border:`1.5px solid ${active ? "#DC2626" : C.gray300}`,
-                                borderRadius:10, background: active ? "#FFF5F5" : C.white,
-                                transition:"border-color .2s, background .2s",
-                              }}
-                            />
-                          </div>
-                        );
-                      })}
+                <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:16, alignItems:"start" }}>
+                  {/* Левая колонка */}
+                  <div>
+                    {/* Позиция */}
+                    <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Позиция</div>
+                      <Input label="Должность *" value={recruitForm.position} onChange={v => setRecruitForm(p => ({...p, position: v}))} placeholder="Senior Product Manager" />
+                      <Input label="Управление" value={recruitForm.management} onChange={v => setRecruitForm(p => ({...p, management: v}))} placeholder="Управление цифровых продуктов" />
+                      <Input label="Департамент" value={recruitForm.department} onChange={v => setRecruitForm(p => ({...p, department: v}))} placeholder="Цифровой бизнес" />
                     </div>
-                  );
-                })()}
 
-                {/* Комментарий */}
-                <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Дополнительно</div>
-                  <Input label="Комментарий для рекрутера" value={recruitForm.comment} onChange={v => setRecruitForm(p => ({...p, comment: v}))}
-                    placeholder="Пожелания по личным качествам, срочность, особые условия..." multiline />
+                    {/* Детали вакансии */}
+                    <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Детали вакансии</div>
+                      <Input label="Количество вакансий *" value={recruitForm.headcount} onChange={v => setRecruitForm(p => ({...p, headcount: v}))} placeholder="1" />
+                      <Input label="Грейд / уровень" value={recruitForm.grade} onChange={v => setRecruitForm(p => ({...p, grade: v}))} placeholder="Middle, Senior, Lead..." />
+                      <Input label="Срочность найма" value={recruitForm.urgency} onChange={v => setRecruitForm(p => ({...p, urgency: v}))} placeholder="Как можно скорее / к 1 марта..." />
+                      <Input label="Формат работы" value={recruitForm.workType} onChange={v => setRecruitForm(p => ({...p, workType: v}))} placeholder="Офис / Гибрид / Удалённо" />
+                    </div>
+                  </div>
+
+                  {/* Правая колонка */}
+                  <div>
+                    {/* Требования, Обязанности, Навыки — каждое поле с отдельной кнопкой 🎙 */}
+                    {(() => {
+                      const startVoiceFor = (fieldKey) => {
+                        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        if (!SR) { alert("Голосовой ввод не поддерживается в этом браузере"); return; }
+                        const rec = new SR();
+                        rec.lang = "ru-RU"; rec.interimResults = true; rec.continuous = false;
+                        rec.onstart  = () => { setListeningField(fieldKey); setVoiceTranscript(""); };
+                        rec.onend    = () => { setListeningField(null); };
+                        rec.onerror  = () => { setListeningField(null); };
+                        rec.onresult = (e) => {
+                          const t = Array.from(e.results).map(r => r[0].transcript).join(" ");
+                          setVoiceTranscript(t);
+                          setRecruitForm(p => ({ ...p, [fieldKey]: t }));
+                        };
+                        rec.start();
+                      };
+
+                      const VOICE_FIELDS = [
+                        { key:"requirements", label:"Требования к кандидату",  placeholder:"Образование, опыт работы, профессиональные качества..." },
+                        { key:"duties",       label:"Должностные обязанности", placeholder:"Ключевые функции и задачи на данной должности..."        },
+                        { key:"skills",       label:"Навыки и компетенции",    placeholder:"Excel, CRM, английский B2, управление командой..."        },
+                      ];
+
+                      return (
+                        <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, padding: "20px", marginBottom: 16 }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 16 }}>
+                            Требования, Обязанности, Навыки
+                          </div>
+                          {VOICE_FIELDS.map(({ key, label, placeholder }) => {
+                            const active = listeningField === key;
+                            return (
+                              <div key={key} style={{ marginBottom: 16 }}>
+                                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: 6 }}>
+                                  <label style={{ fontSize:12, fontWeight:600, color: active ? "#DC2626" : C.gray500 }}>
+                                    {active ? "🔴 Слушаю..." : label}
+                                  </label>
+                                  <button
+                                    disabled={listeningField !== null && !active}
+                                    onClick={() => startVoiceFor(key)}
+                                    style={{
+                                      width:34, height:34, borderRadius:"50%", border:"none",
+                                      cursor: (listeningField !== null && !active) ? "default" : "pointer",
+                                      background: active ? "#DC2626" : C.green,
+                                      color:"#fff", fontSize:16, lineHeight:1,
+                                      display:"flex", alignItems:"center", justifyContent:"center",
+                                      flexShrink:0, opacity: (listeningField !== null && !active) ? 0.3 : 1,
+                                      boxShadow: active ? "0 0 0 5px #DC262633" : "none",
+                                      transition:"all .2s",
+                                    }}>
+                                    {active ? "⏹" : "🎙"}
+                                  </button>
+                                </div>
+                                <textarea
+                                  value={recruitForm[key]}
+                                  onChange={e => setRecruitForm(p => ({ ...p, [key]: e.target.value }))}
+                                  placeholder={active ? "Говорите, текст появится здесь..." : placeholder}
+                                  style={{
+                                    width:"100%", boxSizing:"border-box", resize:"vertical",
+                                    minHeight:90, padding:"10px 12px", fontSize:13,
+                                    fontFamily:"inherit", color:C.dark, outline:"none",
+                                    border:`1.5px solid ${active ? "#DC2626" : C.gray300}`,
+                                    borderRadius:10, background: active ? "#FFF5F5" : C.white,
+                                    transition:"border-color .2s, background .2s",
+                                  }}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+
+                    {/* Комментарий */}
+                    <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Дополнительно</div>
+                      <Input label="Комментарий для рекрутера" value={recruitForm.comment} onChange={v => setRecruitForm(p => ({...p, comment: v}))}
+                        placeholder="Пожелания по личным качествам, срочность, особые условия..." multiline />
+                    </div>
+                  </div>
                 </div>
               </>
             ) : (
@@ -2540,6 +2587,14 @@ export default function App() {
 
           return (
             <div>
+              {/* Back to catalog */}
+              <button onClick={() => navigate("catalog")}
+                style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700,
+                  cursor:"pointer", padding:"0 0 16px", fontFamily:"inherit",
+                  display:"flex", alignItems:"center", gap:4 }}>
+                ← В каталог услуг
+              </button>
+
               {/* Header + view switcher */}
               <div style={{ marginBottom:20 }}>
                 <h1 style={{ fontSize: isMobile?18:22, fontWeight:700, color:C.dark, margin:"0 0 4px" }}>Трек адаптации</h1>
