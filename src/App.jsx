@@ -1465,8 +1465,53 @@ export default function App() {
                   ],
                 },
               ];
+              const avgPerf = (team.reduce((s, e) => s + parseFloat(e.perf), 0) / team.length).toFixed(1);
               return (
                 <div style={{ marginTop: 8 }}>
+                  {/* Performance команды */}
+                  <div style={{ fontSize: 16, fontWeight: 700, color: C.dark, marginBottom: 12 }}>⭐ Performance команды</div>
+                  <div style={{ background: C.card, borderRadius: 20, padding: isMobile ? "16px" : "20px", boxShadow: C.shadow, marginBottom: 20 }}>
+                    {/* Средний рейтинг */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16, paddingBottom: 16, borderBottom: `1px solid ${C.gray300}` }}>
+                      <div style={{ width: 56, height: 56, borderRadius: 16, background: `linear-gradient(135deg, ${C.green} 0%, ${C.greenDark} 100%)`,
+                        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <span style={{ fontSize: 20, fontWeight: 800, color: C.white }}>{avgPerf}</span>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>Средний рейтинг команды</div>
+                        <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>из 5.0 · {team.length} сотрудника · Q2 2026</div>
+                      </div>
+                    </div>
+                    {/* Индивидуальные оценки */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                      {team.map((emp, i) => {
+                        const score = parseFloat(emp.perf);
+                        const pct = (score / 5) * 100;
+                        const color = score >= 4.5 ? C.green : score >= 4.0 ? C.greenDark : score >= 3.5 ? C.orange : C.red;
+                        return (
+                          <div key={emp.id}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                              <div style={{ width: 28, height: 28, borderRadius: "50%", background: color+"22",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                fontSize: 12, fontWeight: 800, color, flexShrink: 0 }}>
+                                {emp.avatar}
+                              </div>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                                  <span style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{emp.name}</span>
+                                  <span style={{ fontSize: 13, fontWeight: 800, color }}>{emp.perf}</span>
+                                </div>
+                                <div style={{ height: 6, background: C.gray100, borderRadius: 3, overflow: "hidden" }}>
+                                  <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 3, transition: "width .4s" }} />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   <div style={{ fontSize: 16, fontWeight: 700, color: C.dark, marginBottom: 12 }}>👥 Моя команда</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                     {team.map(emp => {
