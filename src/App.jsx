@@ -856,21 +856,24 @@ export default function App() {
     return (
       <div style={{ minHeight:"100vh", fontFamily:"'Inter','Segoe UI',sans-serif",
         background:`linear-gradient(160deg, ${C.green} 0%, ${C.greenDark} 100%)`,
-        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-        padding: isMobile ? "12px 16px" : "24px 16px",
+        display:"flex", flexDirection:"column", alignItems:"center", justifyContent: isMobile ? "flex-start" : "center",
+        padding: isMobile ? "10px 12px" : "24px 16px",
       }}>
         {/* Logo */}
-        <div style={{ display:"flex", alignItems:"center", gap: isMobile ? 8 : 12,
-          marginBottom: isMobile ? 10 : 28, textAlign: isMobile ? "left" : "center" }}>
-          <div style={{ width: isMobile ? 36 : 64, height: isMobile ? 36 : 64, borderRadius: isMobile ? 12 : 20,
-            background:"rgba(255,255,255,0.18)", display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize: isMobile ? 18 : 32, flexShrink: 0,
-            border:"2px solid rgba(255,255,255,0.35)" }}>🏦</div>
-          <div>
-            <div style={{ fontSize: isMobile ? 15 : 22, fontWeight:800, color:C.white, lineHeight:1.2 }}>HR Service Portal</div>
-            <div style={{ fontSize:10, color:"rgba(255,255,255,0.70)", marginTop:2 }}>Halyk Bank Group</div>
+        {isMobile ? (
+          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8, alignSelf:"flex-start" }}>
+            <span style={{ fontSize:16 }}>🏦</span>
+            <span style={{ fontSize:13, fontWeight:800, color:C.white }}>HR Service Portal</span>
           </div>
-        </div>
+        ) : (
+          <div style={{ textAlign:"center", marginBottom:28 }}>
+            <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,0.18)",
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:32, margin:"0 auto 12px",
+              border:"2px solid rgba(255,255,255,0.35)" }}>🏦</div>
+            <div style={{ fontSize:22, fontWeight:800, color:C.white }}>HR Service Portal</div>
+            <div style={{ fontSize:12, color:"rgba(255,255,255,0.70)", marginTop:4 }}>Halyk Bank Group</div>
+          </div>
+        )}
 
         {/* Card */}
         <div style={{ background:C.white, borderRadius:24, padding:isMobile?"14px 14px":"28px 28px",
