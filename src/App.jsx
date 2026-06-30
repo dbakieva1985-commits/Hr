@@ -1181,90 +1181,164 @@ export default function App() {
                 ДУП · HR Specialist · АО «Народный Банк»
               </div>
             </div>
-            <div style={{ marginBottom: 10, flexShrink:0 }}>
-              <div style={{ fontSize: isMobile ? 14 : 20, fontWeight: 800, color: C.dark, marginBottom: 2 }}>
-                Выберите пространство
-              </div>
-              <div style={{ fontSize: 11, color: C.gray500 }}>
-                Портал покажет сервисы и данные, доступные именно вам.
-              </div>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
-              {/* Мой HR */}
-              <div onClick={() => navigate("catalog")}
-                style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
-                  cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                  display: "flex", alignItems: "center", gap: 14, flex: 1 }}
-                onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
-                onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
-              >
-                <div style={{ width: 52, height: 52, borderRadius: 14, background: C.greenPale,
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>🏠</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой HR</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                    {["Справки","Подбор персонала","Отпуск","Зарплата","Обучение","C&B"].map(t => (
-                      <span key={t} style={{ fontSize: 10, color: C.green, background: C.greenPale,
-                        borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
+            {portalRole === "hr" ? (() => {
+              const hrCats = [
+                {
+                  icon:"🔍", title:"Подбор персонала", color:C.blue, total:12,
+                  rows:[
+                    { label:"Новые заявки",      count:3,  accent:C.blue },
+                    { label:"Истекает SLA",       count:4,  accent:C.orange },
+                    { label:"Просроченные",       count:2,  accent:C.red },
+                    { label:"Ожидают согл.",      count:3,  accent:C.gray500 },
+                  ],
+                },
+                {
+                  icon:"📋", title:"Кадровое администрирование", color:C.green, total:18,
+                  rows:[
+                    { label:"Приём на работу",   count:5,  accent:C.blue },
+                    { label:"Переводы",           count:4,  accent:C.blue },
+                    { label:"Увольнения",         count:2,  accent:C.red },
+                    { label:"Отпуска",            count:7,  accent:C.green },
+                  ],
+                },
+                {
+                  icon:"💎", title:"Компенсации и льготы", color:C.orange, total:7,
+                  rows:[
+                    { label:"Новые запросы",      count:2,  accent:C.blue },
+                    { label:"Срочные",            count:3,  accent:C.orange },
+                    { label:"Просроченные",       count:1,  accent:C.red },
+                    { label:"В обработке",        count:1,  accent:C.gray500 },
+                  ],
+                },
+                {
+                  icon:"📚", title:"Обучение", color:"#7C3AED", total:9,
+                  rows:[
+                    { label:"Заявки на обучение", count:4,  accent:C.blue },
+                    { label:"Ожидают согл.",      count:2,  accent:C.orange },
+                    { label:"Требуют назначения", count:3,  accent:"#7C3AED" },
+                  ],
+                },
+              ];
+              return (
+                <>
+                  <div style={{ marginBottom:10, flexShrink:0 }}>
+                    <div style={{ fontSize:14, fontWeight:800, color:C.dark, marginBottom:2 }}>Рабочий стол</div>
+                    <div style={{ fontSize:11, color:C.gray500 }}>Задачи, требующие обработки · {new Date().toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}</div>
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, flex:1, overflow:"auto", paddingBottom:4 }}>
+                    {hrCats.map(cat => (
+                      <div key={cat.title} onClick={() => navigate("my")}
+                        style={{ background:C.card, borderRadius:16, padding:"14px 12px",
+                          boxShadow:C.shadow, cursor:"pointer", borderTop:`3px solid ${cat.color}`,
+                          transition:"box-shadow .15s", display:"flex", flexDirection:"column" }}
+                        onMouseEnter={e=>e.currentTarget.style.boxShadow=C.shadowMd}
+                        onMouseLeave={e=>e.currentTarget.style.boxShadow=C.shadow}>
+                        <div style={{ display:"flex", alignItems:"flex-start", gap:6, marginBottom:10 }}>
+                          <div style={{ fontSize:20, lineHeight:1 }}>{cat.icon}</div>
+                          <div style={{ flex:1, fontSize:10, fontWeight:700, color:C.dark, lineHeight:1.35 }}>{cat.title}</div>
+                          <div style={{ fontSize:20, fontWeight:900, color:cat.color, lineHeight:1 }}>{cat.total}</div>
+                        </div>
+                        <div style={{ display:"flex", flexDirection:"column", gap:6, flex:1 }}>
+                          {cat.rows.map(row => (
+                            <div key={row.label} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:4 }}>
+                              <div style={{ fontSize:10, color:C.gray500, flex:1 }}>{row.label}</div>
+                              <div style={{ fontSize:12, fontWeight:800, color:row.count>0?row.accent:C.gray300,
+                                background:row.count>0?row.accent+"15":"transparent",
+                                borderRadius:100, padding:"1px 7px", minWidth:22, textAlign:"center" }}>{row.count}</div>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ marginTop:10, fontSize:10, color:cat.color, fontWeight:600, textAlign:"right" }}>Открыть →</div>
+                      </div>
                     ))}
                   </div>
-                </div>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.green,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
-              </div>
-
-              {/* Мой профиль */}
-              <div onClick={() => navigate("profile")}
-                style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
-                  cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                  display: "flex", alignItems: "center", gap: 14, flex: 1 }}
-                onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.blue}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
-                onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
-              >
-                <div style={{ width: 52, height: 52, borderRadius: 14, background: C.blue+"15",
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👤</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой профиль</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                    {["Показатели","Отпуск","Дисциплина","Заявки"].map(t => (
-                      <span key={t} style={{ fontSize: 10, color: C.blue, background: C.blue+"15",
-                        borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
-                    ))}
+                </>
+              );
+            })() : (
+              <>
+                <div style={{ marginBottom: 10, flexShrink:0 }}>
+                  <div style={{ fontSize: isMobile ? 14 : 20, fontWeight: 800, color: C.dark, marginBottom: 2 }}>
+                    Выберите пространство
+                  </div>
+                  <div style={{ fontSize: 11, color: C.gray500 }}>
+                    Портал покажет сервисы и данные, доступные именно вам.
                   </div>
                 </div>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.blue,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
-              </div>
-
-              {/* Моя команда — только руководитель/hr */}
-              {(portalRole === "manager" || portalRole === "hr") && (
-                <div onClick={() => navigate("team")}
-                  style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
-                    cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                    display: "flex", alignItems: "center", gap: 14, flex: 1 }}
-                  onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.orange}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
-                  onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
-                >
-                  <div style={{ width: 52, height: 52, borderRadius: 14, background: C.orange+"15",
-                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👥</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Моя команда</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                      {["Дисциплина","Показатели","Performance"].map(t => (
-                        <span key={t} style={{ fontSize: 10, color: C.orange, background: C.orange+"15",
-                          borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
-                      ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
+                  {/* Мой HR */}
+                  <div onClick={() => navigate("catalog")}
+                    style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
+                      cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
+                      display: "flex", alignItems: "center", gap: 14, flex: 1 }}
+                    onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                    onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
+                  >
+                    <div style={{ width: 52, height: 52, borderRadius: 14, background: C.greenPale,
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>🏠</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой HR</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                        {["Справки","Подбор персонала","Отпуск","Зарплата","Обучение","C&B"].map(t => (
+                          <span key={t} style={{ fontSize: 10, color: C.green, background: C.greenPale,
+                            borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
+                        ))}
+                      </div>
                     </div>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.green,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
                   </div>
-                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.orange,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
+                  {/* Мой профиль */}
+                  <div onClick={() => navigate("profile")}
+                    style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
+                      cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
+                      display: "flex", alignItems: "center", gap: 14, flex: 1 }}
+                    onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.blue}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                    onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
+                  >
+                    <div style={{ width: 52, height: 52, borderRadius: 14, background: C.blue+"15",
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👤</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой профиль</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                        {["Показатели","Отпуск","Дисциплина","Заявки"].map(t => (
+                          <span key={t} style={{ fontSize: 10, color: C.blue, background: C.blue+"15",
+                            borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.blue,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
+                  </div>
+                  {/* Моя команда — только руководитель/hr */}
+                  {(portalRole === "manager" || portalRole === "hr") && (
+                    <div onClick={() => navigate("team")}
+                      style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
+                        cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
+                        display: "flex", alignItems: "center", gap: 14, flex: 1 }}
+                      onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.orange}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                      onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
+                    >
+                      <div style={{ width: 52, height: 52, borderRadius: 14, background: C.orange+"15",
+                        display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👥</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Моя команда</div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                          {["Дисциплина","Показатели","Performance"].map(t => (
+                            <span key={t} style={{ fontSize: 10, color: C.orange, background: C.orange+"15",
+                              borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.orange,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
         )}
 
