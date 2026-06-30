@@ -913,7 +913,7 @@ export default function App() {
             <div style={{ fontSize:15, fontWeight:700, color:C.dark, marginBottom:3 }}>Выберите вашу роль</div>
             <div style={{ fontSize:12, color:C.gray500, marginBottom:14 }}>Портал покажет сервисы, нужные именно вам</div>
             <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:20 }}>
-              {PORTAL_ROLES.filter(r => r.id !== "worker").map(r => {
+              {PORTAL_ROLES.map(r => {
                 const isActive = loginRole === r.id;
                 return (
                   <div key={r.id} onClick={() => setLoginRole(r.id)}
