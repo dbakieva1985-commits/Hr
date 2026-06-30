@@ -691,6 +691,7 @@ export default function App() {
   const [lifeEventModal,    setLifeEventModal]    = useState(null);
   const [lifeEventSelected, setLifeEventSelected] = useState({});
   const [showBenefits,      setShowBenefits]      = useState(false);
+  const [expandedEmployee,  setExpandedEmployee]  = useState(null);
   const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
@@ -1415,6 +1416,143 @@ export default function App() {
                 </div>
               ))}
             </div>
+
+            {/* Моя команда — только для руководителя */}
+            {(portalRole === "manager" || portalRole === "hr") && (() => {
+              const team = [
+                {
+                  id: 1, name: "Алия К.", pos: "HR Analyst", dept: "ДУП", avatar: "А",
+                  vacation: "18 дн.", requests: 1, courses: 1, perf: "4.5/5",
+                  discipline: [
+                    { date: "30.06", enter: "09:00", exit: "—",    ok: true,  label: "В норме" },
+                    { date: "27.06", enter: "08:55", exit: "18:00", ok: true,  label: "В норме" },
+                    { date: "26.06", enter: "09:02", exit: "18:05", ok: true,  label: "В норме" },
+                    { date: "25.06", enter: "09:10", exit: "18:00", ok: true,  label: "В норме" },
+                    { date: "24.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                  ],
+                },
+                {
+                  id: 2, name: "Марат С.", pos: "HR Specialist", dept: "ДУП", avatar: "М",
+                  vacation: "12 дн.", requests: 2, courses: 3, perf: "3.8/5",
+                  discipline: [
+                    { date: "30.06", enter: "09:45", exit: "—",    ok: false, label: "Нарушение" },
+                    { date: "27.06", enter: "09:30", exit: "18:10", ok: false, label: "Нарушение" },
+                    { date: "26.06", enter: "09:05", exit: "18:00", ok: true,  label: "В норме" },
+                    { date: "25.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                    { date: "24.06", enter: "09:15", exit: "18:00", ok: true,  label: "В норме" },
+                  ],
+                },
+                {
+                  id: 3, name: "Диана Ж.", pos: "Recruiter", dept: "ДУП", avatar: "Д",
+                  vacation: "21 дн.", requests: 0, courses: 1, perf: "4.7/5",
+                  discipline: [
+                    { date: "30.06", enter: "09:00", exit: "—",    ok: true,  label: "В норме" },
+                    { date: "27.06", enter: "08:50", exit: "17:55", ok: true,  label: "В норме" },
+                    { date: "26.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                    { date: "25.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                    { date: "24.06", enter: "09:03", exit: "18:00", ok: true,  label: "В норме" },
+                  ],
+                },
+                {
+                  id: 4, name: "Нурлан Б.", pos: "HR BP", dept: "ДУП", avatar: "Н",
+                  vacation: "7 дн.", requests: 3, courses: 2, perf: "4.0/5",
+                  discipline: [
+                    { date: "30.06", enter: "10:10", exit: "—",    ok: false, label: "Нарушение" },
+                    { date: "27.06", enter: "09:05", exit: "18:00", ok: true,  label: "В норме" },
+                    { date: "26.06", enter: "09:40", exit: "18:30", ok: false, label: "Нарушение" },
+                    { date: "25.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                    { date: "24.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                  ],
+                },
+              ];
+              return (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: C.dark, marginBottom: 12 }}>👥 Моя команда</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    {team.map(emp => {
+                      const violations = emp.discipline.filter(d => !d.ok).length;
+                      const isOpen = expandedEmployee === emp.id;
+                      return (
+                        <div key={emp.id} style={{ background: C.card, borderRadius: 20, boxShadow: C.shadow, overflow: "hidden" }}>
+                          {/* Заголовок сотрудника */}
+                          <div onClick={() => setExpandedEmployee(isOpen ? null : emp.id)}
+                            style={{ display: "flex", alignItems: "center", gap: 12,
+                              padding: isMobile ? "14px 16px" : "16px 20px", cursor: "pointer" }}>
+                            <div style={{ width: 42, height: 42, borderRadius: "50%",
+                              background: violations > 0 ? C.red+"22" : C.greenPale,
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              fontSize: 16, fontWeight: 800, color: violations > 0 ? C.red : C.green, flexShrink: 0 }}>
+                              {emp.avatar}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 14, fontWeight: 700, color: C.dark }}>{emp.name}</div>
+                              <div style={{ fontSize: 11, color: C.gray500, marginTop: 1 }}>{emp.pos} · {emp.dept}</div>
+                            </div>
+                            {violations > 0 && (
+                              <span style={{ fontSize: 10, fontWeight: 700, color: C.red, background: C.red+"15",
+                                borderRadius: 100, padding: "3px 8px", flexShrink: 0 }}>
+                                {violations} нарушения
+                              </span>
+                            )}
+                            {violations === 0 && (
+                              <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: C.greenPale,
+                                borderRadius: 100, padding: "3px 8px", flexShrink: 0 }}>В норме</span>
+                            )}
+                            <span style={{ fontSize: 16, color: C.gray500, transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                              display: "inline-block", transition: "transform .2s", marginLeft: 4 }}>⌄</span>
+                          </div>
+
+                          {/* Раскрытые данные */}
+                          {isOpen && (
+                            <div style={{ padding: isMobile ? "0 16px 16px" : "0 20px 20px", borderTop: `1px solid ${C.gray300}` }}>
+                              {/* Показатели */}
+                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, margin: "14px 0 16px" }}>
+                                {[
+                                  { icon: "🏖", label: "Отпуск", value: emp.vacation, color: C.green },
+                                  { icon: "📋", label: "Заявки", value: emp.requests, color: C.orange },
+                                  { icon: "📚", label: "Курсы", value: emp.courses, color: C.blue },
+                                  { icon: "⭐", label: "Рейтинг", value: emp.perf, color: C.greenDark },
+                                ].map(m => (
+                                  <div key={m.label} style={{ background: C.bg, borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
+                                    <div style={{ fontSize: 18, marginBottom: 4 }}>{m.icon}</div>
+                                    <div style={{ fontSize: 13, fontWeight: 800, color: m.color }}>{m.value}</div>
+                                    <div style={{ fontSize: 9, color: C.gray500, marginTop: 2, fontWeight: 600 }}>{m.label}</div>
+                                  </div>
+                                ))}
+                              </div>
+                              {/* Трудовая дисциплина */}
+                              <div style={{ fontSize: 12, fontWeight: 700, color: C.dark, marginBottom: 8 }}>📜 Трудовая дисциплина</div>
+                              <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "6px 10px",
+                                alignItems: "center", fontSize: 10, fontWeight: 700, color: C.gray500,
+                                marginBottom: 6, paddingBottom: 6, borderBottom: `1px solid ${C.gray300}` }}>
+                                <span>Дата</span><span>Вход</span><span>Выход</span><span>Статус</span>
+                              </div>
+                              {emp.discipline.map((row, i) => (
+                                <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "6px 10px",
+                                  alignItems: "center", padding: "8px 0", borderBottom: i < 4 ? `1px solid ${C.gray300}` : "none",
+                                  background: !row.ok ? C.red+"08" : "transparent", borderRadius: !row.ok ? 6 : 0,
+                                  paddingLeft: !row.ok ? 6 : 0, paddingRight: !row.ok ? 6 : 0 }}>
+                                  <div style={{ fontSize: 11, color: C.gray500, fontWeight: 600 }}>{row.date}</div>
+                                  <div style={{ fontSize: 12, fontWeight: 600, color: C.dark }}>{row.enter}</div>
+                                  <div style={{ fontSize: 12, fontWeight: 600, color: C.dark }}>{row.exit}</div>
+                                  <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 100, whiteSpace: "nowrap",
+                                    background: row.ok ? C.green+"18" : C.red+"18", color: row.ok ? C.green : C.red }}>
+                                    {row.label}
+                                  </span>
+                                </div>
+                              ))}
+                              <div style={{ marginTop: 10, fontSize: 11, color: violations > 0 ? C.red : C.green, fontWeight: 600 }}>
+                                {violations > 0 ? `Нарушений за неделю: ${violations}` : "Нарушений нет ✓"}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
 
