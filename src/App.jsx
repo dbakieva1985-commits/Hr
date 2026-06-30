@@ -712,7 +712,7 @@ export default function App() {
     position: "", management: "", department: "",
     requirements: "", duties: "", skills: "", comment: "",
   });
-  const [isListening,    setIsListening]    = useState(false);
+  const [listeningField,  setListeningField]  = useState(null);
   const [voiceTranscript, setVoiceTranscript] = useState("");
   const [approvalForm, setApprovalForm] = useState({
     // Личные данные
@@ -827,7 +827,7 @@ export default function App() {
       relatives:  [{ lastName: "", firstName: "", patronymic: "", relation: "", address: "", workplace: "", iin: "", phone: "" }],
     });
     setRecruitForm({ position: "", management: "", department: "", requirements: "", duties: "", skills: "", comment: "" });
-    setIsListening(false); setVoiceTranscript("");
+    setListeningField(null); setVoiceTranscript("");
     setSubmitted(false);
   }
 
@@ -1924,86 +1924,78 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Voice input block */}
+                {/* Требования, Обязанности, Навыки — каждое поле с отдельной кнопкой 🎙 */}
                 {(() => {
-                  const parseVoice = (text) => {
-                    const reqM    = text.match(/требования[:\s]+(.+?)(?=обязанности|навыки|$)/si);
-                    const dutiesM = text.match(/обязанности[:\s]+(.+?)(?=требования|навыки|$)/si);
-                    const skillsM = text.match(/навыки[:\s]+(.+?)(?=требования|обязанности|$)/si);
-                    return {
-                      requirements: reqM?.[1]?.trim()    || (!dutiesM && !skillsM ? text.trim() : ""),
-                      duties:       dutiesM?.[1]?.trim() || "",
-                      skills:       skillsM?.[1]?.trim() || "",
-                    };
-                  };
-                  const startVoice = () => {
+                  const startVoiceFor = (fieldKey) => {
                     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
                     if (!SR) { alert("Голосовой ввод не поддерживается в этом браузере"); return; }
                     const rec = new SR();
                     rec.lang = "ru-RU"; rec.interimResults = true; rec.continuous = false;
-                    rec.onstart  = () => setIsListening(true);
-                    rec.onend    = () => setIsListening(false);
-                    rec.onerror  = () => setIsListening(false);
+                    rec.onstart  = () => { setListeningField(fieldKey); setVoiceTranscript(""); };
+                    rec.onend    = () => { setListeningField(null); };
+                    rec.onerror  = () => { setListeningField(null); };
                     rec.onresult = (e) => {
                       const t = Array.from(e.results).map(r => r[0].transcript).join(" ");
                       setVoiceTranscript(t);
-                      if (e.results[e.results.length - 1].isFinal) {
-                        const parsed = parseVoice(t);
-                        setRecruitForm(p => ({
-                          ...p,
-                          requirements: parsed.requirements || p.requirements,
-                          duties:       parsed.duties       || p.duties,
-                          skills:       parsed.skills       || p.skills,
-                        }));
-                      }
+                      setRecruitForm(p => ({ ...p, [fieldKey]: t }));
                     };
                     rec.start();
                   };
+
+                  const VOICE_FIELDS = [
+                    { key:"requirements", label:"Требования к кандидату",  placeholder:"Образование, опыт работы, профессиональные качества..." },
+                    { key:"duties",       label:"Должностные обязанности", placeholder:"Ключевые функции и задачи на данной должности..."        },
+                    { key:"skills",       label:"Навыки и компетенции",    placeholder:"Excel, CRM, английский B2, управление командой..."        },
+                  ];
+
                   return (
-                    <div style={{ background: isListening ? "#FFF0F3" : C.greenPale, borderRadius: 16,
-                      padding: "16px 18px", marginBottom: 16,
-                      border: `1.5px solid ${isListening ? "#FF6B8A" : C.green}22`, transition:"all .2s" }}>
-                      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: voiceTranscript ? 10 : 0 }}>
-                        <div>
-                          <div style={{ fontSize:13, fontWeight:700, color: isListening ? "#DC2626" : C.green }}>
-                            {isListening ? "🔴 Слушаю..." : "🎙 Голосовой ввод"}
-                          </div>
-                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>
-                            {isListening
-                              ? "Скажите требования, обязанности и навыки"
-                              : "Нажмите и говорите — поля заполнятся автоматически"}
-                          </div>
-                        </div>
-                        <button onClick={isListening ? undefined : startVoice}
-                          style={{ width:48, height:48, borderRadius:"50%", border:"none", cursor: isListening ? "default" : "pointer",
-                            background: isListening ? "#DC2626" : C.green, color:"#fff", fontSize:20,
-                            display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0,
-                            boxShadow: isListening ? "0 0 0 6px #DC262622" : "none",
-                            animation: isListening ? "pulse 1s infinite" : "none",
-                          }}>
-                          {isListening ? "⏹" : "🎙"}
-                        </button>
+                    <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, padding: "20px", marginBottom: 16 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 16 }}>
+                        Требования, Обязанности, Навыки
                       </div>
-                      {voiceTranscript && (
-                        <div style={{ fontSize:12, color:C.gray700, background:C.white, borderRadius:10,
-                          padding:"10px 12px", lineHeight:1.5 }}>
-                          <b style={{ color:C.gray500 }}>Распознано:</b> {voiceTranscript}
-                        </div>
-                      )}
+                      {VOICE_FIELDS.map(({ key, label, placeholder }) => {
+                        const active = listeningField === key;
+                        return (
+                          <div key={key} style={{ marginBottom: 16 }}>
+                            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: 6 }}>
+                              <label style={{ fontSize:12, fontWeight:600, color: active ? "#DC2626" : C.gray500 }}>
+                                {active ? "🔴 Слушаю..." : label}
+                              </label>
+                              <button
+                                disabled={listeningField !== null && !active}
+                                onClick={() => startVoiceFor(key)}
+                                style={{
+                                  width:34, height:34, borderRadius:"50%", border:"none",
+                                  cursor: (listeningField !== null && !active) ? "default" : "pointer",
+                                  background: active ? "#DC2626" : C.green,
+                                  color:"#fff", fontSize:16, lineHeight:1,
+                                  display:"flex", alignItems:"center", justifyContent:"center",
+                                  flexShrink:0, opacity: (listeningField !== null && !active) ? 0.3 : 1,
+                                  boxShadow: active ? "0 0 0 5px #DC262633" : "none",
+                                  transition:"all .2s",
+                                }}>
+                                {active ? "⏹" : "🎙"}
+                              </button>
+                            </div>
+                            <textarea
+                              value={recruitForm[key]}
+                              onChange={e => setRecruitForm(p => ({ ...p, [key]: e.target.value }))}
+                              placeholder={active ? "Говорите, текст появится здесь..." : placeholder}
+                              style={{
+                                width:"100%", boxSizing:"border-box", resize:"vertical",
+                                minHeight:72, padding:"10px 12px", fontSize:13,
+                                fontFamily:"inherit", color:C.dark, outline:"none",
+                                border:`1.5px solid ${active ? "#DC2626" : C.gray300}`,
+                                borderRadius:10, background: active ? "#FFF5F5" : C.white,
+                                transition:"border-color .2s, background .2s",
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
                   );
                 })()}
-
-                {/* Требования, Обязанности, Навыки */}
-                <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Требования, Обязанности, Навыки</div>
-                  <Input label="Требования к кандидату" value={recruitForm.requirements} onChange={v => setRecruitForm(p => ({...p, requirements: v}))}
-                    placeholder="Образование, опыт работы, профессиональные качества..." multiline />
-                  <Input label="Должностные обязанности" value={recruitForm.duties} onChange={v => setRecruitForm(p => ({...p, duties: v}))}
-                    placeholder="Ключевые функции и задачи на данной должности..." multiline />
-                  <Input label="Навыки и компетенции" value={recruitForm.skills} onChange={v => setRecruitForm(p => ({...p, skills: v}))}
-                    placeholder="Product roadmap, Jira, работа с данными, английский B2..." multiline />
-                </div>
 
                 {/* Комментарий */}
                 <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
