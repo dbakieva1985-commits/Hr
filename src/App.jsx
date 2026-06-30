@@ -1281,82 +1281,37 @@ export default function App() {
           // ── redesigned ServiceCard ────────────────────────────────────
           const ServiceCard = ({ s }) => {
             const ti = tagInfo(s);
-            const cc = catColor(s.cat);
-            if (s.featured) return (
-              <div style={{ background:C.card, borderRadius:20, overflow:"hidden", boxShadow:C.shadowMd, display:"flex", flexDirection:"column" }}>
-                <div style={{ background:`linear-gradient(145deg,${C.green} 0%,${C.greenMid} 100%)`, padding:"28px 20px 22px", display:"flex", flexDirection:"column", alignItems:"center", gap:10 }}>
-                  <div style={{ fontSize:52, lineHeight:1 }}>{s.icon}</div>
-                  <div style={{ fontSize:16, fontWeight:800, color:"#fff", textAlign:"center", lineHeight:1.3 }}>{s.title}</div>
-                </div>
-                <div style={{ padding:"16px 20px", display:"flex", flexDirection:"column", flex:1 }}>
-                  <div style={{ fontSize:13, color:C.gray500, lineHeight:1.7, flex:1, whiteSpace:"pre-line" }}>{s.desc}</div>
-                  <div style={{ marginTop:12, fontSize:12, color:C.gray500 }}>⏱ {s.sla}</div>
-                </div>
-              </div>
-            );
+            const cc = C.green;
             return (
-              <div style={{ background:C.card, borderRadius:20, overflow:"hidden",
-                boxShadow:C.shadow, display:"flex", flexDirection:"column",
-                transition:"box-shadow .15s, transform .15s",
-                borderTop:`3px solid ${cc}22`,
+              <div style={{ background:C.card, borderRadius:12, padding:"10px 12px",
+                boxShadow:C.shadow, display:"flex", alignItems:"center", gap:10,
+                borderLeft:`3px solid ${cc}22`, transition:"box-shadow .12s",
               }}
-                onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
-                onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}>
-
-                {/* Card header */}
-                <div style={{ padding:"16px 16px 0", display:"flex", alignItems:"flex-start", gap:12 }}>
-                  <div style={{ width:48, height:48, borderRadius:14, background:cc+"18",
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>
-                    {s.icon}
-                  </div>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:10, fontWeight:800, color:cc, textTransform:"uppercase", letterSpacing:0.8, marginBottom:2 }}>
-                      {s.group || s.cat}
-                    </div>
-                    {ti && (
-                      <span style={{ fontSize:9, fontWeight:700, color:ti.color, background:ti.color+"18",
-                        borderRadius:100, padding:"1px 7px" }}>{ti.label}</span>
-                    )}
-                  </div>
+                onMouseEnter={e => e.currentTarget.style.boxShadow=C.shadowMd}
+                onMouseLeave={e => e.currentTarget.style.boxShadow=C.shadow}>
+                <div style={{ width:36, height:36, borderRadius:10, background:cc+"15",
+                  display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
+                  {s.icon}
                 </div>
-
-                {/* Title + desc */}
-                <div style={{ padding:"10px 16px 0" }}>
-                  <div style={{ fontSize:14, fontWeight:700, color:C.dark, lineHeight:1.35, marginBottom:6 }}>{s.title}</div>
-                  <div style={{ fontSize:12, color:C.gray500, lineHeight:1.65, marginBottom:10 }}>{s.desc}</div>
-                </div>
-
-                {/* Meta row */}
-                <div style={{ margin:"0 16px 12px", padding:"10px 12px", background:C.gray100, borderRadius:12, display:"flex", flexDirection:"column", gap:5 }}>
-                  {s.who && (
-                    <div style={{ display:"flex", alignItems:"flex-start", gap:6, fontSize:11 }}>
-                      <span style={{ color:C.gray500, flexShrink:0 }}>👤</span>
-                      <span style={{ color:C.gray700, fontWeight:500, lineHeight:1.4 }}>{s.who}</span>
-                    </div>
-                  )}
-                  {s.docs && s.docs !== "Не требуются" && (
-                    <div style={{ display:"flex", alignItems:"flex-start", gap:6, fontSize:11 }}>
-                      <span style={{ color:C.gray500, flexShrink:0 }}>📋</span>
-                      <span style={{ color:C.gray700, fontWeight:500, lineHeight:1.4 }}>{s.docs}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Footer */}
-                <div style={{ padding:"0 16px 16px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:6, marginTop:"auto" }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                    <span style={{ fontSize:11, color:C.gray500 }}>⏱</span>
-                    <span style={{ fontSize:11, fontWeight:700, color: s.sla==="Онлайн"||s.sla==="Справочно"||s.sla==="Актуально" ? C.green : C.dark }}>{s.sla}</span>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:5, marginBottom:2 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:C.dark,
+                      whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{s.title}</div>
+                    {ti && <span style={{ fontSize:9, fontWeight:700, color:ti.color, background:ti.color+"18",
+                      borderRadius:100, padding:"1px 6px", flexShrink:0 }}>{ti.label}</span>}
                   </div>
-                  <div style={{ display:"flex", gap:6 }}>
-                    {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link,"_blank"); } else { setSelected(s); setPage("form"); } }}>
-                      {s.btnText || (s.isOnboarding||s.link ? "Открыть" : "Подать заявку")}
-                    </Btn>}
-                    {s.secondBtnText && <Btn small variant="ghost" onClick={() => { const sec=SERVICES.find(x=>x.id===s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
-                      {s.secondBtnText}
-                    </Btn>}
-                    {s.noBtn && <span style={{ fontSize:11, color:C.gray500, fontWeight:600, padding:"7px 0" }}>Информация</span>}
-                  </div>
+                  <div style={{ fontSize:11, color:C.gray500,
+                    whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{s.desc}</div>
+                  <div style={{ fontSize:10, fontWeight:600, color: s.sla==="Онлайн"||s.sla==="Справочно"||s.sla==="Актуально" ? C.green : C.gray500, marginTop:2 }}>⏱ {s.sla}</div>
+                </div>
+                <div style={{ display:"flex", flexDirection:"column", gap:4, flexShrink:0, alignItems:"flex-end" }}>
+                  {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link,"_blank"); } else { setSelected(s); setPage("form"); } }}>
+                    {s.btnText || (s.isOnboarding||s.link ? "Открыть" : "Подать")}
+                  </Btn>}
+                  {s.secondBtnText && <Btn small variant="ghost" onClick={() => { const sec=SERVICES.find(x=>x.id===s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
+                    {s.secondBtnText}
+                  </Btn>}
+                  {s.noBtn && <span style={{ fontSize:10, color:C.gray500, fontWeight:600 }}>Справка</span>}
                 </div>
               </div>
             );
@@ -1367,26 +1322,27 @@ export default function App() {
             const cc = C.green;
             const linkText = grp === "Вакансии Банка" ? "Смотреть вакансии →"
               : grp === "Реферальная программа" ? "Смотреть далее →"
-              : `Открыть →`;
+              : "Открыть →";
             return (
               <div onClick={() => setSelectedGroup(grp)}
-                style={{ background:C.card, borderRadius:14, padding:"10px 14px",
+                style={{ background:C.card, borderRadius:12, padding:"9px 12px",
                   cursor:"pointer", transition:"box-shadow .12s",
-                  display:"flex", alignItems:"center", gap:12, boxShadow:C.shadow,
+                  display:"flex", alignItems:"center", gap:10, boxShadow:C.shadow,
                   borderLeft:`3px solid ${cc}`,
                 }}
                 onMouseEnter={e => e.currentTarget.style.boxShadow=C.shadowMd}
                 onMouseLeave={e => e.currentTarget.style.boxShadow=C.shadow}>
-                <div style={{ width:36, height:36, borderRadius:10, background:cc+"15",
-                  display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
+                <div style={{ width:32, height:32, borderRadius:9, background:cc+"15",
+                  display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>
                   {GROUP_ICONS[grp] || "📝"}
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:13, fontWeight:700, color:C.dark, lineHeight:1.2 }}>{grp}</div>
-                  <div style={{ fontSize:11, color:cc, fontWeight:600, marginTop:2 }}>{linkText}</div>
+                  <div style={{ fontSize:12, fontWeight:700, color:C.dark,
+                    whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{grp}</div>
+                  <div style={{ fontSize:10, color:cc, fontWeight:600 }}>{linkText}</div>
                 </div>
                 <span style={{ fontSize:11, fontWeight:800, color:cc, background:cc+"15",
-                  borderRadius:100, padding:"2px 9px", flexShrink:0 }}>{count}</span>
+                  borderRadius:100, padding:"2px 8px", flexShrink:0 }}>{count}</span>
               </div>
             );
           };
