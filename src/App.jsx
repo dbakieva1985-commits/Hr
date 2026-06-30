@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-const _v = "8.0";
+const _v = "8.1";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#F0F2F5",   // Revolut-style light gray page background
@@ -1284,7 +1284,7 @@ export default function App() {
         {/* ── HOME / WORKSPACE SELECTION ── */}
         {page === "home" && !selected && (
           <div style={{ display:"flex", flexDirection:"column",
-            height: isMobile ? "calc(100vh - 140px)" : "calc(100vh - 120px)" }}>
+            minHeight: isMobile ? "calc(100vh - 180px)" : "calc(100vh - 120px)" }}>
             {/* Greeting banner */}
             <div style={{ background:`linear-gradient(135deg, ${C.green} 0%, ${C.greenDark} 100%)`,
               borderRadius:20, padding: isMobile ? "20px 18px" : "28px 32px",
