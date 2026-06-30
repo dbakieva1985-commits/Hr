@@ -1631,6 +1631,9 @@ export default function App() {
             {
               id: 1, name: "Алия К.", pos: "HR Analyst", dept: "ДУП", avatar: "А",
               vacation: "18 дн.", requests: 1, courses: 1, perf: "4.5/5",
+              courseList: [
+                { title: "Противодействие мошенничеству", deadline: "31 июля 2026", progress: 0, urgent: true },
+              ],
               discipline: [
                 { date: "30.06", enter: "09:00", exit: "—",    ok: true,  label: "В норме" },
                 { date: "27.06", enter: "08:55", exit: "18:00", ok: true,  label: "В норме" },
@@ -1642,6 +1645,11 @@ export default function App() {
             {
               id: 2, name: "Марат С.", pos: "HR Specialist", dept: "ДУП", avatar: "М",
               vacation: "12 дн.", requests: 2, courses: 3, perf: "3.8/5",
+              courseList: [
+                { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 20, urgent: true },
+                { title: "Противодействие мошенничеству", deadline: "31 июля 2026", progress: 0, urgent: false },
+                { title: "Основы кибербезопасности", deadline: "15 августа 2026", progress: 0, urgent: false },
+              ],
               discipline: [
                 { date: "30.06", enter: "09:45", exit: "—",    ok: false, label: "Нарушение" },
                 { date: "27.06", enter: "09:30", exit: "18:10", ok: false, label: "Нарушение" },
@@ -1653,6 +1661,9 @@ export default function App() {
             {
               id: 3, name: "Диана Ж.", pos: "Recruiter", dept: "ДУП", avatar: "Д",
               vacation: "21 дн.", requests: 0, courses: 1, perf: "4.7/5",
+              courseList: [
+                { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 85, urgent: false },
+              ],
               discipline: [
                 { date: "30.06", enter: "09:00", exit: "—",    ok: true,  label: "В норме" },
                 { date: "27.06", enter: "08:50", exit: "17:55", ok: true,  label: "В норме" },
@@ -1664,6 +1675,10 @@ export default function App() {
             {
               id: 4, name: "Нурлан Б.", pos: "HR BP", dept: "ДУП", avatar: "Н",
               vacation: "7 дн.", requests: 3, courses: 2, perf: "4.0/5",
+              courseList: [
+                { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 0, urgent: true },
+                { title: "Противодействие мошенничеству", deadline: "31 июля 2026", progress: 0, urgent: false },
+              ],
               discipline: [
                 { date: "30.06", enter: "10:10", exit: "—",    ok: false, label: "Нарушение" },
                 { date: "27.06", enter: "09:05", exit: "18:00", ok: true,  label: "В норме" },
@@ -1797,6 +1812,35 @@ export default function App() {
                           <div style={{ marginTop: 10, fontSize: 11, color: violations > 0 ? C.red : C.green, fontWeight: 600 }}>
                             {violations > 0 ? `Нарушений за неделю: ${violations}` : "Нарушений нет ✓"}
                           </div>
+                          {/* Обучение */}
+                          {emp.courseList && emp.courseList.length > 0 && (
+                            <div style={{ marginTop: 16 }}>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: C.dark, marginBottom: 8 }}>📚 Обучение</div>
+                              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                                {emp.courseList.map((course, ci) => (
+                                  <div key={ci} style={{ background: course.urgent ? C.red+"08" : C.bg, borderRadius: 10,
+                                    padding: "10px 12px", border: course.urgent ? `1px solid ${C.red}22` : `1px solid ${C.gray300}` }}>
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 6 }}>
+                                      <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ fontSize: 12, fontWeight: 700, color: C.dark }}>{course.title}</div>
+                                        <div style={{ fontSize: 11, color: course.urgent ? C.red : C.gray500, fontWeight: course.urgent ? 700 : 400, marginTop: 2 }}>
+                                          {course.urgent ? "⚠ Истекает срок: " : "Срок: "}{course.deadline}
+                                        </div>
+                                      </div>
+                                      <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 100, flexShrink: 0,
+                                        background: course.progress === 0 ? C.gray300 : C.green+"22",
+                                        color: course.progress === 0 ? C.gray500 : C.green }}>
+                                        {course.progress === 0 ? "Не начат" : `${course.progress}%`}
+                                      </span>
+                                    </div>
+                                    <div style={{ height: 4, background: C.gray100, borderRadius: 2, overflow: "hidden" }}>
+                                      <div style={{ height: "100%", width: `${course.progress}%`, background: C.green, borderRadius: 2 }} />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
