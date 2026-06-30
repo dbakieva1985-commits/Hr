@@ -1512,8 +1512,8 @@ export default function App() {
                 </div>
               )}
 
-              {/* Life Events strip — only on "Все", no search, no group */}
-              {!search && !selectedGroup && catFilter==="Все" && (
+              {/* Life Events strip — only in Кадровое администрирование */}
+              {!search && !selectedGroup && catFilter==="Кадровое администрирование" && (
                 <div style={{ marginBottom:16 }}>
                   <div style={{ fontSize:12, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:0.8, marginBottom:8 }}>
                     Жизненные ситуации
