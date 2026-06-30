@@ -3137,25 +3137,22 @@ export default function App() {
 
         {/* ── MENTEE ── */}
         {page === "mentee" && (() => {
-          const spasiboTotal = obSpasibo;
-          const spasiboNext  = SPASIBO_REWARDS.find(r=>r.n > spasiboTotal);
-          const spasiboPrev  = [...SPASIBO_REWARDS].reverse().find(r=>r.n <= spasiboTotal);
-          const spasiboPct   = spasiboNext ? Math.round((spasiboTotal-(spasiboPrev?.n||0))/(spasiboNext.n-(spasiboPrev?.n||0))*100) : 100;
-          const tasksDone  = obMentorTasks.filter(t=>t.done).length;
-          const tasksTotal = obMentorTasks.length;
-          const tasksPct   = Math.round(tasksDone/tasksTotal*100);
+          const total = obSpasibo;
+          const next  = SPASIBO_REWARDS.find(r=>r.n > total);
+          const prev  = [...SPASIBO_REWARDS].reverse().find(r=>r.n <= total);
+          const pct   = next ? Math.round((total-(prev?.n||0))/(next.n-(prev?.n||0))*100) : 100;
           return (
             <div>
-              <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px", marginBottom:16, color:C.white }}>
-                <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Мой подопечный</div>
+              <div style={{ background:`linear-gradient(135deg, ${C.green}, ${C.greenMid})`, borderRadius:16, padding:"20px 24px", marginBottom:16, color:C.white }}>
+                <div style={{ fontSize:18, fontWeight:800, marginBottom:4 }}>Вы — наставник нового сотрудника</div>
                 <div style={{ fontSize:13, opacity:0.9 }}>Алия Сейткали · Senior PM · Выход: 16 июня 2026</div>
               </div>
 
               {/* Спасибо */}
-              <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:16, padding:isMobile?"16px":"20px" }}>
+              <div style={{ background:C.card, boxShadow:C.shadow, borderRadius:16, padding:"20px 24px", marginBottom:16 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
                   <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Мои «Спасибо»</div>
-                  <div style={{ fontSize:24, fontWeight:800, color:C.green }}>{spasiboTotal} <span style={{ fontSize:14 }}>⭐</span></div>
+                  <div style={{ fontSize:24, fontWeight:800, color:C.green }}>{total} <span style={{ fontSize:14 }}>⭐</span></div>
                 </div>
                 {spasiboSent && (
                   <div style={{ background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:10, padding:"8px 12px", marginBottom:12 }}>
@@ -3164,19 +3161,19 @@ export default function App() {
                     <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>от Алия Сейткали · только что</div>
                   </div>
                 )}
-                {spasiboNext && (<>
+                {next && (<>
                   <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
                     <span style={{ fontSize:11, color:C.gray500 }}>До следующей награды</span>
-                    <span style={{ fontSize:11, fontWeight:700, color:C.green }}>{spasiboNext.n - spasiboTotal} Спасибо</span>
+                    <span style={{ fontSize:11, fontWeight:700, color:C.green }}>{next.n - total} Спасибо</span>
                   </div>
                   <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:12, overflow:"hidden" }}>
-                    <div style={{ height:"100%", width:`${spasiboPct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:4 }} />
+                    <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:4 }} />
                   </div>
                 </>)}
                 <div style={{ fontSize:12, fontWeight:700, color:C.dark, marginBottom:8 }}>Магазин наград</div>
                 <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:4 }}>
                   {SPASIBO_REWARDS.map(r => {
-                    const unlocked = spasiboTotal >= r.n;
+                    const unlocked = total >= r.n;
                     return (
                       <div key={r.n} style={{ minWidth:74, background:unlocked?C.greenPale:C.gray100, border:`1.5px solid ${unlocked?C.green:C.gray300}`, borderRadius:10, padding:"10px 6px", textAlign:"center", flexShrink:0 }}>
                         <div style={{ fontSize:20, marginBottom:4 }}>{r.icon}</div>
@@ -3189,34 +3186,40 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Задачи наставника */}
-              <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, padding:isMobile?"16px":"20px" }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
-                  <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Задачи наставника</div>
-                  <div style={{ fontSize:13, fontWeight:700, color:C.green }}>{tasksDone}/{tasksTotal}</div>
-                </div>
-                <div style={{ height:6, background:C.gray100, borderRadius:3, marginBottom:14, overflow:"hidden" }}>
-                  <div style={{ height:"100%", width:`${tasksPct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:3 }} />
-                </div>
-                {obMentorTasks.map(task => (
-                  <div key={task.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0", borderBottom:`1px solid ${C.gray100}` }}>
-                    <div onClick={() => setObMentorTasks(prev => prev.map(t => t.id===task.id ? {...t,done:!t.done} : t))}
-                      style={{ width:22, height:22, borderRadius:6, border:`2px solid ${task.done ? C.green : C.gray300}`,
-                        background: task.done ? C.green : C.white, display:"flex", alignItems:"center",
-                        justifyContent:"center", cursor:"pointer", flexShrink:0 }}>
-                      {task.done && <span style={{ color:C.white, fontSize:13, fontWeight:900 }}>✓</span>}
+              {/* Задачи наставника по фазам */}
+              <div style={{ background:C.card, boxShadow:C.shadow, borderRadius:16, padding:"20px 24px" }}>
+                <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>Ваши задачи</div>
+                {[
+                  { phase:"pre",    label:"До выхода" },
+                  { phase:"week1",  label:"День 1–7"  },
+                  { phase:"month3", label:"Месяц 2–3" },
+                ].map(g => {
+                  const tasks = obMentorTasks.filter(t=>t.phase===g.phase);
+                  if(!tasks.length) return null;
+                  return (
+                    <div key={g.phase} style={{ marginBottom:16 }}>
+                      <div style={{ fontSize:11, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:0.5, marginBottom:8 }}>{g.label}</div>
+                      {tasks.map(task => (
+                        <div key={task.id}>
+                          <TaskRow task={task}
+                            onToggle={id => setObMentorTasks(prev => prev.map(t => t.id===id ? {...t,done:!t.done} : t))}
+                          />
+                          {task.isSurvey && task.done && (
+                            <div style={{ marginLeft:32, marginBottom:8 }}>
+                              <SurveyBlock
+                                questions={SURVEY_MENTOR}
+                                answers={obSurveys.mentor}
+                                onAnswer={(qid,val) => setObSurveys(p=>({...p, mentor:{...p.mentor,[qid]:val}}))}
+                                onSubmit={() => setObSurveys(p=>({...p, mentorSubmitted:true}))}
+                                submitted={!!obSurveys.mentorSubmitted}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                    <div style={{ fontSize:12, flex:1, lineHeight:1.4, color: task.done ? C.gray500 : C.dark, textDecoration: task.done ? "line-through" : "none" }}>
-                      {task.title}
-                    </div>
-                  </div>
-                ))}
-                <button onClick={() => navigate("onboarding")}
-                  style={{ marginTop:14, width:"100%", padding:"11px", border:`1.5px solid ${C.green}`,
-                    borderRadius:12, fontSize:13, fontWeight:700, color:C.green, background:C.white,
-                    cursor:"pointer", fontFamily:"inherit" }}>
-                  Открыть онбординг →
-                </button>
+                  );
+                })}
               </div>
             </div>
           );
