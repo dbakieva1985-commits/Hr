@@ -1268,24 +1268,13 @@ export default function App() {
         {/* ── CATALOG ── */}
         {page === "catalog" && !selected && (() => {
           // ── colour accent per category ────────────────────────────────
-          const CAT_COLOR = {
-            "Подбор персонала":               C.blue,
-            "Онбординг":                       C.orange,
-            "Кадровое администрирование":      C.green,
-            "Заработная плата и командировки": C.greenDark,
-            "Compensation & Benefits":         "#7C3AED",
-            "Обучение и развитие":             "#0891B2",
-            "Оценка и Performance":            C.orange,
-            "Кадровый резерв":                 C.greenMid,
-            "HR Analytics":                    C.blue,
-          };
-          const catColor = (cat) => CAT_COLOR[cat] || C.green;
+          const catColor = () => C.green;
 
           // ── tag label + color ─────────────────────────────────────────
           const tagInfo = (s) => {
             if (s.noBtn)         return { label:"Справочно", color:C.gray500 };
-            if (s.tag === "ИТ")  return { label:"ИТ", color:C.blue };
-            if (s.tag === "рук") return { label:"Рук-ль", color:C.orange };
+            if (s.tag === "ИТ")  return { label:"ИТ",        color:C.green };
+            if (s.tag === "рук") return { label:"Рук-ль",    color:C.greenDark };
             return null;
           };
 
@@ -1432,7 +1421,7 @@ export default function App() {
             "HR Analytics":                       "Аналитика",
           };
 
-          const sidebarW = isMobile ? 80 : 200;
+          const sidebarW = isMobile ? 110 : 200;
 
           return (
           <div style={{ display:"flex", gap:0, alignItems:"flex-start", margin: isMobile ? "0 -16px" : "0 -24px" }}>
@@ -1444,36 +1433,35 @@ export default function App() {
               maxHeight:"100vh", overflowY:"auto",
               background: C.white,
               borderRight:`1px solid ${C.gray300}`,
-              paddingTop:8, paddingBottom:20,
+              paddingTop:12, paddingBottom:24,
               scrollbarWidth:"none",
             }}>
+              <div style={{ fontSize:9, fontWeight:700, color:C.gray500, textTransform:"uppercase",
+                letterSpacing:1.2, padding: isMobile ? "0 10px 8px" : "0 16px 10px" }}>
+                Категории
+              </div>
               {["Все", ...CATS].map(c => {
                 const isActive = catFilter === c;
-                const cc = c === "Все" ? C.green : catColor(c);
-                const icon = CAT_ICONS[c] || "📝";
                 const short = CAT_SHORT[c] || c;
                 return (
                   <div key={c}
                     onClick={() => { setCatFilter(c); setSelectedGroup(null); setSearch(""); }}
                     style={{
-                      display:"flex", flexDirection:"column", alignItems:"center",
-                      padding: isMobile ? "10px 6px" : "11px 14px",
-                      margin:"1px 6px",
-                      borderRadius:12,
+                      display:"flex", alignItems:"center",
+                      padding: isMobile ? "9px 10px 9px 12px" : "10px 16px 10px 16px",
                       cursor:"pointer",
-                      background: isActive ? cc : "transparent",
-                      transition:"background .12s",
-                      gap: 4,
-                      borderLeft: isActive ? "none" : `3px solid ${cc}33`,
+                      background: isActive ? C.greenPale : "transparent",
+                      borderLeft: isActive ? `3px solid ${C.green}` : "3px solid transparent",
+                      transition:"background .12s, border-color .12s",
                     }}
-                    onMouseEnter={e => { if(!isActive) e.currentTarget.style.background=cc+"15"; }}
+                    onMouseEnter={e => { if(!isActive) e.currentTarget.style.background=C.gray100; }}
                     onMouseLeave={e => { if(!isActive) e.currentTarget.style.background="transparent"; }}
                   >
-                    <span style={{ fontSize: isMobile ? 18 : 20, lineHeight:1 }}>{icon}</span>
                     <span style={{
-                      fontSize: isMobile ? 9 : 10, fontWeight: isActive ? 700 : 500,
-                      color: isActive ? C.white : C.gray700,
-                      lineHeight:1.25, textAlign:"center", wordBreak:"break-word",
+                      fontSize: isMobile ? 11 : 12,
+                      fontWeight: isActive ? 700 : 400,
+                      color: isActive ? C.green : C.gray700,
+                      lineHeight: 1.3,
                     }}>{short}</span>
                   </div>
                 );
@@ -1515,7 +1503,7 @@ export default function App() {
                     </div>
                   ) : catFilter !== "Все" ? (
                     <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                      <span style={{ fontSize:18 }}>{CAT_ICONS[catFilter] || "📝"}</span>
+                      <div style={{ width:4, height:32, borderRadius:2, background:C.green, flexShrink:0 }} />
                       <div>
                         <div style={{ fontSize:15, fontWeight:800, color:C.dark, lineHeight:1.2 }}>{catFilter}</div>
                         <div style={{ fontSize:11, color:C.gray500 }}>
