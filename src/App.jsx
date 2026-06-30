@@ -696,7 +696,7 @@ export default function App() {
   const [showSport,         setShowSport]         = useState(false);
   const [hrGroups,          setHrGroups]          = useState({});
   const [expandedEmployee,  setExpandedEmployee]  = useState(null);
-  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my","team"];
+  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my","team","courses"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
   const navigate = p => { window.location.hash = p; setPage(p); };
@@ -1174,7 +1174,7 @@ export default function App() {
           display:"flex", alignItems:"center", justifyContent:"space-between",
           padding:"0 16px", zIndex:200, boxShadow:"0 1px 0 rgba(0,0,0,0.06)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            {(page === "catalog" || page === "profile" || page === "team") && (
+            {(page === "catalog" || page === "profile" || page === "team" || page === "courses") && (
               <button onClick={() => navigate("home")} style={{
                 background:"none", border:"none", cursor:"pointer", padding:"4px 6px 4px 0",
                 color:C.dark, fontSize:22, lineHeight:1, display:"flex", alignItems:"center",
@@ -1433,18 +1433,18 @@ export default function App() {
                 portalRole === "hr"
                   ? { icon: "📥", label: "Входящие заявки", value: HR_INCOMING.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "требуют обработки", onClick: () => navigate("my") }
                   : { icon: "📋", label: "Мои заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке", onClick: () => navigate("my") },
-                { icon: "📚", label: "Курсы", value: "2", color: C.blue, sub: "срок до 15 июля", onClick: null },
+                { icon: "📚", label: "Курсы", value: "2", color: C.blue, sub: "срок до 15 июля", onClick: () => navigate("courses") },
                 { icon: "⭐", label: "Performance", value: "4.2/5", color: C.greenDark, sub: "за квартал", onClick: null },
               ].map(m => (
                 <div key={m.label} onClick={m.onClick || undefined}
                   style={{ background: C.card, borderRadius: 14, padding: "12px 10px", boxShadow: C.shadow,
                     cursor: m.onClick ? "pointer" : "default",
-                    border: m.onClick ? `2px solid ${C.orange}22` : "2px solid transparent" }}>
+                    border: m.onClick ? `2px solid ${m.color}33` : "2px solid transparent" }}>
                   <div style={{ fontSize: 22, marginBottom: 6 }}>{m.icon}</div>
                   <div style={{ fontSize: isMobile ? 17 : 19, fontWeight: 800, color: m.color, marginBottom: 2 }}>{m.value}</div>
                   <div style={{ fontSize: 11, fontWeight: 600, color: C.dark, marginBottom: 2, lineHeight: 1.3 }}>{m.label}</div>
                   <div style={{ fontSize: 10, color: C.gray500 }}>{m.sub}</div>
-                  {m.onClick && <div style={{ fontSize: 9, color: C.orange, fontWeight: 700, marginTop: 4 }}>Открыть →</div>}
+                  {m.onClick && <div style={{ fontSize: 9, color: m.color, fontWeight: 700, marginTop: 4 }}>Открыть →</div>}
                 </div>
               ))}
             </div>
@@ -2926,6 +2926,63 @@ export default function App() {
               <Btn onClick={resetForm} variant="ghost">Отмена</Btn>
             </div>
             </>)}
+          </div>
+        )}
+
+        {/* ── COURSES ── */}
+        {page === "courses" && (
+          <div>
+            <button onClick={() => navigate("profile")}
+              style={{ background:"none", border:"none", color:C.green, fontSize:13,
+                cursor:"pointer", marginBottom:20, padding:0, fontFamily:"inherit" }}>
+              ← Мой профиль
+            </button>
+            <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:24 }}>
+              <div style={{ width:44, height:44, borderRadius:12, background:C.blue+"15",
+                display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>📚</div>
+              <div>
+                <h1 style={{ fontSize:20, fontWeight:700, color:C.dark, margin:0 }}>Мои курсы</h1>
+                <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>Обязательные и рекомендованные к прохождению</div>
+              </div>
+            </div>
+            {[
+              { title:"Compliance & Ethics 2025",          deadline:"15 июля 2026",   progress:40, urgent:true,  type:"Обязательный" },
+              { title:"Противодействие мошенничеству",     deadline:"31 июля 2026",   progress:0,  urgent:false, type:"Обязательный" },
+              { title:"Основы кибербезопасности",          deadline:"15 августа 2026",progress:0,  urgent:false, type:"Рекомендованный" },
+              { title:"Управление временем и приоритетами",deadline:"30 сентября 2026",progress:0, urgent:false, type:"Рекомендованный" },
+            ].map((course,i) => (
+              <div key={i} style={{ background:C.card, borderRadius:16, padding:"16px 18px",
+                boxShadow:C.shadow, marginBottom:12,
+                borderLeft:`3px solid ${course.urgent ? C.red : course.progress>0 ? C.green : C.gray300}` }}>
+                <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:10, marginBottom:12 }}>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:4 }}>{course.title}</div>
+                    <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                      <span style={{ fontSize:10, fontWeight:600, color:course.urgent?C.red:C.gray500 }}>
+                        {course.urgent?"⚠ ":""}Срок: {course.deadline}
+                      </span>
+                      <span style={{ fontSize:10, fontWeight:600,
+                        color: course.type==="Обязательный" ? C.orange : C.blue,
+                        background: course.type==="Обязательный" ? C.orange+"18" : C.blue+"15",
+                        borderRadius:100, padding:"1px 7px" }}>{course.type}</span>
+                    </div>
+                  </div>
+                  <span style={{ fontSize:12, fontWeight:700, padding:"4px 12px", borderRadius:100, flexShrink:0,
+                    background: course.progress===0 ? C.gray100 : C.green+"22",
+                    color:      course.progress===0 ? C.gray500  : C.green }}>
+                    {course.progress===0 ? "Не начат" : `${course.progress}%`}
+                  </span>
+                </div>
+                <div style={{ height:7, background:C.gray100, borderRadius:4, overflow:"hidden", marginBottom:12 }}>
+                  <div style={{ height:"100%", width:`${course.progress}%`,
+                    background:`linear-gradient(90deg,${C.green},${C.greenMid})`,
+                    borderRadius:4, transition:"width .4s" }}/>
+                </div>
+                <Btn small onClick={() => {}}>
+                  {course.progress===0 ? "Начать курс" : "Продолжить"}
+                </Btn>
+              </div>
+            ))}
           </div>
         )}
 
