@@ -1630,7 +1630,7 @@ export default function App() {
           const team = [
             {
               id: 1, name: "Алия К.", pos: "HR Analyst", dept: "ДУП", avatar: "А",
-              vacation: "18 дн.", requests: 1, courses: 1, perf: "4.5/5",
+              vacation: "18 дн.", lastVacation: "2 мес. назад", vacationAlert: false, requests: 1, courses: 1, perf: "4.5/5",
               courseList: [
                 { title: "Противодействие мошенничеству", deadline: "31 июля 2026", progress: 0, urgent: true },
               ],
@@ -1644,7 +1644,7 @@ export default function App() {
             },
             {
               id: 2, name: "Марат С.", pos: "HR Specialist", dept: "ДУП", avatar: "М",
-              vacation: "12 дн.", requests: 2, courses: 3, perf: "3.8/5",
+              vacation: "12 дн.", lastVacation: "9 мес. назад", vacationAlert: true, requests: 2, courses: 3, perf: "3.8/5",
               courseList: [
                 { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 20, urgent: true },
                 { title: "Противодействие мошенничеству", deadline: "31 июля 2026", progress: 0, urgent: false },
@@ -1660,7 +1660,7 @@ export default function App() {
             },
             {
               id: 3, name: "Диана Ж.", pos: "Recruiter", dept: "ДУП", avatar: "Д",
-              vacation: "21 дн.", requests: 0, courses: 1, perf: "4.7/5",
+              vacation: "21 дн.", lastVacation: "1 мес. назад", vacationAlert: false, requests: 0, courses: 1, perf: "4.7/5",
               courseList: [
                 { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 85, urgent: false },
               ],
@@ -1674,7 +1674,7 @@ export default function App() {
             },
             {
               id: 4, name: "Нурлан Б.", pos: "HR BP", dept: "ДУП", avatar: "Н",
-              vacation: "7 дн.", requests: 3, courses: 2, perf: "4.0/5",
+              vacation: "7 дн.", lastVacation: "1.5 года назад", vacationAlert: true, requests: 3, courses: 2, perf: "4.0/5",
               courseList: [
                 { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 0, urgent: true },
                 { title: "Противодействие мошенничеству", deadline: "31 июля 2026", progress: 0, urgent: false },
@@ -1765,6 +1765,9 @@ export default function App() {
                           <div style={{ fontSize: 14, fontWeight: 700, color: C.dark }}>{emp.name}</div>
                           <div style={{ fontSize: 11, color: C.gray500, marginTop: 1 }}>{emp.pos} · {emp.dept}</div>
                         </div>
+                        {emp.vacationAlert && (
+                          <span style={{ fontSize: 10, fontWeight: 700, color: C.orange, background: C.orange+"15", borderRadius: 100, padding: "3px 8px", flexShrink: 0 }}>🌴 Отпуск</span>
+                        )}
                         {violations > 0
                           ? <span style={{ fontSize: 10, fontWeight: 700, color: C.red, background: C.red+"15", borderRadius: 100, padding: "3px 8px", flexShrink: 0 }}>{violations} нарушения</span>
                           : <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 8px", flexShrink: 0 }}>В норме</span>
@@ -1788,6 +1791,23 @@ export default function App() {
                               </div>
                             ))}
                           </div>
+                          {/* Предупреждение об отпуске */}
+                          {emp.vacationAlert && (
+                            <div style={{ background: C.orange+"12", border: `1px solid ${C.orange}33`, borderRadius: 12,
+                              padding: "12px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
+                              <span style={{ fontSize: 22, flexShrink: 0 }}>🌴</span>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontSize: 12, fontWeight: 700, color: C.orange }}>Рекомендуем отпуск</div>
+                                <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>
+                                  Последний отпуск: {emp.lastVacation} · Остаток: {emp.vacation}
+                                </div>
+                              </div>
+                              <div style={{ fontSize: 10, fontWeight: 700, color: C.orange, background: C.orange+"20",
+                                borderRadius: 8, padding: "4px 8px", cursor: "pointer", flexShrink: 0 }}>
+                                Отправить →
+                              </div>
+                            </div>
+                          )}
                           {/* Трудовая дисциплина */}
                           <div style={{ fontSize: 12, fontWeight: 700, color: C.dark, marginBottom: 8 }}>📜 Трудовая дисциплина</div>
                           <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "6px 10px",
