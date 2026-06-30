@@ -1922,7 +1922,7 @@ export default function App() {
                     <div style={{ fontSize:10, fontWeight:600, color: s.sla==="Онлайн"||s.sla==="Справочно"||s.sla==="Актуально" ? C.green : C.gray500, flex:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>⏱ {s.sla}</div>
                     <div style={{ display:"flex", gap:4 }}>
                       {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link,"_blank"); } else { setSelected(s); setPage("form"); } }}>
-                        {s.isOnboarding||s.link ? "Открыть" : "Подать"}
+                        {s.isOnboarding||s.link ? "Открыть" : "Заявка"}
                       </Btn>}
                       {s.secondBtnText && <Btn small variant="ghost" onClick={() => { const sec=SERVICES.find(x=>x.id===s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
                         Ещё
