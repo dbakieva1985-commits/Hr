@@ -342,7 +342,9 @@ const ApprovalBar = ({ decisions, businessDir }) => (
 
 // ── Sidebar nav ─────────────────────────────────────────────────────────────
 const NAV = [
-  { id: "catalog",   icon: "☰", label: "Каталог" },
+  { id: "home",      icon: "🏠", label: "Workspace" },
+  { id: "profile",   icon: "👤", label: "Мой профиль" },
+  { id: "catalog",   icon: "☰", label: "Мой HR" },
   { id: "my",        icon: "📋", label: "Мои заявки" },
   { id: "analytics", icon: "⊡", label: "Аналитика" },
 ];
@@ -688,7 +690,7 @@ export default function App() {
   const [valQuiz,        setValQuiz]        = useState({ idx:0, picked:null, score:0, done:false });
   const [lifeEventModal,    setLifeEventModal]    = useState(null);
   const [lifeEventSelected, setLifeEventSelected] = useState({});
-  const VALID_PAGES = ["home","catalog","requests","onboarding","analytics"];
+  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
   const navigate = p => { window.location.hash = p; setPage(p); };
@@ -943,7 +945,7 @@ export default function App() {
                 setPortalRole(loginRole);
                 if (r?.obView) setObView(r.obView);
                 setCompany(selectedCompany);
-                navigate("catalog");
+                navigate("home");
               }}
               disabled={!loginRole}
               style={{ width:"100%", background: loginRole ? C.green : C.gray300,
@@ -1150,421 +1152,226 @@ export default function App() {
         maxWidth: isMobile ? "100vw" : `calc(100vw - ${sideW}px)`,
         boxSizing: "border-box", background: C.bg }}>
 
-        {/* ── HOME ── */}
-        {page === "home" && !selected && (() => {
-
-          // ── Quick-card helper used in role dashboards ──────────────────────
-          const RoleServiceRow = ({ ids, onOpenCatalog }) => {
-            const svcs = ids.map(id => SERVICES.find(s => s.id === id)).filter(Boolean);
-            return (
-              <div style={{ background:C.card, borderRadius:16, overflow:"hidden", boxShadow:C.shadow }}>
-                {svcs.map((s, i) => (
-                  <div key={s.id} onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link,"_blank"); } else { setSelected(s); setPage("form"); } }}
-                    style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", cursor:"pointer",
-                      borderBottom: i < svcs.length-1 ? `1px solid ${C.gray300}` : "none",
-                      transition:"background .12s" }}
-                    onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
-                    onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                    <div style={{ width:36, height:36, borderRadius:10, background:C.greenPale,
-                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>{s.icon}</div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:13, fontWeight:600, color:C.dark, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{s.title}</div>
-                      <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>⏱ {s.sla}</div>
-                    </div>
-                    <span style={{ color:C.green, fontSize:16, flexShrink:0 }}>›</span>
-                  </div>
-                ))}
-              </div>
-            );
-          };
-
-          const RoleSectionLabel = ({ text }) => (
-            <div style={{ fontSize:11, fontWeight:700, color:C.gray500, textTransform:"uppercase",
-              letterSpacing:1, marginTop:20, marginBottom:8, paddingLeft:2 }}>{text}</div>
-          );
-
-          const RoleHero = ({ title, sub, stats }) => (
-            <div style={{
-              background:`linear-gradient(145deg, ${C.green} 0%, ${C.greenMid} 55%, #00A855 100%)`,
-              borderRadius: isMobile ? 20 : 24, padding: isMobile ? "22px 20px 24px" : "28px 28px 30px",
-              marginBottom:16, boxShadow:`0 8px 32px ${C.green}55`, position:"relative", overflow:"hidden",
-            }}>
-              <div style={{ position:"absolute", top:-40, right:-30, width:160, height:160, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
-              <div style={{ fontSize:11, color:"rgba(255,255,255,0.70)", fontWeight:600, marginBottom:4, letterSpacing:0.5 }}>HALYK BANK · HR SERVICE PORTAL</div>
-              <div style={{ fontSize: isMobile ? 20 : 24, fontWeight:800, color:C.white, marginBottom:3, lineHeight:1.2 }}>{title}</div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,0.75)", marginBottom:16 }}>{sub}</div>
-              <div style={{ display:"flex", gap: isMobile ? 16 : 28 }}>
-                {stats.map(st => (
-                  <div key={st.label}>
-                    <div style={{ fontSize: isMobile ? 20 : 24, fontWeight:800, color:C.white }}>{st.value}</div>
-                    <div style={{ fontSize:11, color:"rgba(255,255,255,0.70)", marginTop:2 }}>{st.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-
-          // ── РУКОВОДИТЕЛЬ ──────────────────────────────────────────────────
-          if (portalRole === "manager") return (
-            <div>
-              <RoleHero
-                title="Панель руководителя 👔"
-                sub="Управление командой и кадровые процессы"
-                stats={[
-                  { label:"Активных заявок", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length },
-                  { label:"Кандидатов", value: requests.filter(r=>r.isApproval).length },
-                  { label:"Всего заявок", value: requests.length },
-                ]}
-              />
-
-              <RoleSectionLabel text="Подбор и найм" />
-              <RoleServiceRow ids={[37, 82]} />
-
-              <RoleSectionLabel text="Управление командой" />
-              <RoleServiceRow ids={[44, 1, 20, 8]} />
-
-              <RoleSectionLabel text="Отсутствие и графики" />
-              <RoleServiceRow ids={[3, 13, 5, 11, 33]} />
-
-              <RoleSectionLabel text="Кадровые данные и отчёты" />
-              <RoleServiceRow ids={[28, 30, 41, 31]} />
-
-              <div style={{ marginTop:20, display:"flex", gap:10 }}>
-                <button onClick={() => navigate("catalog")} style={{
-                  flex:1, background:C.green, color:C.white, border:"none", borderRadius:100,
-                  padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
-                  boxShadow:`0 2px 8px ${C.green}44`,
-                }}>☰ Весь каталог</button>
-                <button onClick={() => navigate("analytics")} style={{
-                  flex:1, background:C.white, color:C.dark, border:`1px solid ${C.gray300}`, borderRadius:100,
-                  padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
-                }}>⊡ Аналитика</button>
-              </div>
-              <div style={{ height:8 }} />
-            </div>
-          );
-
-          // ── HR ────────────────────────────────────────────────────────────
-          if (portalRole === "hr") return (
-            <div>
-              <RoleHero
-                title="HR-панель 👩‍💼"
-                sub="Полный доступ к кадровым процессам"
-                stats={[
-                  { label:"Сервисов HR", value: SERVICES.filter(s=>!s.hidden).length },
-                  { label:"Активных заявок", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length },
-                  { label:"Кандидатов", value: requests.filter(r=>r.isApproval).length },
-                ]}
-              />
-
-              <RoleSectionLabel text="Подбор персонала" />
-              <RoleServiceRow ids={[37, 82]} />
-
-              <RoleSectionLabel text="Онбординг и адаптация" />
-              <RoleServiceRow ids={[43]} />
-
-              <RoleSectionLabel text="Кадровое делопроизводство" />
-              <RoleServiceRow ids={[44, 1, 20, 6, 22]} />
-
-              <RoleSectionLabel text="Аналитика и отчёты" />
-              <RoleServiceRow ids={[41, 30, 36, 33, 35]} />
-
-              <RoleSectionLabel text="Компенсации и льготы" />
-              <RoleServiceRow ids={[39, 91, 95]} />
-
-              <div style={{ marginTop:20, display:"flex", gap:10 }}>
-                <button onClick={() => navigate("catalog")} style={{
-                  flex:1, background:C.green, color:C.white, border:"none", borderRadius:100,
-                  padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
-                  boxShadow:`0 2px 8px ${C.green}44`,
-                }}>☰ Весь каталог</button>
-                <button onClick={() => navigate("analytics")} style={{
-                  flex:1, background:C.white, color:C.dark, border:`1px solid ${C.gray300}`, borderRadius:100,
-                  padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
-                }}>⊡ Аналитика</button>
-              </div>
-              <div style={{ height:8 }} />
-            </div>
-          );
-
-          // ── СОТРУДНИК (existing home) ─────────────────────────────────────
-          const QUICK = [
-            { icon: "📋", label: "Подать\nзаявку",   action: () => navigate("catalog") },
-            { icon: "📁", label: "Мои\nзаявки",      action: () => navigate("my") },
-            { icon: "🎉", label: "Онбординг",         action: () => navigate("onboarding") },
-            { icon: "📊", label: "Аналитика",         action: () => navigate("analytics") },
-          ];
-          const POP_IDS = [2, 15, 9, 26, 59, 45];
-          const popular = SERVICES.filter(s => POP_IDS.includes(s.id) && !s.hidden);
-          return (
+        {/* ── HOME / WORKSPACE SELECTION ── */}
+        {page === "home" && !selected && (
           <div>
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 11, color: C.gray500, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>
+                Halyk Bank · HR Service Portal
+              </div>
+              <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800, color: C.dark, marginBottom: 6 }}>
+                Выберите пространство
+              </div>
+              <div style={{ fontSize: 14, color: C.gray500, lineHeight: 1.55 }}>
+                Портал покажет сервисы и данные, доступные именно вам.
+              </div>
+            </div>
 
-            {/* ── Life Event modal overlay ── */}
-            {lifeEventModal && (
-              <div onClick={() => setLifeEventModal(null)} style={{
-                position:"fixed", inset:0, background:"rgba(0,0,0,0.55)", zIndex:9998,
-                display:"flex", alignItems:"flex-end", justifyContent:"center",
-                backdropFilter:"blur(4px)",
-              }}>
-                <div onClick={e => e.stopPropagation()} style={{
-                  background:C.white, borderRadius:"28px 28px 0 0",
-                  padding:isMobile?"24px 20px 36px":"32px 32px 44px",
-                  maxWidth:500, width:"100%", boxSizing:"border-box",
-                  maxHeight:"85vh", overflowY:"auto",
-                }}>
-                  <div style={{ width:40, height:4, borderRadius:100, background:C.gray300, margin:"0 auto 20px" }} />
-                  <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:20 }}>
-                    <div style={{ width:58, height:58, borderRadius:18, background:lifeEventModal.bgColor,
-                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:30, flexShrink:0 }}>
-                      {lifeEventModal.icon}
-                    </div>
-                    <div>
-                      <div style={{ fontSize:18, fontWeight:800, color:C.dark }}>{lifeEventModal.title}</div>
-                      <div style={{ fontSize:13, color:C.gray500, marginTop:3, lineHeight:1.4 }}>{lifeEventModal.desc}</div>
-                    </div>
-                  </div>
-                  <div style={{ fontSize:11, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:1, marginBottom:12 }}>
-                    Что будет оформлено — выберите нужное:
-                  </div>
-                  {lifeEventModal.services.map(svc => {
-                    const svcData = SERVICES.find(x => x.id === svc.serviceId);
-                    const isSel = !!lifeEventSelected[svc.serviceId];
-                    return (
-                      <div key={svc.serviceId} onClick={() => setLifeEventSelected(prev => ({...prev, [svc.serviceId]: !prev[svc.serviceId]}))}
-                        style={{
-                          display:"flex", alignItems:"center", gap:12, padding:"12px 14px",
-                          borderRadius:14, marginBottom:8, cursor:"pointer",
-                          background: isSel ? C.greenPale : C.gray100,
-                          border:`2px solid ${isSel ? C.green : "transparent"}`,
-                          transition:"all .15s",
-                        }}>
-                        <div style={{ width:42, height:42, borderRadius:13, flexShrink:0,
-                          display:"flex", alignItems:"center", justifyContent:"center", fontSize:20,
-                          background: isSel ? C.green : C.white,
-                          color: isSel ? C.white : C.gray500,
-                          border:`2px solid ${isSel ? C.green : C.gray300}`,
-                          transition:"all .15s", fontWeight:800,
-                        }}>{isSel ? "✓" : svc.icon}</div>
-                        <div style={{ flex:1 }}>
-                          <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{svc.label}</div>
-                          {svcData && <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>⏱ {svcData.sla}</div>}
-                        </div>
-                        {svc.rec && <span style={{ fontSize:10, color:C.orange, fontWeight:700, background:"#FFF3E0", padding:"2px 8px", borderRadius:100, flexShrink:0 }}>Рекомендуется</span>}
-                      </div>
-                    );
-                  })}
-                  <div style={{ fontSize:11, color:C.gray500, marginTop:4, marginBottom:20, lineHeight:1.5 }}>
-                    После нажатия кнопки все выбранные заявки будут созданы автоматически. Специалист HR свяжется с вами по каждой из них.
-                  </div>
-                  <Btn onClick={() => {
-                    const toSubmit = lifeEventModal.services.filter(s => lifeEventSelected[s.serviceId]);
-                    if (!toSubmit.length) return;
-                    const newReqs = toSubmit.map((svc, i) => {
-                      const svcData = SERVICES.find(x => x.id === svc.serviceId);
-                      return { id:`HR-E${Date.now()%10000}-${i}`, title:svc.label, status:"sent", sla:svcData?.sla||"", date:new Date().toLocaleDateString("ru-RU"), icon:svc.icon };
-                    });
-                    setRequests(prev => [...newReqs, ...prev]);
-                    setLifeEventModal(null);
-                    setObToast({ title:"Заявки поданы!", reward:`Оформлено ${newReqs.length} заявки по ситуации «${lifeEventModal.title}»`, icon:lifeEventModal.icon });
-                  }}>
-                    Подать {Object.values(lifeEventSelected).filter(Boolean).length || lifeEventModal.services.length} заявки сразу
-                  </Btn>
-                  <button onClick={() => setLifeEventModal(null)} style={{
-                    marginTop:12, width:"100%", background:"none", border:"none", color:C.gray500,
-                    fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:"8px 0",
-                  }}>Отмена</button>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
+              {/* Мой HR */}
+              <div onClick={() => navigate("catalog")}
+                style={{ background: C.white, borderRadius: 24, padding: "28px 24px", boxShadow: C.shadow,
+                  cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
+                  display: "flex", flexDirection: "column", gap: 0 }}
+                onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
+              >
+                <div style={{ width: 64, height: 64, borderRadius: 20, background: C.greenPale,
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 16 }}>🏠</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: C.dark, marginBottom: 6 }}>Мой HR</div>
+                <div style={{ fontSize: 12, color: C.green, fontWeight: 700, marginBottom: 12 }}>Для всех сотрудников</div>
+                <div style={{ fontSize: 13, color: C.gray500, lineHeight: 1.6, marginBottom: 20, flex: 1 }}>
+                  Все HR-сервисы: справки, отпуск, зарплата, обучение, льготы, документы, подбор и многое другое.
                 </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
+                  {["Кадровое","Отпуск","Зарплата","Обучение","C&B","Резерв"].map(t => (
+                    <span key={t} style={{ fontSize: 11, color: C.green, background: C.greenPale,
+                      borderRadius: 100, padding: "3px 10px", fontWeight: 600 }}>{t}</span>
+                  ))}
+                </div>
+                <div style={{ background: C.green, color: C.white, borderRadius: 100, padding: "12px 0",
+                  textAlign: "center", fontSize: 14, fontWeight: 700, boxShadow: `0 4px 12px ${C.green}44` }}>
+                  → Открыть каталог
+                </div>
+              </div>
+
+              {/* Мой профиль */}
+              <div onClick={() => navigate("profile")}
+                style={{ background: C.white, borderRadius: 24, padding: "28px 24px", boxShadow: C.shadow,
+                  cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
+                  display: "flex", flexDirection: "column", gap: 0 }}
+                onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.blue}`; e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
+              >
+                <div style={{ width: 64, height: 64, borderRadius: 20, background: C.blue+"15",
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 16 }}>👤</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: C.dark, marginBottom: 6 }}>Мой профиль</div>
+                <div style={{ fontSize: 12, color: C.blue, fontWeight: 700, marginBottom: 12 }}>Личный кабинет</div>
+                <div style={{ fontSize: 13, color: C.gray500, lineHeight: 1.6, marginBottom: 20, flex: 1 }}>
+                  Ваши показатели, остаток отпуска, трудовая дисциплина, активные заявки и курсы обучения.
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
+                  {["Показатели","Отпуск","Дисциплина","Заявки","Обучение"].map(t => (
+                    <span key={t} style={{ fontSize: 11, color: C.blue, background: C.blue+"15",
+                      borderRadius: 100, padding: "3px 10px", fontWeight: 600 }}>{t}</span>
+                  ))}
+                </div>
+                <div style={{ background: C.blue, color: C.white, borderRadius: 100, padding: "12px 0",
+                  textAlign: "center", fontSize: 14, fontWeight: 700, boxShadow: `0 4px 12px ${C.blue}44` }}>
+                  → Открыть профиль
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── PROFILE ── */}
+        {page === "profile" && !selected && (
+          <div>
+            {/* Header */}
+            <div style={{ background: `linear-gradient(135deg, ${C.blue} 0%, #2563EB 100%)`,
+              borderRadius: isMobile ? 20 : 24, padding: isMobile ? "24px 20px" : "28px 28px",
+              marginBottom: 20, boxShadow: `0 8px 32px ${C.blue}44`, position: "relative", overflow: "hidden" }}>
+              <div style={{ position:"absolute", top:-30, right:-20, width:140, height:140, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
+              <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(255,255,255,0.2)",
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: 800, color: C.white, flexShrink: 0 }}>Ф</div>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: C.white, lineHeight: 1.2 }}>Фируза Б.</div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", marginTop: 2 }}>ДУП · HR Specialist</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.60)", marginTop: 1 }}>АО «Народный Банк»</div>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: isMobile ? 20 : 36 }}>
+                {[
+                  { label: "Стаж", value: "3 года 2 мес." },
+                  { label: "Табельный №", value: "00050416" },
+                  { label: "Отдел", value: "ДУП" },
+                ].map(st => (
+                  <div key={st.label}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.white }}>{st.value}</div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.65)", marginTop: 1 }}>{st.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Мои показатели */}
+            <div style={{ fontSize: 16, fontWeight: 700, color: C.dark, marginBottom: 12 }}>Мои показатели</div>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
+              {[
+                { icon: "🏖", label: "Остаток отпуска", value: "14 дн.", color: C.green, sub: "из 24 дней" },
+                { icon: "📋", label: "Активные заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке" },
+                { icon: "📚", label: "Курсы к прохождению", value: "2", color: C.blue, sub: "срок до 15 июля" },
+                { icon: "⭐", label: "Performance", value: "4.2/5", color: C.greenDark, sub: "за квартал" },
+              ].map(m => (
+                <div key={m.label} style={{ background: C.card, borderRadius: 16, padding: "16px 14px", boxShadow: C.shadow }}>
+                  <div style={{ fontSize: 26, marginBottom: 8 }}>{m.icon}</div>
+                  <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 800, color: m.color, marginBottom: 2 }}>{m.value}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: C.dark, marginBottom: 2, lineHeight: 1.3 }}>{m.label}</div>
+                  <div style={{ fontSize: 10, color: C.gray500 }}>{m.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Трудовая дисциплина */}
+            <div style={{ background: C.card, borderRadius: 20, padding: isMobile ? "16px" : "20px", boxShadow: C.shadow, marginBottom: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>📜 Трудовая дисциплина</div>
+                <span style={{ fontSize: 11, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 10px" }}>Июнь 2026</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "8px 12px", alignItems: "center",
+                fontSize: 11, fontWeight: 700, color: C.gray500, marginBottom: 8, paddingBottom: 8, borderBottom: `1px solid ${C.gray300}` }}>
+                <span>Дата</span><span>Вход</span><span>Выход</span><span>Статус</span>
+              </div>
+              {[
+                { date: "30.06 Сег.", enter: "09:15", exit: "—",    ok: true,  label: "В норме" },
+                { date: "27.06 Пт",  enter: "09:20", exit: "18:05", ok: true,  label: "В норме" },
+                { date: "26.06 Чт",  enter: "09:05", exit: "18:10", ok: true,  label: "В норме" },
+                { date: "25.06 Ср",  enter: "09:37", exit: "18:58", ok: false, label: "Нарушение" },
+                { date: "24.06 Вт",  enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+              ].map((row, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "8px 12px",
+                  alignItems: "center", padding: "10px 0", borderBottom: i < 4 ? `1px solid ${C.gray300}` : "none",
+                  background: !row.ok ? C.red+"08" : "transparent", borderRadius: !row.ok ? 8 : 0,
+                  paddingLeft: !row.ok ? 8 : 0, paddingRight: !row.ok ? 8 : 0 }}>
+                  <div style={{ fontSize: 12, color: C.gray500, fontWeight: 600, whiteSpace: "nowrap" }}>{row.date}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{row.enter}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{row.exit}</div>
+                  <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100, whiteSpace: "nowrap",
+                    background: row.ok ? C.green+"18" : C.red+"18", color: row.ok ? C.green : C.red }}>
+                    {row.label}
+                  </span>
+                </div>
+              ))}
+              <div style={{ marginTop: 12, display: "flex", gap: 20, fontSize: 12 }}>
+                <span>Нарушений за месяц: <b style={{ color: C.red }}>1</b></span>
+                <span>Рабочих дней: <b style={{ color: C.dark }}>20</b></span>
+              </div>
+            </div>
+
+            {/* Мои заявки */}
+            <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>Мои заявки</span>
+              <button onClick={() => navigate("my")} style={{ background: "none", border: "none", color: C.green, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Все →</button>
+            </div>
+            {requests.length === 0 ? (
+              <div style={{ background: C.card, borderRadius: 16, padding: "32px 20px", textAlign: "center", boxShadow: C.shadow }}>
+                <div style={{ fontSize: 32, marginBottom: 10 }}>📋</div>
+                <div style={{ fontSize: 14, color: C.gray500 }}>У вас пока нет заявок</div>
+                <button onClick={() => navigate("catalog")} style={{ marginTop: 16, background: C.green, color: C.white, border: "none", borderRadius: 100, padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Подать заявку</button>
+              </div>
+            ) : (
+              <div style={{ background: C.card, borderRadius: 20, overflow: "hidden", boxShadow: C.shadow, marginBottom: 16 }}>
+                {requests.slice(0, 5).map((r, i) => (
+                  <div key={r.id} onClick={() => { setDetail(r); navigate("my"); }}
+                    style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", cursor: "pointer",
+                      borderBottom: i < Math.min(requests.length, 5) - 1 ? `1px solid ${C.gray300}` : "none", transition: "background .12s" }}
+                    onMouseEnter={e => e.currentTarget.style.background = C.gray100}
+                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                    <div style={{ width: 44, height: 44, borderRadius: 14, background: C.greenPale, flexShrink: 0,
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>{r.icon}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: C.dark, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title}</div>
+                      <div style={{ fontSize: 12, color: C.gray500, marginTop: 2 }}>{r.id} · {r.date} · SLA: {r.sla}</div>
+                    </div>
+                    <div style={{ flexShrink: 0, textAlign: "right" }}>
+                      <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
-            {/* Hero card — Revolut style */}
-            <div style={{
-              background: `linear-gradient(145deg, ${C.green} 0%, ${C.greenMid} 55%, #00A855 100%)`,
-              borderRadius: isMobile ? 20 : 24,
-              padding: isMobile ? "24px 20px 28px" : "32px 32px 36px",
-              marginBottom: 16,
-              boxShadow: `0 8px 32px ${C.green}55`,
-              position: "relative", overflow: "hidden",
-            }}>
-              {/* decorative circle */}
-              <div style={{ position:"absolute", top:-40, right:-30, width:160, height:160, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
-              <div style={{ position:"absolute", bottom:-60, right:60, width:200, height:200, borderRadius:"50%", background:"rgba(255,255,255,0.05)", pointerEvents:"none" }} />
-
-              <div style={{ fontSize: 12, color:"rgba(255,255,255,0.75)", fontWeight:600, marginBottom:6, letterSpacing:0.5 }}>
-                HALYK BANK · HR SERVICE PORTAL
-              </div>
-              <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800, color: C.white, marginBottom: 4, lineHeight: 1.2 }}>
-                Добро пожаловать,<br/>Фируза 👋
-              </div>
-              <div style={{ fontSize: 13, color:"rgba(255,255,255,0.80)", marginBottom: 20 }}>
-                ДУП · HR Specialist
-              </div>
-              <div style={{ display:"flex", gap: isMobile ? 16 : 32 }}>
-                {[
-                  { label: "Сервисов", value: SERVICES.filter(s=>!s.hidden).length },
-                  { label: "Мои заявки", value: requests.length },
-                  { label: "В работе", value: requests.filter(r=>r.status==="inwork").length },
-                ].map(st => (
-                  <div key={st.label}>
-                    <div style={{ fontSize: isMobile ? 22 : 26, fontWeight:800, color:C.white }}>{st.value}</div>
-                    <div style={{ fontSize: 11, color:"rgba(255,255,255,0.70)", marginTop:2 }}>{st.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ── Мои задачи — Revolut People To-Do style ── */}
-            <div style={{ background:C.card, borderRadius:20, padding:isMobile?"16px 16px":"20px 20px", boxShadow:C.shadow, marginBottom:16 }}>
-              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
-                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                  <span style={{ fontSize:15, fontWeight:700, color:C.dark }}>Мои задачи</span>
-                  <span style={{ background:C.red, color:C.white, borderRadius:100, padding:"1px 8px", fontSize:11, fontWeight:800 }}>
-                    {MY_TASKS.length}
-                  </span>
-                </div>
-                <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
-                  {[["Обучение",C.blue],["Оценка",C.orange],["HR",C.green],["Кадровое",C.greenDark]].map(([cat,col]) => {
-                    const cnt = MY_TASKS.filter(t=>t.cat===cat).length;
-                    return cnt ? <span key={cat} style={{ fontSize:10, color:col, background:col+"18", borderRadius:100, padding:"2px 8px", fontWeight:700 }}>{cnt} {cat}</span> : null;
-                  })}
-                </div>
-              </div>
-              {MY_TASKS.map((task, i) => (
-                <div key={task.id} style={{
-                  display:"flex", alignItems:"center", gap:12, padding:"10px 0",
-                  borderBottom: i < MY_TASKS.length - 1 ? `1px solid ${C.gray300}` : "none",
-                }}>
-                  <div style={{ width:38, height:38, borderRadius:12, background:task.urgent?C.red+"18":C.greenPale, flexShrink:0,
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>{task.icon}</div>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:13, fontWeight:600, color:C.dark, lineHeight:1.35, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{task.title}</div>
-                    <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:3, flexWrap:"wrap" }}>
-                      <span style={{ fontSize:11, color:task.urgent?C.red:C.gray500, fontWeight:task.urgent?700:400 }}>
-                        {task.urgent ? `⚠ Срок: ${task.dueIn} дн.` : `Срок: ${task.dueIn} дн.`}
-                      </span>
-                      <span style={{ fontSize:10, fontWeight:700, padding:"1px 7px", borderRadius:100,
-                        color:task.cat==="Обучение"?C.blue:task.cat==="Оценка"?C.orange:C.green,
-                        background:(task.cat==="Обучение"?C.blue:task.cat==="Оценка"?C.orange:C.green)+"18" }}>
-                        {task.cat}
-                      </span>
+            {/* Курсы к прохождению */}
+            <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>📚 Обучение</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 8 }}>
+              {[
+                { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 40, urgent: true },
+                { title: "Противодействие мошенничеству", deadline: "31 июля 2026", progress: 0, urgent: false },
+              ].map((course, i) => (
+                <div key={i} style={{ background: C.card, borderRadius: 16, padding: "16px 18px", boxShadow: C.shadow }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 10 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 4 }}>{course.title}</div>
+                      <div style={{ fontSize: 12, color: course.urgent ? C.red : C.gray500, fontWeight: course.urgent ? 700 : 400 }}>
+                        {course.urgent ? "⚠ " : ""}Срок: {course.deadline}
+                      </div>
                     </div>
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 100, flexShrink: 0,
+                      background: course.progress === 0 ? C.gray300 : C.green+"22",
+                      color: course.progress === 0 ? C.gray500 : C.green }}>
+                      {course.progress === 0 ? "Не начат" : `${course.progress}%`}
+                    </span>
                   </div>
-                  <button onClick={() => { const s = SERVICES.find(x=>x.id===task.serviceId); if(s){ setSelected(s); setPage("form"); } else navigate("catalog"); }}
-                    style={{ flexShrink:0, background:C.green, color:C.white, border:"none", borderRadius:100,
-                      padding:"7px 14px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
-                      boxShadow:`0 2px 6px ${C.green}44`, whiteSpace:"nowrap" }}>
-                    {task.action}
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Quick actions — Revolut circular buttons */}
-            <div style={{ background:C.card, borderRadius:20, padding: isMobile ? "16px 8px" : "20px 16px",
-              boxShadow: C.shadow, marginBottom:16,
-              display:"flex", justifyContent:"space-around" }}>
-              {QUICK.map(q => (
-                <button key={q.label} onClick={q.action} style={{
-                  background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
-                  display:"flex", flexDirection:"column", alignItems:"center", gap:8, padding: "4px 8px",
-                }}>
-                  <div style={{ width: isMobile ? 52 : 60, height: isMobile ? 52 : 60, borderRadius:"50%",
-                    background: C.greenPale, display:"flex", alignItems:"center", justifyContent:"center",
-                    fontSize: isMobile ? 22 : 26, boxShadow: `0 2px 8px ${C.green}22`,
-                    transition:"transform .15s"
-                  }}
-                    onMouseEnter={e => e.currentTarget.style.transform="scale(1.07)"}
-                    onMouseLeave={e => e.currentTarget.style.transform="scale(1)"}
-                  >{q.icon}</div>
-                  <span style={{ fontSize:11, fontWeight:600, color:C.gray700, textAlign:"center", whiteSpace:"pre-line", lineHeight:1.3 }}>{q.label}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* ── Жизненные ситуации ── */}
-            <div style={{ marginBottom:16 }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
-                <div>
-                  <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Жизненные ситуации</div>
-                  <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Несколько заявок — один шаг</div>
-                </div>
-              </div>
-              <div style={{ display:"flex", gap:12, overflowX:"auto", paddingBottom:6, scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
-                {LIFE_EVENTS.map(ev => (
-                  <button key={ev.id} onClick={() => {
-                    const sel = {};
-                    ev.services.forEach(s => { if(s.rec) sel[s.serviceId] = true; });
-                    setLifeEventSelected(sel);
-                    setLifeEventModal(ev);
-                  }} style={{
-                    flexShrink:0, width:isMobile?148:166, background:C.card, borderRadius:18,
-                    padding:"16px 14px 14px", border:"none", cursor:"pointer", fontFamily:"inherit",
-                    textAlign:"left", boxShadow:C.shadow, transition:"box-shadow .15s, transform .15s",
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
-                  >
-                    <div style={{ width:46, height:46, borderRadius:14, background:ev.bgColor, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:10, flexShrink:0 }}>
-                      {ev.icon}
-                    </div>
-                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4, lineHeight:1.3 }}>{ev.title}</div>
-                    <div style={{ fontSize:11, color:C.gray500, lineHeight:1.5, marginBottom:8 }}>{ev.desc}</div>
-                    <div style={{ fontSize:11, color:ev.color, fontWeight:700 }}>{ev.services.length} заявки →</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Popular services */}
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
-              <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Популярные сервисы</div>
-              <button onClick={() => navigate("catalog")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Все →</button>
-            </div>
-            <div style={{ background:C.card, borderRadius:20, overflow:"hidden", boxShadow:C.shadow, marginBottom:16 }}>
-              {popular.map((s, i) => (
-                <div key={s.id} onClick={() => { setSelected(s); setPage("form"); }}
-                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", cursor:"pointer",
-                    borderBottom: i < popular.length-1 ? `1px solid ${C.gray300}` : "none",
-                    transition:"background .12s" }}
-                  onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
-                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <div style={{ width:44, height:44, borderRadius:14, background:C.greenPale, flexShrink:0,
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>{s.icon}</div>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:14, fontWeight:600, color:C.dark, lineHeight:1.3 }}>{s.title}</div>
-                    <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>⏱ {s.sla}</div>
+                  <div style={{ height: 6, background: C.gray100, borderRadius: 3, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${course.progress}%`, background: C.green, borderRadius: 3, transition: "width .4s" }} />
                   </div>
-                  <span style={{ fontSize:18, color:C.gray300 }}>›</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Recent requests */}
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
-              <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Последние заявки</div>
-              <button onClick={() => navigate("my")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Все →</button>
-            </div>
-            <div style={{ background:C.card, borderRadius:20, overflow:"hidden", boxShadow:C.shadow }}>
-              {requests.slice(0,3).map((r, i) => (
-                <div key={r.id} onClick={() => { setDetail(r); navigate("my"); }}
-                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", cursor:"pointer",
-                    borderBottom: i < 2 ? `1px solid ${C.gray300}` : "none",
-                    transition:"background .12s" }}
-                  onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
-                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <div style={{ width:44, height:44, borderRadius:14, background:C.greenPale, flexShrink:0,
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>{r.icon}</div>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>{r.title}</div>
-                    <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>{r.id} · {r.date}</div>
-                  </div>
-                  <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
                 </div>
               ))}
             </div>
           </div>
-          );
-        })()}
+        )}
 
         {/* ── CATALOG ── */}
         {page === "catalog" && !selected && (() => {
