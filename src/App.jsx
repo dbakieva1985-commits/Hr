@@ -663,6 +663,66 @@ const MY_TASKS = [
   { id:"tk4", title:"Подтвердить плановый график отпусков",       dueIn:25, cat:"Кадровое", icon:"🗓", action:"Подтвердить", serviceId:3,  urgent:false },
 ];
 
+const TaskRow = ({ task, onToggle }) => (
+  <div onClick={() => onToggle(task.id)}
+    style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"11px 12px", borderRadius:8, cursor:"pointer", marginBottom:6,
+      background: task.done ? C.greenPale : C.gray100, border:`1px solid ${task.done ? C.green+"40" : "transparent"}` }}>
+    <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:task.done?C.green:C.white,
+      display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
+      {task.done?"✓":""}
+    </div>
+    <div style={{ flex:1 }}>
+      <div style={{ fontSize:13, color:task.done?C.gray500:C.dark, textDecoration:task.done?"line-through":"none", fontWeight:task.done?400:500 }}>{task.title}</div>
+      {task.sub  && <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{task.sub}</div>}
+      {task.who  && <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Отв.: {task.who}</div>}
+      {task.info && <div style={{ fontSize:11, color:C.blue, marginTop:4, fontStyle:"italic" }}>ℹ {task.info}</div>}
+      {task.instruction && !task.done && (
+        <div style={{ marginTop:4, fontSize:12, color:C.blue, fontStyle:"italic" }}>
+          {task.instruction}
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+const SurveyBlock = ({ questions, answers, onAnswer, submitted, onSubmit }) => (
+  <div style={{ padding:"14px 16px", background:C.white, border:`1px solid ${C.gray300}`, borderRadius:10, marginTop:8 }}>
+    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:12 }}>Опрос от HR</div>
+    {questions.map((q, i) => (
+      <div key={q.id} style={{ marginBottom:14, paddingBottom:14, borderBottom: i<questions.length-1?`1px solid ${C.gray100}`:"none" }}>
+        <div style={{ fontSize:12, fontWeight:600, color:C.gray700, marginBottom:6 }}>{i+1}. {q.q}</div>
+        {q.type === "text" ? (
+          <textarea
+            value={answers[q.id] || ""}
+            onChange={e => { e.stopPropagation(); onAnswer(q.id, e.target.value); }}
+            onClick={e => e.stopPropagation()}
+            placeholder="Введите ответ..."
+            rows={2}
+            style={{ width:"100%", boxSizing:"border-box", border:`1px solid ${C.gray300}`, borderRadius:8,
+              padding:"8px 10px", fontSize:12, fontFamily:"inherit", resize:"vertical", outline:"none", color:C.dark }}
+          />
+        ) : (
+          <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+            {q.opts.map(opt => (
+              <button key={opt} onClick={e => { e.stopPropagation(); onAnswer(q.id, opt); }} style={{
+                padding:"5px 12px", borderRadius:20, fontSize:11, cursor:"pointer", fontFamily:"inherit",
+                background: answers[q.id]===opt ? C.blue : C.gray100,
+                color:      answers[q.id]===opt ? C.white : C.gray700,
+                border:     `1px solid ${answers[q.id]===opt ? C.blue : C.gray300}`,
+                fontWeight: answers[q.id]===opt ? 700 : 400,
+              }}>{opt}</button>
+            ))}
+          </div>
+        )}
+      </div>
+    ))}
+    {!submitted
+      ? <button onClick={e => { e.stopPropagation(); onSubmit(); }} style={{ padding:"7px 18px", background:C.green, color:C.white, border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Отправить</button>
+      : <div style={{ fontSize:12, color:C.green, fontWeight:700 }}>✓ Ответы отправлены в HR</div>
+    }
+  </div>
+);
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════════════════
@@ -3538,66 +3598,6 @@ export default function App() {
 
           const docStatusColor = { verified: C.green, pending: C.orange, waiting: C.gray300 };
           const docStatusLabel = { verified: "✓ Проверено HR", pending: "⏳ На проверке", waiting: "Ожидает загрузки" };
-
-          const TaskRow = ({ task, onToggle }) => (
-            <div onClick={() => onToggle(task.id)}
-              style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"11px 12px", borderRadius:8, cursor:"pointer", marginBottom:6,
-                background: task.done ? C.greenPale : C.gray100, border:`1px solid ${task.done ? C.green+"40" : "transparent"}` }}>
-              <div style={{ width:20, height:20, borderRadius:4, border:`2px solid ${C.green}`, background:task.done?C.green:C.white,
-                display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:C.white, fontSize:11, fontWeight:700, marginTop:2 }}>
-                {task.done?"✓":""}
-              </div>
-              <div style={{ flex:1 }}>
-                <div style={{ fontSize:13, color:task.done?C.gray500:C.dark, textDecoration:task.done?"line-through":"none", fontWeight:task.done?400:500 }}>{task.title}</div>
-                {task.sub  && <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{task.sub}</div>}
-                {task.who  && <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Отв.: {task.who}</div>}
-                {task.info && <div style={{ fontSize:11, color:C.blue, marginTop:4, fontStyle:"italic" }}>ℹ {task.info}</div>}
-                {task.instruction && !task.done && (
-                  <div style={{ marginTop:4, fontSize:12, color:C.blue, fontStyle:"italic" }}>
-                    {task.instruction}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-
-          const SurveyBlock = ({ questions, answers, onAnswer, submitted, onSubmit }) => (
-            <div style={{ padding:"14px 16px", background:C.white, border:`1px solid ${C.gray300}`, borderRadius:10, marginTop:8 }}>
-              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:12 }}>Опрос от HR</div>
-              {questions.map((q, i) => (
-                <div key={q.id} style={{ marginBottom:14, paddingBottom:14, borderBottom: i<questions.length-1?`1px solid ${C.gray100}`:"none" }}>
-                  <div style={{ fontSize:12, fontWeight:600, color:C.gray700, marginBottom:6 }}>{i+1}. {q.q}</div>
-                  {q.type === "text" ? (
-                    <textarea
-                      value={answers[q.id] || ""}
-                      onChange={e => { e.stopPropagation(); onAnswer(q.id, e.target.value); }}
-                      onClick={e => e.stopPropagation()}
-                      placeholder="Введите ответ..."
-                      rows={2}
-                      style={{ width:"100%", boxSizing:"border-box", border:`1px solid ${C.gray300}`, borderRadius:8,
-                        padding:"8px 10px", fontSize:12, fontFamily:"inherit", resize:"vertical", outline:"none", color:C.dark }}
-                    />
-                  ) : (
-                    <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
-                      {q.opts.map(opt => (
-                        <button key={opt} onClick={e => { e.stopPropagation(); onAnswer(q.id, opt); }} style={{
-                          padding:"5px 12px", borderRadius:20, fontSize:11, cursor:"pointer", fontFamily:"inherit",
-                          background: answers[q.id]===opt ? C.blue : C.gray100,
-                          color:      answers[q.id]===opt ? C.white : C.gray700,
-                          border:     `1px solid ${answers[q.id]===opt ? C.blue : C.gray300}`,
-                          fontWeight: answers[q.id]===opt ? 700 : 400,
-                        }}>{opt}</button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-              {!submitted
-                ? <button onClick={e => { e.stopPropagation(); onSubmit(); }} style={{ padding:"7px 18px", background:C.green, color:C.white, border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Отправить</button>
-                : <div style={{ fontSize:12, color:C.green, fontWeight:700 }}>✓ Ответы отправлены в HR</div>
-              }
-            </div>
-          );
 
           return (
             <div>
