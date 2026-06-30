@@ -1522,6 +1522,103 @@ export default function App() {
               ))}
             </div>
 
+            {/* Mentor: Спасибо */}
+            {portalRole === "mentor" && (() => {
+              const total = obSpasibo;
+              const next  = SPASIBO_REWARDS.find(r=>r.n > total);
+              const prev  = [...SPASIBO_REWARDS].reverse().find(r=>r.n <= total);
+              const pct   = next ? Math.round((total-(prev?.n||0))/(next.n-(prev?.n||0))*100) : 100;
+              return (
+                <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, padding:isMobile?"16px":"20px" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Мои «Спасибо»</div>
+                    <div style={{ fontSize:24, fontWeight:800, color:C.green }}>{total} <span style={{ fontSize:14 }}>⭐</span></div>
+                  </div>
+                  {spasiboSent && (
+                    <div style={{ background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:10, padding:"8px 12px", marginBottom:12 }}>
+                      <div style={{ fontSize:12, fontWeight:700, color:C.green }}>Новое Спасибо от новичка!</div>
+                      <div style={{ fontSize:11, color:C.dark, marginTop:2 }}>«Быстро помогла разобраться с системой»</div>
+                      <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>от Алия Сейткали · только что</div>
+                    </div>
+                  )}
+                  {next && (<>
+                    <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                      <span style={{ fontSize:11, color:C.gray500 }}>До следующей награды</span>
+                      <span style={{ fontSize:11, fontWeight:700, color:C.green }}>{next.n - total} Спасибо</span>
+                    </div>
+                    <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:12, overflow:"hidden" }}>
+                      <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:4 }} />
+                    </div>
+                  </>)}
+                  <div style={{ fontSize:12, fontWeight:700, color:C.dark, marginBottom:8 }}>Магазин наград</div>
+                  <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:4 }}>
+                    {SPASIBO_REWARDS.map(r => {
+                      const unlocked = total >= r.n;
+                      return (
+                        <div key={r.n} style={{ minWidth:74, background:unlocked?C.greenPale:C.gray100, border:`1.5px solid ${unlocked?C.green:C.gray300}`, borderRadius:10, padding:"10px 6px", textAlign:"center", flexShrink:0 }}>
+                          <div style={{ fontSize:20, marginBottom:4 }}>{r.icon}</div>
+                          <div style={{ fontSize:11, fontWeight:800, color:unlocked?C.green:C.dark }}>{r.n} ⭐</div>
+                          <div style={{ fontSize:9, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{r.reward}</div>
+                          {unlocked && <div style={{ fontSize:9, color:C.green, fontWeight:700, marginTop:3 }}>Обменять</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Mentor: Мой подопечный */}
+            {portalRole === "mentor" && (() => {
+              const done = obMentorTasks.filter(t=>t.done).length;
+              const total = obMentorTasks.length;
+              const pct = Math.round(done/total*100);
+              return (
+                <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:12, padding:isMobile?"16px":"20px",
+                    borderBottom:`1px solid ${C.gray100}` }}>
+                    <div style={{ width:44, height:44, borderRadius:12, background:C.green+"20",
+                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 }}>🤝</div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Мой подопечный</div>
+                      <div style={{ fontSize:12, color:C.gray500, marginTop:1 }}>Алия Сейткали · Senior PM · Выход: 16 июня</div>
+                    </div>
+                    <div style={{ textAlign:"right", flexShrink:0 }}>
+                      <div style={{ fontSize:20, fontWeight:800, color:C.green }}>{pct}%</div>
+                      <div style={{ fontSize:10, color:C.gray500 }}>выполнено</div>
+                    </div>
+                  </div>
+                  <div style={{ padding:isMobile?"14px 16px 16px":"14px 20px 20px" }}>
+                    <div style={{ height:6, background:C.gray100, borderRadius:3, marginBottom:14, overflow:"hidden" }}>
+                      <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:3 }} />
+                    </div>
+                    {obMentorTasks.map(task => (
+                      <div key={task.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0",
+                        borderBottom:`1px solid ${C.gray100}` }}>
+                        <div onClick={() => setObMentorTasks(prev => prev.map(t => t.id===task.id ? {...t,done:!t.done} : t))}
+                          style={{ width:22, height:22, borderRadius:6, border:`2px solid ${task.done ? C.green : C.gray300}`,
+                            background: task.done ? C.green : C.white, display:"flex", alignItems:"center",
+                            justifyContent:"center", cursor:"pointer", flexShrink:0 }}>
+                          {task.done && <span style={{ color:C.white, fontSize:13, fontWeight:900 }}>✓</span>}
+                        </div>
+                        <div style={{ fontSize:12, flex:1, lineHeight:1.4,
+                          color: task.done ? C.gray500 : C.dark,
+                          textDecoration: task.done ? "line-through" : "none" }}>
+                          {task.title}
+                        </div>
+                      </div>
+                    ))}
+                    <button onClick={() => navigate("onboarding")}
+                      style={{ marginTop:14, width:"100%", padding:"11px", border:`1.5px solid ${C.green}`,
+                        borderRadius:12, fontSize:13, fontWeight:700, color:C.green, background:C.white,
+                        cursor:"pointer", fontFamily:"inherit" }}>
+                      Открыть онбординг →
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Мои льготы */}
             {(() => {
               const isManager = portalRole === "manager" || portalRole === "hr";
@@ -1847,103 +1944,6 @@ export default function App() {
                 </div>
               )}
             </div>
-
-            {/* Mentor: Спасибо */}
-            {portalRole === "mentor" && (() => {
-              const total = obSpasibo;
-              const next  = SPASIBO_REWARDS.find(r=>r.n > total);
-              const prev  = [...SPASIBO_REWARDS].reverse().find(r=>r.n <= total);
-              const pct   = next ? Math.round((total-(prev?.n||0))/(next.n-(prev?.n||0))*100) : 100;
-              return (
-                <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, padding:isMobile?"16px":"20px" }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Мои «Спасибо»</div>
-                    <div style={{ fontSize:24, fontWeight:800, color:C.green }}>{total} <span style={{ fontSize:14 }}>⭐</span></div>
-                  </div>
-                  {spasiboSent && (
-                    <div style={{ background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:10, padding:"8px 12px", marginBottom:12 }}>
-                      <div style={{ fontSize:12, fontWeight:700, color:C.green }}>Новое Спасибо от новичка!</div>
-                      <div style={{ fontSize:11, color:C.dark, marginTop:2 }}>«Быстро помогла разобраться с системой»</div>
-                      <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>от Алия Сейткали · только что</div>
-                    </div>
-                  )}
-                  {next && (<>
-                    <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
-                      <span style={{ fontSize:11, color:C.gray500 }}>До следующей награды</span>
-                      <span style={{ fontSize:11, fontWeight:700, color:C.green }}>{next.n - total} Спасибо</span>
-                    </div>
-                    <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:12, overflow:"hidden" }}>
-                      <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:4 }} />
-                    </div>
-                  </>)}
-                  <div style={{ fontSize:12, fontWeight:700, color:C.dark, marginBottom:8 }}>Магазин наград</div>
-                  <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:4 }}>
-                    {SPASIBO_REWARDS.map(r => {
-                      const unlocked = total >= r.n;
-                      return (
-                        <div key={r.n} style={{ minWidth:74, background:unlocked?C.greenPale:C.gray100, border:`1.5px solid ${unlocked?C.green:C.gray300}`, borderRadius:10, padding:"10px 6px", textAlign:"center", flexShrink:0 }}>
-                          <div style={{ fontSize:20, marginBottom:4 }}>{r.icon}</div>
-                          <div style={{ fontSize:11, fontWeight:800, color:unlocked?C.green:C.dark }}>{r.n} ⭐</div>
-                          <div style={{ fontSize:9, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{r.reward}</div>
-                          {unlocked && <div style={{ fontSize:9, color:C.green, fontWeight:700, marginTop:3 }}>Обменять</div>}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Mentor: Мой подопечный */}
-            {portalRole === "mentor" && (() => {
-              const done = obMentorTasks.filter(t=>t.done).length;
-              const total = obMentorTasks.length;
-              const pct = Math.round(done/total*100);
-              return (
-                <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:12, padding:isMobile?"16px":"20px",
-                    borderBottom:`1px solid ${C.gray100}` }}>
-                    <div style={{ width:44, height:44, borderRadius:12, background:C.green+"20",
-                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 }}>🤝</div>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Мой подопечный</div>
-                      <div style={{ fontSize:12, color:C.gray500, marginTop:1 }}>Алия Сейткали · Senior PM · Выход: 16 июня</div>
-                    </div>
-                    <div style={{ textAlign:"right", flexShrink:0 }}>
-                      <div style={{ fontSize:20, fontWeight:800, color:C.green }}>{pct}%</div>
-                      <div style={{ fontSize:10, color:C.gray500 }}>выполнено</div>
-                    </div>
-                  </div>
-                  <div style={{ padding:isMobile?"14px 16px 16px":"14px 20px 20px" }}>
-                    <div style={{ height:6, background:C.gray100, borderRadius:3, marginBottom:14, overflow:"hidden" }}>
-                      <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:3 }} />
-                    </div>
-                    {obMentorTasks.map(task => (
-                      <div key={task.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0",
-                        borderBottom:`1px solid ${C.gray100}` }}>
-                        <div onClick={() => setObMentorTasks(prev => prev.map(t => t.id===task.id ? {...t,done:!t.done} : t))}
-                          style={{ width:22, height:22, borderRadius:6, border:`2px solid ${task.done ? C.green : C.gray300}`,
-                            background: task.done ? C.green : C.white, display:"flex", alignItems:"center",
-                            justifyContent:"center", cursor:"pointer", flexShrink:0 }}>
-                          {task.done && <span style={{ color:C.white, fontSize:13, fontWeight:900 }}>✓</span>}
-                        </div>
-                        <div style={{ fontSize:12, flex:1, lineHeight:1.4,
-                          color: task.done ? C.gray500 : C.dark,
-                          textDecoration: task.done ? "line-through" : "none" }}>
-                          {task.title}
-                        </div>
-                      </div>
-                    ))}
-                    <button onClick={() => navigate("onboarding")}
-                      style={{ marginTop:14, width:"100%", padding:"11px", border:`1.5px solid ${C.green}`,
-                        borderRadius:12, fontSize:13, fontWeight:700, color:C.green, background:C.white,
-                        cursor:"pointer", fontFamily:"inherit" }}>
-                      Открыть онбординг →
-                    </button>
-                  </div>
-                </div>
-              );
-            })()}
 
             {/* Команда вынесена на отдельную страницу team */}
             {false && (() => {
