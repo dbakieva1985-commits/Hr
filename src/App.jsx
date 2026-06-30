@@ -690,6 +690,7 @@ export default function App() {
   const [valQuiz,        setValQuiz]        = useState({ idx:0, picked:null, score:0, done:false });
   const [lifeEventModal,    setLifeEventModal]    = useState(null);
   const [lifeEventSelected, setLifeEventSelected] = useState({});
+  const [showBenefits,      setShowBenefits]      = useState(false);
   const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
@@ -1308,35 +1309,45 @@ export default function App() {
               ];
               const benefits = isManager ? [...baseBenefits, ...managerBenefits] : baseBenefits;
               return (
-                <div style={{ background: C.card, borderRadius: 20, padding: isMobile ? "16px" : "20px", boxShadow: C.shadow, marginBottom: 20 }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>🛍️ Мои льготы</div>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 10px" }}>
-                      {benefits.length} льгот
-                    </span>
+                <div style={{ background: C.card, borderRadius: 20, boxShadow: C.shadow, marginBottom: 20, overflow: "hidden" }}>
+                  <div onClick={() => setShowBenefits(v => !v)}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "space-between",
+                      padding: isMobile ? "16px" : "20px", cursor: "pointer" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>🛍️ Мои льготы</div>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 10px" }}>
+                        {benefits.length} льгот
+                      </span>
+                    </div>
+                    <span style={{ fontSize: 18, color: C.gray500, transition: "transform .2s",
+                      transform: showBenefits ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>⌄</span>
                   </div>
-                  {isManager && (
-                    <div style={{ fontSize: 11, color: C.greenDark, background: C.greenPale, borderRadius: 8, padding: "6px 10px", marginBottom: 12, fontWeight: 600 }}>
-                      ⭐ Расширенный пакет руководителя
+                  {showBenefits && (
+                    <div style={{ padding: isMobile ? "0 16px 16px" : "0 20px 20px" }}>
+                      {isManager && (
+                        <div style={{ fontSize: 11, color: C.greenDark, background: C.greenPale, borderRadius: 8, padding: "6px 10px", marginBottom: 12, fontWeight: 600 }}>
+                          ⭐ Расширенный пакет руководителя
+                        </div>
+                      )}
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        {benefits.map((b, i) => (
+                          <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0",
+                            borderBottom: i < benefits.length - 1 ? `1px solid ${C.gray300}` : "none" }}>
+                            <div style={{ width: 36, height: 36, borderRadius: 10, background: C.greenPale,
+                              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
+                              {b.icon}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{b.title}</div>
+                              <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{b.desc}</div>
+                            </div>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: C.greenPale,
+                              borderRadius: 100, padding: "2px 8px", flexShrink: 0 }}>Активна</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                    {benefits.map((b, i) => (
-                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0",
-                        borderBottom: i < benefits.length - 1 ? `1px solid ${C.gray300}` : "none" }}>
-                        <div style={{ width: 36, height: 36, borderRadius: 10, background: C.greenPale,
-                          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-                          {b.icon}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{b.title}</div>
-                          <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{b.desc}</div>
-                        </div>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: C.greenPale,
-                          borderRadius: 100, padding: "2px 8px", flexShrink: 0 }}>Активна</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               );
             })()}
