@@ -690,7 +690,7 @@ export default function App() {
   const [valQuiz,        setValQuiz]        = useState({ idx:0, picked:null, score:0, done:false });
   const [lifeEventModal,    setLifeEventModal]    = useState(null);
   const [lifeEventSelected, setLifeEventSelected] = useState({});
-  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics"];
+  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
   const navigate = p => { window.location.hash = p; setPage(p); };
@@ -1270,7 +1270,7 @@ export default function App() {
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
               {[
                 { icon: "🏖", label: "Остаток отпуска", value: "14 дн.", color: C.green, sub: "из 24 дней", onClick: null },
-                { icon: "📋", label: "Активные заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке", onClick: () => navigate("my") },
+                { icon: "📋", label: "Мои заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке", onClick: () => navigate("my") },
                 { icon: "📚", label: "Курсы к прохождению", value: "2", color: C.blue, sub: "срок до 15 июля", onClick: null },
                 { icon: "⭐", label: "Performance", value: "4.2/5", color: C.greenDark, sub: "за квартал", onClick: null },
               ].map(m => (
