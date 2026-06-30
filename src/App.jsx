@@ -245,8 +245,8 @@ const Btn = ({ children, onClick, variant = "primary", small }) => (
     color: variant === "primary" ? C.white : C.gray700,
     border: variant === "ghost" ? `1.5px solid ${C.gray300}` : "none",
     borderRadius: 100,
-    padding: small ? "7px 16px" : "11px 24px",
-    fontSize: small ? 12 : 14, fontWeight: 700, cursor: "pointer",
+    padding: small ? "5px 11px" : "11px 24px",
+    fontSize: small ? 11 : 14, fontWeight: 700, cursor: "pointer",
     fontFamily: "inherit", transition: "all .15s",
     boxShadow: variant === "primary" ? `0 2px 8px ${C.green}40` : "none",
     letterSpacing: 0.1,
@@ -753,6 +753,14 @@ export default function App() {
     { id: "HR-002", title: "Заявка на отпуск",        status: "closed",  sla: "1 раб. день",  date: "02.06.2026", icon: "🏖" },
     { id: "HR-003", title: "Заявка на подбор",        status: "review",  sla: "5 раб. дней",  date: "11.06.2026", icon: "🔍" },
   ]);
+  const HR_INCOMING = [
+    { id: "HR-I01", from: "Марат С.",   title: "Справка с места работы",   status: "sent",   sla: "1 раб. день",  date: "29.06.2026", icon: "📄" },
+    { id: "HR-I02", from: "Нурлан Б.",  title: "Заявка на отпуск",          status: "inwork", sla: "2 раб. дня",   date: "28.06.2026", icon: "🏖" },
+    { id: "HR-I03", from: "Диана Ж.",   title: "Заявление на командировку", status: "sent",   sla: "3 раб. дня",   date: "30.06.2026", icon: "✈️" },
+    { id: "HR-I04", from: "Алия К.",    title: "Заявка на обучение",        status: "review", sla: "3 раб. дня",   date: "27.06.2026", icon: "📚" },
+    { id: "HR-I05", from: "Нурлан Б.",  title: "Смена личных данных",       status: "sent",   sla: "2 раб. дня",   date: "30.06.2026", icon: "📝" },
+    { id: "HR-I06", from: "Марат С.",   title: "Заявка на материальную помощь", status: "done", sla: "5 раб. дней", date: "20.06.2026", icon: "💰" },
+  ];
   const [detail, setDetail] = useState(null);       // request detail view
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
   useState(() => {
@@ -1296,7 +1304,9 @@ export default function App() {
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
               {[
                 { icon: "🏖", label: "Остаток отпуска", value: "14 дн.", color: C.green, sub: "из 24 дней", onClick: null },
-                { icon: "📋", label: "Мои заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке", onClick: () => navigate("my") },
+                portalRole === "hr"
+                  ? { icon: "📥", label: "Входящие заявки", value: HR_INCOMING.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "требуют обработки", onClick: () => navigate("my") }
+                  : { icon: "📋", label: "Мои заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке", onClick: () => navigate("my") },
                 { icon: "📚", label: "Курсы", value: "2", color: C.blue, sub: "срок до 15 июля", onClick: null },
                 { icon: "⭐", label: "Performance", value: "4.2/5", color: C.greenDark, sub: "за квартал", onClick: null },
               ].map(m => (
@@ -1909,13 +1919,13 @@ export default function App() {
                   <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4, marginBottom:4,
                     overflow:"hidden", display:"-webkit-box", WebkitBoxOrient:"vertical", WebkitLineClamp:2 }}>{s.desc}</div>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:6 }}>
-                    <div style={{ fontSize:10, fontWeight:600, color: s.sla==="Онлайн"||s.sla==="Справочно"||s.sla==="Актуально" ? C.green : C.gray500 }}>⏱ {s.sla}</div>
-                    <div style={{ display:"flex", gap:4, flexShrink:0 }}>
+                    <div style={{ fontSize:10, fontWeight:600, color: s.sla==="Онлайн"||s.sla==="Справочно"||s.sla==="Актуально" ? C.green : C.gray500, flex:1, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>⏱ {s.sla}</div>
+                    <div style={{ display:"flex", gap:4 }}>
                       {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link,"_blank"); } else { setSelected(s); setPage("form"); } }}>
-                        {s.btnText || (s.isOnboarding||s.link ? "Открыть" : "Подать")}
+                        {s.isOnboarding||s.link ? "Открыть" : "Подать"}
                       </Btn>}
                       {s.secondBtnText && <Btn small variant="ghost" onClick={() => { const sec=SERVICES.find(x=>x.id===s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
-                        {s.secondBtnText}
+                        Ещё
                       </Btn>}
                       {s.noBtn && <span style={{ fontSize:10, color:C.gray500, fontWeight:600 }}>Справка</span>}
                     </div>
@@ -2649,41 +2659,73 @@ export default function App() {
         {/* ── MY REQUESTS ── */}
         {page === "my" && !detail && (
           <div>
-            <div style={{ marginBottom: 22 }}>
-              <h1 style={{ fontSize: 24, fontWeight: 700, color: C.dark, margin: 0 }}>Мои заявки</h1>
-              <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>История всех ваших обращений в HR Service Center</p>
-            </div>
-
-            <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`, overflow: "hidden" }}>
-              {requests.map((r, ri) => (
-                <div key={r.id} onClick={() => setDetail(r)}
-                  style={{ padding: "14px 16px", cursor: "pointer", borderBottom: ri < requests.length-1 ? `1px solid ${C.gray300}` : "none",
-                    transition:"background .1s" }}
-                  onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
-                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 10, background: C.greenPale,
-                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{r.icon}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: C.dark }}>{r.title}</div>
-                      <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{r.id} · Подана {r.date} · SLA {r.sla}</div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
-                      <span style={{ color: C.gray300, fontSize: 16 }}>›</span>
-                    </div>
-                  </div>
+            {portalRole === "hr" ? (
+              <>
+                <div style={{ marginBottom: 22 }}>
+                  <h1 style={{ fontSize: 24, fontWeight: 700, color: C.dark, margin: 0 }}>Входящие заявки</h1>
+                  <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>Заявки сотрудников, поступившие на обработку</p>
                 </div>
-              ))}
-            </div>
-
-            {requests.length === 0 && (
-              <div style={{ textAlign: "center", padding: "60px 0", color: C.gray500 }}>
-                <div style={{ fontSize: 36, marginBottom: 12 }}>📋</div>
-                <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Заявок пока нет</div>
-                <div style={{ fontSize: 13, marginBottom: 20 }}>Подайте первую заявку через каталог</div>
-                <Btn onClick={() => setPage("catalog")}>Открыть каталог</Btn>
-              </div>
+                <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`, overflow: "hidden" }}>
+                  {HR_INCOMING.map((r, ri) => (
+                    <div key={r.id}
+                      style={{ padding: "14px 16px", borderBottom: ri < HR_INCOMING.length-1 ? `1px solid ${C.gray300}` : "none",
+                        transition:"background .1s", cursor:"default" }}
+                      onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
+                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: 10, background: C.greenPale,
+                          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{r.icon}</div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 14, fontWeight: 600, color: C.dark }}>{r.title}</div>
+                          <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>
+                            <span style={{ fontWeight: 600, color: C.dark }}>{r.from}</span> · {r.id} · {r.date} · SLA {r.sla}
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ marginBottom: 22 }}>
+                  <h1 style={{ fontSize: 24, fontWeight: 700, color: C.dark, margin: 0 }}>Мои заявки</h1>
+                  <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>История всех ваших обращений в HR Service Center</p>
+                </div>
+                <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`, overflow: "hidden" }}>
+                  {requests.map((r, ri) => (
+                    <div key={r.id} onClick={() => setDetail(r)}
+                      style={{ padding: "14px 16px", cursor: "pointer", borderBottom: ri < requests.length-1 ? `1px solid ${C.gray300}` : "none",
+                        transition:"background .1s" }}
+                      onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
+                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: 10, background: C.greenPale,
+                          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{r.icon}</div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 14, fontWeight: 600, color: C.dark }}>{r.title}</div>
+                          <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{r.id} · Подана {r.date} · SLA {r.sla}</div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
+                          <span style={{ color: C.gray300, fontSize: 16 }}>›</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {requests.length === 0 && (
+                  <div style={{ textAlign: "center", padding: "60px 0", color: C.gray500 }}>
+                    <div style={{ fontSize: 36, marginBottom: 12 }}>📋</div>
+                    <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Заявок пока нет</div>
+                    <div style={{ fontSize: 13, marginBottom: 20 }}>Подайте первую заявку через каталог</div>
+                    <Btn onClick={() => setPage("catalog")}>Открыть каталог</Btn>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
