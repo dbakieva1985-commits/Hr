@@ -1362,35 +1362,31 @@ export default function App() {
             );
           };
 
-          // ── improved group tile ───────────────────────────────────────
+          // ── compact group tile ────────────────────────────────────────
           const GroupTile = ({ grp, count }) => {
-            const cc = catColor(filteredServices.find(s=>s.group===grp)?.cat || "");
+            const cc = C.green;
+            const linkText = grp === "Вакансии Банка" ? "Смотреть вакансии →"
+              : grp === "Реферальная программа" ? "Смотреть далее →"
+              : `Открыть →`;
             return (
               <div onClick={() => setSelectedGroup(grp)}
-                style={{ background:C.card, borderRadius:20, padding:isMobile?"16px 14px":"20px 18px",
-                  cursor:"pointer", transition:"box-shadow .15s, transform .15s",
-                  display:"flex", flexDirection:"column", gap:10, boxShadow:C.shadow,
-                  borderLeft:`4px solid ${cc}`,
+                style={{ background:C.card, borderRadius:14, padding:"10px 14px",
+                  cursor:"pointer", transition:"box-shadow .12s",
+                  display:"flex", alignItems:"center", gap:12, boxShadow:C.shadow,
+                  borderLeft:`3px solid ${cc}`,
                 }}
-                onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
-                onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}>
-                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-                  <div style={{ width:48, height:48, borderRadius:14, background:cc+"18",
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:24 }}>
-                    {GROUP_ICONS[grp] || "📝"}
-                  </div>
-                  <span style={{ fontSize:11, fontWeight:800, color:cc, background:cc+"18",
-                    borderRadius:100, padding:"3px 10px" }}>{count}</span>
+                onMouseEnter={e => e.currentTarget.style.boxShadow=C.shadowMd}
+                onMouseLeave={e => e.currentTarget.style.boxShadow=C.shadow}>
+                <div style={{ width:36, height:36, borderRadius:10, background:cc+"15",
+                  display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
+                  {GROUP_ICONS[grp] || "📝"}
                 </div>
-                <div>
-                  <div style={{ fontSize:isMobile?13:14, fontWeight:700, color:C.dark, lineHeight:1.3, marginBottom:3 }}>{grp}</div>
-                  <div style={{ fontSize:11, color:C.gray500 }}>Нажмите для просмотра</div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:C.dark, lineHeight:1.2 }}>{grp}</div>
+                  <div style={{ fontSize:11, color:cc, fontWeight:600, marginTop:2 }}>{linkText}</div>
                 </div>
-                <div style={{ fontSize:13, color:cc, fontWeight:700 }}>
-                  {grp === "Вакансии Банка" ? "Смотреть вакансии →"
-                    : grp === "Реферальная программа" ? "Смотреть далее →"
-                    : `Смотреть ${count} сервисов →`}
-                </div>
+                <span style={{ fontSize:11, fontWeight:800, color:cc, background:cc+"15",
+                  borderRadius:100, padding:"2px 9px", flexShrink:0 }}>{count}</span>
               </div>
             );
           };
@@ -1447,16 +1443,20 @@ export default function App() {
                   <div key={c}
                     onClick={() => { setCatFilter(c); setSelectedGroup(null); setSearch(""); }}
                     style={{
-                      display:"flex", alignItems:"center",
-                      padding: isMobile ? "9px 10px 9px 12px" : "10px 16px 10px 16px",
+                      display:"flex", alignItems:"center", gap:8,
+                      padding: isMobile ? "9px 10px 9px 10px" : "10px 14px",
                       cursor:"pointer",
                       background: isActive ? C.greenPale : "transparent",
                       borderLeft: isActive ? `3px solid ${C.green}` : "3px solid transparent",
                       transition:"background .12s, border-color .12s",
                     }}
-                    onMouseEnter={e => { if(!isActive) e.currentTarget.style.background=C.gray100; }}
+                    onMouseEnter={e => { if(!isActive) e.currentTarget.style.background=C.greenPale+"88"; }}
                     onMouseLeave={e => { if(!isActive) e.currentTarget.style.background="transparent"; }}
                   >
+                    <span style={{
+                      width:6, height:6, borderRadius:"50%", flexShrink:0,
+                      background: isActive ? C.green : C.green+"55",
+                    }} />
                     <span style={{
                       fontSize: isMobile ? 11 : 12,
                       fontWeight: isActive ? 700 : 400,
@@ -1503,13 +1503,8 @@ export default function App() {
                     </div>
                   ) : catFilter !== "Все" ? (
                     <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                      <div style={{ width:4, height:32, borderRadius:2, background:C.green, flexShrink:0 }} />
-                      <div>
-                        <div style={{ fontSize:15, fontWeight:800, color:C.dark, lineHeight:1.2 }}>{catFilter}</div>
-                        <div style={{ fontSize:11, color:C.gray500 }}>
-                          {SERVICES.filter(s=>s.cat===catFilter&&!s.hidden).length} сервисов
-                        </div>
-                      </div>
+                      <div style={{ width:4, height:28, borderRadius:2, background:C.green, flexShrink:0 }} />
+                      <div style={{ fontSize:15, fontWeight:800, color:C.dark }}>{catFilter}</div>
                     </div>
                   ) : (
                     <div style={{ fontSize:15, fontWeight:800, color:C.dark }}>Все HR-сервисы</div>
