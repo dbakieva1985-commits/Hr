@@ -753,14 +753,56 @@ export default function App() {
     { id: "HR-002", title: "Заявка на отпуск",        status: "closed",  sla: "1 раб. день",  date: "02.06.2026", icon: "🏖" },
     { id: "HR-003", title: "Заявка на подбор",        status: "review",  sla: "5 раб. дней",  date: "11.06.2026", icon: "🔍" },
   ]);
-  const HR_INCOMING = [
-    { id: "HR-I01", from: "Марат С.",   title: "Справка с места работы",   status: "sent",   sla: "1 раб. день",  date: "29.06.2026", icon: "📄" },
-    { id: "HR-I02", from: "Нурлан Б.",  title: "Заявка на отпуск",          status: "inwork", sla: "2 раб. дня",   date: "28.06.2026", icon: "🏖" },
-    { id: "HR-I03", from: "Диана Ж.",   title: "Заявление на командировку", status: "sent",   sla: "3 раб. дня",   date: "30.06.2026", icon: "✈️" },
-    { id: "HR-I04", from: "Алия К.",    title: "Заявка на обучение",        status: "review", sla: "3 раб. дня",   date: "27.06.2026", icon: "📚" },
-    { id: "HR-I05", from: "Нурлан Б.",  title: "Смена личных данных",       status: "sent",   sla: "2 раб. дня",   date: "30.06.2026", icon: "📝" },
-    { id: "HR-I06", from: "Марат С.",   title: "Заявка на материальную помощь", status: "done", sla: "5 раб. дней", date: "20.06.2026", icon: "💰" },
-  ];
+  const HR_CAT_REQUESTS = {
+    podborPersonala: [
+      { id:"P-001", from:"ИТ Блок",              title:"Подбор Backend-разработчика",        status:"sent",   sla:"5 раб. дней", date:"30.06.2026", icon:"💼", tag:"Новая" },
+      { id:"P-002", from:"Розничный бизнес",     title:"Подбор Менеджера по продажам",       status:"inwork", sla:"5 раб. дней", date:"22.06.2026", icon:"💼", tag:"Срочная" },
+      { id:"P-003", from:"Финансовый блок",      title:"Подбор Финансового аналитика",       status:"inwork", sla:"7 раб. дней", date:"18.06.2026", icon:"💼", tag:"Просрочена" },
+      { id:"P-004", from:"ДУП",                  title:"Подбор HR Business Partner",          status:"review", sla:"7 раб. дней", date:"25.06.2026", icon:"💼", tag:"Согласование" },
+      { id:"P-005", from:"Юридический блок",     title:"Подбор Юрисконсульта",               status:"sent",   sla:"5 раб. дней", date:"29.06.2026", icon:"💼", tag:"Новая" },
+      { id:"P-006", from:"Операционный блок",    title:"Подбор Специалиста по рискам",       status:"sent",   sla:"5 раб. дней", date:"30.06.2026", icon:"💼", tag:"Новая" },
+      { id:"P-007", from:"Розничный бизнес",     title:"Подбор Кредитного эксперта",         status:"inwork", sla:"5 раб. дней", date:"19.06.2026", icon:"💼", tag:"Просрочена" },
+      { id:"P-008", from:"ИТ Блок",              title:"Подбор DevOps-инженера",             status:"review", sla:"7 раб. дней", date:"27.06.2026", icon:"💼", tag:"Согласование" },
+      { id:"P-009", from:"Маркетинг",            title:"Подбор Digital-маркетолога",         status:"sent",   sla:"5 раб. дней", date:"30.06.2026", icon:"💼", tag:"Новая" },
+      { id:"P-010", from:"Корпоративный блок",   title:"Подбор Менеджера по работе с VIP",  status:"inwork", sla:"7 раб. дней", date:"21.06.2026", icon:"💼", tag:"Срочная" },
+      { id:"P-011", from:"Комплаенс",            title:"Подбор Compliance-офицера",          status:"sent",   sla:"5 раб. дней", date:"28.06.2026", icon:"💼", tag:"Новая" },
+      { id:"P-012", from:"Безопасность",         title:"Подбор Специалиста по ИБ",          status:"inwork", sla:"7 раб. дней", date:"17.06.2026", icon:"💼", tag:"Просрочена" },
+    ],
+    kadrovoe: [
+      { id:"K-001", from:"Алия К.",              title:"Приём на работу: Сейтжанов А.М.",    status:"sent",   sla:"3 раб. дня",  date:"30.06.2026", icon:"📋", tag:"Новая" },
+      { id:"K-002", from:"Марат С.",             title:"Заявка на ежегодный отпуск",         status:"sent",   sla:"2 раб. дня",  date:"29.06.2026", icon:"🏖", tag:"Срочная" },
+      { id:"K-003", from:"Нурлан Б.",            title:"Перевод в другое подразделение",     status:"inwork", sla:"3 раб. дня",  date:"26.06.2026", icon:"🔄", tag:"В работе" },
+      { id:"K-004", from:"Диана Ж.",             title:"Оформление командировки",            status:"sent",   sla:"2 раб. дня",  date:"30.06.2026", icon:"✈️", tag:"Новая" },
+      { id:"K-005", from:"Нурлан Б.",            title:"Заявление об увольнении",            status:"review", sla:"5 раб. дней", date:"25.06.2026", icon:"📝", tag:"Согласование" },
+      { id:"K-006", from:"Марат С.",             title:"Изменение графика работы",           status:"inwork", sla:"2 раб. дня",  date:"23.06.2026", icon:"🗓", tag:"Просрочена" },
+      { id:"K-007", from:"Алия К.",              title:"Справка с места работы (банк)",      status:"sent",   sla:"1 раб. день", date:"30.06.2026", icon:"📄", tag:"Новая" },
+      { id:"K-008", from:"Диана Ж.",             title:"Оформление декретного отпуска",      status:"inwork", sla:"5 раб. дней", date:"28.06.2026", icon:"👶", tag:"В работе" },
+      { id:"K-009", from:"Нурлан Б.",            title:"Смена персональных данных",          status:"sent",   sla:"2 раб. дня",  date:"29.06.2026", icon:"✏️", tag:"Новая" },
+      { id:"K-010", from:"Марат С.",             title:"Заявка на больничный (задним ч.)",   status:"review", sla:"1 раб. день", date:"18.06.2026", icon:"🏥", tag:"Просрочена" },
+    ],
+    cb: [
+      { id:"C-001", from:"Нурлан Б.",            title:"Запрос на материальную помощь",      status:"sent",   sla:"5 раб. дней", date:"30.06.2026", icon:"💰", tag:"Новая" },
+      { id:"C-002", from:"Марат С.",             title:"Компенсация ДМС (дополнит. лечение)",status:"inwork", sla:"3 раб. дня",  date:"25.06.2026", icon:"🏥", tag:"Срочная" },
+      { id:"C-003", from:"Алия К.",              title:"Пересмотр заработной платы",         status:"review", sla:"7 раб. дней", date:"22.06.2026", icon:"💵", tag:"Согласование" },
+      { id:"C-004", from:"Диана Ж.",             title:"Льготы при рождении ребёнка",        status:"sent",   sla:"5 раб. дней", date:"28.06.2026", icon:"🎁", tag:"Новая" },
+      { id:"C-005", from:"Нурлан Б.",            title:"Компенсация мобильной связи",        status:"inwork", sla:"3 раб. дня",  date:"20.06.2026", icon:"📱", tag:"Просрочена" },
+      { id:"C-006", from:"Марат С.",             title:"Запрос на доп. страховку",           status:"sent",   sla:"5 раб. дней", date:"29.06.2026", icon:"🛡️", tag:"Новая" },
+      { id:"C-007", from:"Алия К.",              title:"Субсидирование ипотеки",             status:"review", sla:"7 раб. дней", date:"24.06.2026", icon:"🏠", tag:"Срочная" },
+    ],
+    obuchenie: [
+      { id:"O-001", from:"Нурлан Б.",            title:"Заявка на внешнее обучение (PMI)",   status:"sent",   sla:"5 раб. дней", date:"30.06.2026", icon:"🎓", tag:"Новая" },
+      { id:"O-002", from:"Марат С.",             title:"Запись на курс «Лидерство»",         status:"inwork", sla:"3 раб. дня",  date:"26.06.2026", icon:"📚", tag:"В работе" },
+      { id:"O-003", from:"ДУП (5 чел.)",         title:"Назначение: Compliance & Ethics 2025",status:"sent",  sla:"2 раб. дня",  date:"29.06.2026", icon:"⚖️", tag:"Срочная" },
+      { id:"O-004", from:"Алия К.",              title:"Возмещение расходов на обучение",    status:"review", sla:"5 раб. дней", date:"24.06.2026", icon:"💳", tag:"Согласование" },
+      { id:"O-005", from:"ИТ Блок (3 чел.)",     title:"Назначение: Основы кибербезопасности",status:"sent", sla:"2 раб. дня",  date:"28.06.2026", icon:"🔐", tag:"Новая" },
+      { id:"O-006", from:"Диана Ж.",             title:"Заявка на онлайн-курс Coursera",     status:"inwork", sla:"3 раб. дня",  date:"20.06.2026", icon:"💻", tag:"Просрочена" },
+      { id:"O-007", from:"Нурлан Б.",            title:"Участие во внешней конференции",     status:"review", sla:"5 раб. дней", date:"25.06.2026", icon:"🎤", tag:"Согласование" },
+      { id:"O-008", from:"Розница (8 чел.)",     title:"Назначение: Противодействие мошенничеству",status:"sent",sla:"2 раб. дня",date:"30.06.2026",icon:"🛡️", tag:"Срочная" },
+      { id:"O-009", from:"Марат С.",             title:"Тренинг по управлению проектами",    status:"sent",   sla:"5 раб. дней", date:"29.06.2026", icon:"📊", tag:"Новая" },
+    ],
+  };
+  const HR_INCOMING = Object.values(HR_CAT_REQUESTS).flat();
+  const [hrCatFilter, setHrCatFilter] = useState(null);
   const [detail, setDetail] = useState(null);       // request detail view
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
   useState(() => {
@@ -1182,40 +1224,46 @@ export default function App() {
               </div>
             </div>
             {portalRole === "hr" ? (() => {
+              const tag = (key, t) => HR_CAT_REQUESTS[key].filter(r=>r.tag===t).length;
               const hrCats = [
                 {
-                  icon:"🔍", title:"Подбор персонала", color:C.blue, total:12,
+                  key:"podborPersonala", icon:"🔍", title:"Подбор персонала", color:C.blue,
+                  total: HR_CAT_REQUESTS.podborPersonala.length,
                   rows:[
-                    { label:"Новые заявки",      count:3,  accent:C.blue },
-                    { label:"Истекает SLA",       count:4,  accent:C.orange },
-                    { label:"Просроченные",       count:2,  accent:C.red },
-                    { label:"Ожидают согл.",      count:3,  accent:C.gray500 },
+                    { label:"Новые",         count: tag("podborPersonala","Новая"),       accent:C.blue },
+                    { label:"Срочные",       count: tag("podborPersonala","Срочная"),     accent:C.orange },
+                    { label:"Просроченные",  count: tag("podborPersonala","Просрочена"),  accent:C.red },
+                    { label:"Согласование",  count: tag("podborPersonala","Согласование"),accent:C.gray500 },
                   ],
                 },
                 {
-                  icon:"📋", title:"Кадровое администрирование", color:C.green, total:18,
+                  key:"kadrovoe", icon:"📋", title:"Кадровое администрирование", color:C.green,
+                  total: HR_CAT_REQUESTS.kadrovoe.length,
                   rows:[
-                    { label:"Приём на работу",   count:5,  accent:C.blue },
-                    { label:"Переводы",           count:4,  accent:C.blue },
-                    { label:"Увольнения",         count:2,  accent:C.red },
-                    { label:"Отпуска",            count:7,  accent:C.green },
+                    { label:"Новые",         count: tag("kadrovoe","Новая"),              accent:C.blue },
+                    { label:"Срочные",       count: tag("kadrovoe","Срочная"),            accent:C.orange },
+                    { label:"Просроченные",  count: tag("kadrovoe","Просрочена"),         accent:C.red },
+                    { label:"В работе",      count: tag("kadrovoe","В работе"),           accent:C.green },
                   ],
                 },
                 {
-                  icon:"💎", title:"Компенсации и льготы", color:C.orange, total:7,
+                  key:"cb", icon:"💎", title:"Компенсации и льготы", color:C.orange,
+                  total: HR_CAT_REQUESTS.cb.length,
                   rows:[
-                    { label:"Новые запросы",      count:2,  accent:C.blue },
-                    { label:"Срочные",            count:3,  accent:C.orange },
-                    { label:"Просроченные",       count:1,  accent:C.red },
-                    { label:"В обработке",        count:1,  accent:C.gray500 },
+                    { label:"Новые",         count: tag("cb","Новая"),                   accent:C.blue },
+                    { label:"Срочные",       count: tag("cb","Срочная"),                 accent:C.orange },
+                    { label:"Просроченные",  count: tag("cb","Просрочена"),              accent:C.red },
+                    { label:"Согласование",  count: tag("cb","Согласование"),            accent:C.gray500 },
                   ],
                 },
                 {
-                  icon:"📚", title:"Обучение", color:"#7C3AED", total:9,
+                  key:"obuchenie", icon:"📚", title:"Обучение", color:"#7C3AED",
+                  total: HR_CAT_REQUESTS.obuchenie.length,
                   rows:[
-                    { label:"Заявки на обучение", count:4,  accent:C.blue },
-                    { label:"Ожидают согл.",      count:2,  accent:C.orange },
-                    { label:"Требуют назначения", count:3,  accent:"#7C3AED" },
+                    { label:"Новые",         count: tag("obuchenie","Новая"),             accent:C.blue },
+                    { label:"Срочные",       count: tag("obuchenie","Срочная"),           accent:C.orange },
+                    { label:"Просроченные",  count: tag("obuchenie","Просрочена"),        accent:C.red },
+                    { label:"Согласование",  count: tag("obuchenie","Согласование"),      accent:"#7C3AED" },
                   ],
                 },
               ];
@@ -1227,7 +1275,7 @@ export default function App() {
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, flex:1, overflow:"auto", paddingBottom:4 }}>
                     {hrCats.map(cat => (
-                      <div key={cat.title} onClick={() => navigate("my")}
+                      <div key={cat.title} onClick={() => { setHrCatFilter(cat.key); navigate("my"); }}
                         style={{ background:C.card, borderRadius:16, padding:"14px 12px",
                           boxShadow:C.shadow, cursor:"pointer", borderTop:`3px solid ${cat.color}`,
                           transition:"box-shadow .15s", display:"flex", flexDirection:"column" }}
@@ -2733,37 +2781,70 @@ export default function App() {
         {/* ── MY REQUESTS ── */}
         {page === "my" && !detail && (
           <div>
-            {portalRole === "hr" ? (
-              <>
-                <div style={{ marginBottom: 22 }}>
-                  <h1 style={{ fontSize: 24, fontWeight: 700, color: C.dark, margin: 0 }}>Входящие заявки</h1>
-                  <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>Заявки сотрудников, поступившие на обработку</p>
-                </div>
-                <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`, overflow: "hidden" }}>
-                  {HR_INCOMING.map((r, ri) => (
-                    <div key={r.id}
-                      style={{ padding: "14px 16px", borderBottom: ri < HR_INCOMING.length-1 ? `1px solid ${C.gray300}` : "none",
-                        transition:"background .1s", cursor:"default" }}
-                      onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
-                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: 10, background: C.greenPale,
-                          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{r.icon}</div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 14, fontWeight: 600, color: C.dark }}>{r.title}</div>
-                          <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>
-                            <span style={{ fontWeight: 600, color: C.dark }}>{r.from}</span> · {r.id} · {r.date} · SLA {r.sla}
-                          </div>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
-                        </div>
+            {portalRole === "hr" ? (() => {
+              const catMeta = {
+                podborPersonala: { title:"Подбор персонала",            icon:"🔍", color:C.blue },
+                kadrovoe:        { title:"Кадровое администрирование",  icon:"📋", color:C.green },
+                cb:              { title:"Компенсации и льготы",        icon:"💎", color:C.orange },
+                obuchenie:       { title:"Обучение",                    icon:"📚", color:"#7C3AED" },
+              };
+              const tagColor = { "Новая":C.blue, "Срочная":C.orange, "Просрочена":C.red, "Согласование":C.gray500, "В работе":C.green };
+              const list = hrCatFilter ? HR_CAT_REQUESTS[hrCatFilter] : HR_INCOMING;
+              const meta = hrCatFilter ? catMeta[hrCatFilter] : null;
+              return (
+                <>
+                  <div style={{ marginBottom: 16 }}>
+                    {hrCatFilter && (
+                      <button onClick={() => { setHrCatFilter(null); navigate("home"); }}
+                        style={{ background:"none", border:"none", color:C.green, fontSize:13,
+                          cursor:"pointer", padding:0, fontFamily:"inherit", marginBottom:10, display:"block" }}>
+                        ← Рабочий стол
+                      </button>
+                    )}
+                    <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                      {meta && <div style={{ width:38, height:38, borderRadius:10, background:meta.color+"15",
+                        display:"flex", alignItems:"center", justifyContent:"center", fontSize:20 }}>{meta.icon}</div>}
+                      <div>
+                        <h1 style={{ fontSize:20, fontWeight:700, color:C.dark, margin:0 }}>
+                          {meta ? meta.title : "Все входящие заявки"}
+                        </h1>
+                        <p style={{ color:C.gray500, fontSize:12, marginTop:3 }}>
+                          {list.length} заявок · нажмите для обработки
+                        </p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </>
-            ) : (
+                  </div>
+                  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                    {list.map(r => {
+                      const tc = tagColor[r.tag] || C.gray500;
+                      return (
+                        <div key={r.id}
+                          style={{ background:C.white, borderRadius:12, padding:"12px 14px",
+                            boxShadow:C.shadow, transition:"box-shadow .12s", cursor:"default",
+                            borderLeft:`3px solid ${tc}` }}
+                          onMouseEnter={e=>e.currentTarget.style.boxShadow=C.shadowMd}
+                          onMouseLeave={e=>e.currentTarget.style.boxShadow=C.shadow}>
+                          <div style={{ display:"flex", alignItems:"flex-start", gap:12 }}>
+                            <div style={{ width:38, height:38, borderRadius:9, background:tc+"15",
+                              display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>{r.icon}</div>
+                            <div style={{ flex:1, minWidth:0 }}>
+                              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:3 }}>{r.title}</div>
+                              <div style={{ fontSize:11, color:C.gray500 }}>
+                                <span style={{ fontWeight:600, color:C.dark }}>{r.from}</span>
+                                {" · "}{r.id}{" · "}{r.date}
+                              </div>
+                              <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>⏱ SLA {r.sla}</div>
+                            </div>
+                            <span style={{ fontSize:10, fontWeight:700, color:tc, background:tc+"18",
+                              borderRadius:100, padding:"3px 8px", flexShrink:0, whiteSpace:"nowrap" }}>{r.tag}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              );
+            })() : (
               <>
                 <div style={{ marginBottom: 22 }}>
                   <h1 style={{ fontSize: 24, fontWeight: 700, color: C.dark, margin: 0 }}>Мои заявки</h1>
