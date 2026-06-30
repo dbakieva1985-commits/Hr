@@ -1004,9 +1004,9 @@ export default function App() {
         <nav style={{ padding: "8px 10px", flex: 1 }}>
           <div style={{ fontSize:9, color:"#FFFFFF50", fontWeight:700, letterSpacing:1.1, textTransform:"uppercase", padding:"0 4px 6px" }}>Роль</div>
           {PORTAL_ROLES.map(r => {
-            const isActive = page === "home" && portalRole === r.id;
+            const isActive = portalRole === r.id;
             return (
-              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate("home"); setDetail(null); }} style={{
+              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate("catalog"); setSelectedGroup(null); setSearch(""); setCatFilter("Все"); setDetail(null); }} style={{
                 display: "flex", alignItems: "center", gap: 10, width: "100%",
                 padding: "10px 14px", borderRadius: 12, border: "none",
                 background: isActive ? C.green : "transparent",
@@ -1098,9 +1098,9 @@ export default function App() {
         <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:64, background:C.white,
           display:"flex", zIndex:200, boxShadow:"0 -1px 0 rgba(0,0,0,0.06), 0 -4px 16px rgba(0,0,0,0.06)" }}>
           {PORTAL_ROLES.map(r => {
-            const isActive = page === "home" && portalRole === r.id;
+            const isActive = portalRole === r.id;
             return (
-              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate("home"); setDetail(null); }} style={{
+              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate("catalog"); setSelectedGroup(null); setSearch(""); setCatFilter("Все"); setDetail(null); }} style={{
                 flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
                 background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
                 color: isActive ? C.green : C.gray500, padding:"4px 2px", gap:2,
