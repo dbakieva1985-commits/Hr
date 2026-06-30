@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-const _v = "7.0";
+const _v = "8.0";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
   bg:       "#F0F2F5",   // Revolut-style light gray page background
@@ -24,7 +24,7 @@ const C = {
 // ── Data ───────────────────────────────────────────────────────────────────
 const SERVICES = [
   // ── Трудовая дисциплина ───────────────────────────────────────────────────
-  { id: 44, cat: "Кадровое администрирование", group: "Трудовая дисциплина", icon: "📜", title: "Трудовая дисциплина", sla: "3 раб. дня", desc: "Оформление документов по трудовой дисциплине сотрудников.", who: "Руководитель / HR", docs: "Объяснительная, акт нарушения" },
+  { id: 44, cat: "Кадровое администрирование", group: "Трудовая дисциплина", icon: "📜", title: "Трудовая дисциплина (ТД)", sla: "3 раб. дня", desc: "Подайте заявку на дисциплинарное взыскание или зафиксируйте нарушение трудовой дисциплины. Руководители оформляют объяснительные записки, акты о нарушении, выговоры и замечания. Сотрудник может просмотреть свой дисциплинарный статус.", who: "Руководитель / HR", docs: "Объяснительная, акт нарушения" },
 
   // ── Отсутствие ────────────────────────────────────────────────────────────
   { id: 3,  cat: "Кадровое администрирование", group: "Отсутствие", icon: "📅", title: "Планируемый график отпусков",                                sla: "2 раб. дня",  desc: "Формирование и согласование планового графика отпусков подразделения.", who: "Руководитель", docs: "График отпусков по подразделению" },
@@ -603,6 +603,48 @@ const VALUES_QUIZ = [
   { scenario:"Сотрудник сам инициировал улучшение процесса в отделе, не дожидаясь указаний руководства.", answer:"Лидерство и ответственность", options:["Профессионализм и честность","Лидерство и ответственность","Клиентоориентированность и надёжность"] },
 ];
 
+// ── Life Events (Жизненные ситуации) ────────────────────────────────────────
+const LIFE_EVENTS = [
+  { id:"baby",    icon:"🍼", title:"Родился ребёнок",     desc:"Соцотпуск, материальная помощь и документы — всё сразу",        color:"#FF6B8A", bgColor:"#FFF0F3",
+    services:[
+      { serviceId:4,  label:"Отпуск по уходу за ребёнком",  icon:"👶", rec:true  },
+      { serviceId:23, label:"Материальная помощь",            icon:"🤝", rec:true  },
+      { serviceId:15, label:"Справка с места работы",         icon:"📄", rec:false },
+    ]},
+  { id:"wedding", icon:"💍", title:"Вступление в брак",   desc:"Смена персональных данных и положенные льготы",                 color:"#F59E0B", bgColor:"#FFFBEB",
+    services:[
+      { serviceId:6,  label:"Изменение персональных данных", icon:"📝", rec:true  },
+      { serviceId:23, label:"Материальная помощь",            icon:"🤝", rec:true  },
+      { serviceId:15, label:"Справка с места работы",         icon:"📄", rec:false },
+    ]},
+  { id:"loss",    icon:"🕊️", title:"Потеря близкого",     desc:"Отпуск, поддержка и все необходимые документы",                color:"#6B7280", bgColor:"#F3F4F6",
+    services:[
+      { serviceId:2,  label:"Заявка на отпуск",               icon:"🏖", rec:true  },
+      { serviceId:23, label:"Материальная помощь",            icon:"🤝", rec:true  },
+      { serviceId:15, label:"Справка с места работы",         icon:"📄", rec:false },
+    ]},
+  { id:"vacation",icon:"✈️", title:"Уходите в отпуск?",  desc:"Быстрое оформление и нужные справки за один раз",              color:"#1D5CB4", bgColor:"#EFF6FF",
+    services:[
+      { serviceId:2,  label:"Заявка на отпуск",               icon:"🏖", rec:true  },
+      { serviceId:26, label:"Расчётный листок",               icon:"🧮", rec:false },
+      { serviceId:45, label:"Справка для налоговой",          icon:"📄", rec:false },
+    ]},
+  { id:"move",    icon:"🔄", title:"Перевод / ротация",   desc:"Все документы для смены должности или подразделения",          color:"#7C3AED", bgColor:"#F5F3FF",
+    services:[
+      { serviceId:1,  label:"Перевод на другую должность",    icon:"🔄", rec:true  },
+      { serviceId:6,  label:"Обновление персональных данных", icon:"📝", rec:false },
+      { serviceId:19, label:"Обходной лист",                  icon:"📑", rec:false },
+    ]},
+];
+
+// ── My Tasks (Мои задачи) mock data ─────────────────────────────────────────
+const MY_TASKS = [
+  { id:"tk1", title:"Пройти курс «Комплаенс и ПОД/ФТ»",         dueIn:1,  cat:"Обучение", icon:"📚", action:"Начать",      serviceId:56, urgent:true  },
+  { id:"tk2", title:"Заполнить опрос адаптации (2 месяца)",      dueIn:5,  cat:"HR",        icon:"📋", action:"Заполнить",   serviceId:43, urgent:false },
+  { id:"tk3", title:"Оценка KPI за Q2 2026 — внести данные",     dueIn:11, cat:"Оценка",   icon:"📊", action:"Выполнить",   serviceId:41, urgent:false },
+  { id:"tk4", title:"Подтвердить плановый график отпусков",       dueIn:25, cat:"Кадровое", icon:"🗓", action:"Подтвердить", serviceId:3,  urgent:false },
+];
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN APP
 // ═══════════════════════════════════════════════════════════════════════════
@@ -628,6 +670,8 @@ export default function App() {
   const [spasiboSent,    setSpasiboSent]    = useState(false);
   const [joinedComms,    setJoinedComms]    = useState([]);
   const [valQuiz,        setValQuiz]        = useState({ idx:0, picked:null, score:0, done:false });
+  const [lifeEventModal,    setLifeEventModal]    = useState(null);
+  const [lifeEventSelected, setLifeEventSelected] = useState({});
   const VALID_PAGES = ["home","catalog","requests","onboarding","analytics"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
@@ -729,7 +773,10 @@ export default function App() {
   const filteredServices = SERVICES.filter(s => {
     if (s.hidden) return false;
     const matchCat  = catFilter === "Все" || s.cat === catFilter;
-    const matchSrch = s.title.toLowerCase().includes(search.toLowerCase()) || s.cat.toLowerCase().includes(search.toLowerCase());
+    const q = search.toLowerCase();
+    const matchSrch = !q || s.title.toLowerCase().includes(q) || s.cat.toLowerCase().includes(q)
+      || (s.desc && s.desc.toLowerCase().includes(q))
+      || (s.group && s.group.toLowerCase().includes(q));
     return matchCat && matchSrch;
   });
 
@@ -947,12 +994,91 @@ export default function App() {
           const popular = SERVICES.filter(s => POP_IDS.includes(s.id) && !s.hidden);
           return (
           <div>
+
+            {/* ── Life Event modal overlay ── */}
+            {lifeEventModal && (
+              <div onClick={() => setLifeEventModal(null)} style={{
+                position:"fixed", inset:0, background:"rgba(0,0,0,0.55)", zIndex:9998,
+                display:"flex", alignItems:"flex-end", justifyContent:"center",
+                backdropFilter:"blur(4px)",
+              }}>
+                <div onClick={e => e.stopPropagation()} style={{
+                  background:C.white, borderRadius:"28px 28px 0 0",
+                  padding:isMobile?"24px 20px 36px":"32px 32px 44px",
+                  maxWidth:500, width:"100%", boxSizing:"border-box",
+                  maxHeight:"85vh", overflowY:"auto",
+                }}>
+                  <div style={{ width:40, height:4, borderRadius:100, background:C.gray300, margin:"0 auto 20px" }} />
+                  <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:20 }}>
+                    <div style={{ width:58, height:58, borderRadius:18, background:lifeEventModal.bgColor,
+                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:30, flexShrink:0 }}>
+                      {lifeEventModal.icon}
+                    </div>
+                    <div>
+                      <div style={{ fontSize:18, fontWeight:800, color:C.dark }}>{lifeEventModal.title}</div>
+                      <div style={{ fontSize:13, color:C.gray500, marginTop:3, lineHeight:1.4 }}>{lifeEventModal.desc}</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize:11, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:1, marginBottom:12 }}>
+                    Что будет оформлено — выберите нужное:
+                  </div>
+                  {lifeEventModal.services.map(svc => {
+                    const svcData = SERVICES.find(x => x.id === svc.serviceId);
+                    const isSel = !!lifeEventSelected[svc.serviceId];
+                    return (
+                      <div key={svc.serviceId} onClick={() => setLifeEventSelected(prev => ({...prev, [svc.serviceId]: !prev[svc.serviceId]}))}
+                        style={{
+                          display:"flex", alignItems:"center", gap:12, padding:"12px 14px",
+                          borderRadius:14, marginBottom:8, cursor:"pointer",
+                          background: isSel ? C.greenPale : C.gray100,
+                          border:`2px solid ${isSel ? C.green : "transparent"}`,
+                          transition:"all .15s",
+                        }}>
+                        <div style={{ width:42, height:42, borderRadius:13, flexShrink:0,
+                          display:"flex", alignItems:"center", justifyContent:"center", fontSize:20,
+                          background: isSel ? C.green : C.white,
+                          color: isSel ? C.white : C.gray500,
+                          border:`2px solid ${isSel ? C.green : C.gray300}`,
+                          transition:"all .15s", fontWeight:800,
+                        }}>{isSel ? "✓" : svc.icon}</div>
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{svc.label}</div>
+                          {svcData && <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>⏱ {svcData.sla}</div>}
+                        </div>
+                        {svc.rec && <span style={{ fontSize:10, color:C.orange, fontWeight:700, background:"#FFF3E0", padding:"2px 8px", borderRadius:100, flexShrink:0 }}>Рекомендуется</span>}
+                      </div>
+                    );
+                  })}
+                  <div style={{ fontSize:11, color:C.gray500, marginTop:4, marginBottom:20, lineHeight:1.5 }}>
+                    После нажатия кнопки все выбранные заявки будут созданы автоматически. Специалист HR свяжется с вами по каждой из них.
+                  </div>
+                  <Btn onClick={() => {
+                    const toSubmit = lifeEventModal.services.filter(s => lifeEventSelected[s.serviceId]);
+                    if (!toSubmit.length) return;
+                    const newReqs = toSubmit.map((svc, i) => {
+                      const svcData = SERVICES.find(x => x.id === svc.serviceId);
+                      return { id:`HR-E${Date.now()%10000}-${i}`, title:svc.label, status:"sent", sla:svcData?.sla||"", date:new Date().toLocaleDateString("ru-RU"), icon:svc.icon };
+                    });
+                    setRequests(prev => [...newReqs, ...prev]);
+                    setLifeEventModal(null);
+                    setObToast({ title:"Заявки поданы!", reward:`Оформлено ${newReqs.length} заявки по ситуации «${lifeEventModal.title}»`, icon:lifeEventModal.icon });
+                  }}>
+                    Подать {Object.values(lifeEventSelected).filter(Boolean).length || lifeEventModal.services.length} заявки сразу
+                  </Btn>
+                  <button onClick={() => setLifeEventModal(null)} style={{
+                    marginTop:12, width:"100%", background:"none", border:"none", color:C.gray500,
+                    fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:"8px 0",
+                  }}>Отмена</button>
+                </div>
+              </div>
+            )}
+
             {/* Hero card — Revolut style */}
             <div style={{
               background: `linear-gradient(145deg, ${C.green} 0%, ${C.greenMid} 55%, #00A855 100%)`,
               borderRadius: isMobile ? 20 : 24,
               padding: isMobile ? "24px 20px 28px" : "32px 32px 36px",
-              marginBottom: 20,
+              marginBottom: 16,
               boxShadow: `0 8px 32px ${C.green}55`,
               position: "relative", overflow: "hidden",
             }}>
@@ -983,6 +1109,52 @@ export default function App() {
               </div>
             </div>
 
+            {/* ── Мои задачи — Revolut People To-Do style ── */}
+            <div style={{ background:C.card, borderRadius:20, padding:isMobile?"16px 16px":"20px 20px", boxShadow:C.shadow, marginBottom:16 }}>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <span style={{ fontSize:15, fontWeight:700, color:C.dark }}>Мои задачи</span>
+                  <span style={{ background:C.red, color:C.white, borderRadius:100, padding:"1px 8px", fontSize:11, fontWeight:800 }}>
+                    {MY_TASKS.length}
+                  </span>
+                </div>
+                <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                  {[["Обучение",C.blue],["Оценка",C.orange],["HR",C.green],["Кадровое",C.greenDark]].map(([cat,col]) => {
+                    const cnt = MY_TASKS.filter(t=>t.cat===cat).length;
+                    return cnt ? <span key={cat} style={{ fontSize:10, color:col, background:col+"18", borderRadius:100, padding:"2px 8px", fontWeight:700 }}>{cnt} {cat}</span> : null;
+                  })}
+                </div>
+              </div>
+              {MY_TASKS.map((task, i) => (
+                <div key={task.id} style={{
+                  display:"flex", alignItems:"center", gap:12, padding:"10px 0",
+                  borderBottom: i < MY_TASKS.length - 1 ? `1px solid ${C.gray300}` : "none",
+                }}>
+                  <div style={{ width:38, height:38, borderRadius:12, background:task.urgent?C.red+"18":C.greenPale, flexShrink:0,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>{task.icon}</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:13, fontWeight:600, color:C.dark, lineHeight:1.35, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{task.title}</div>
+                    <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:3, flexWrap:"wrap" }}>
+                      <span style={{ fontSize:11, color:task.urgent?C.red:C.gray500, fontWeight:task.urgent?700:400 }}>
+                        {task.urgent ? `⚠ Срок: ${task.dueIn} дн.` : `Срок: ${task.dueIn} дн.`}
+                      </span>
+                      <span style={{ fontSize:10, fontWeight:700, padding:"1px 7px", borderRadius:100,
+                        color:task.cat==="Обучение"?C.blue:task.cat==="Оценка"?C.orange:C.green,
+                        background:(task.cat==="Обучение"?C.blue:task.cat==="Оценка"?C.orange:C.green)+"18" }}>
+                        {task.cat}
+                      </span>
+                    </div>
+                  </div>
+                  <button onClick={() => { const s = SERVICES.find(x=>x.id===task.serviceId); if(s){ setSelected(s); setPage("form"); } else navigate("catalog"); }}
+                    style={{ flexShrink:0, background:C.green, color:C.white, border:"none", borderRadius:100,
+                      padding:"7px 14px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
+                      boxShadow:`0 2px 6px ${C.green}44`, whiteSpace:"nowrap" }}>
+                    {task.action}
+                  </button>
+                </div>
+              ))}
+            </div>
+
             {/* Quick actions — Revolut circular buttons */}
             <div style={{ background:C.card, borderRadius:20, padding: isMobile ? "16px 8px" : "20px 16px",
               boxShadow: C.shadow, marginBottom:16,
@@ -1003,6 +1175,40 @@ export default function App() {
                   <span style={{ fontSize:11, fontWeight:600, color:C.gray700, textAlign:"center", whiteSpace:"pre-line", lineHeight:1.3 }}>{q.label}</span>
                 </button>
               ))}
+            </div>
+
+            {/* ── Жизненные ситуации ── */}
+            <div style={{ marginBottom:16 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
+                <div>
+                  <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Жизненные ситуации</div>
+                  <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Несколько заявок — один шаг</div>
+                </div>
+              </div>
+              <div style={{ display:"flex", gap:12, overflowX:"auto", paddingBottom:6, scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
+                {LIFE_EVENTS.map(ev => (
+                  <button key={ev.id} onClick={() => {
+                    const sel = {};
+                    ev.services.forEach(s => { if(s.rec) sel[s.serviceId] = true; });
+                    setLifeEventSelected(sel);
+                    setLifeEventModal(ev);
+                  }} style={{
+                    flexShrink:0, width:isMobile?148:166, background:C.card, borderRadius:18,
+                    padding:"16px 14px 14px", border:"none", cursor:"pointer", fontFamily:"inherit",
+                    textAlign:"left", boxShadow:C.shadow, transition:"box-shadow .15s, transform .15s",
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
+                  >
+                    <div style={{ width:46, height:46, borderRadius:14, background:ev.bgColor, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:10, flexShrink:0 }}>
+                      {ev.icon}
+                    </div>
+                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4, lineHeight:1.3 }}>{ev.title}</div>
+                    <div style={{ fontSize:11, color:C.gray500, lineHeight:1.5, marginBottom:8 }}>{ev.desc}</div>
+                    <div style={{ fontSize:11, color:ev.color, fontWeight:700 }}>{ev.services.length} заявки →</div>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Popular services */}
