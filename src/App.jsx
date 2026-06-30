@@ -1297,7 +1297,7 @@ export default function App() {
               {[
                 { icon: "🏖", label: "Остаток отпуска", value: "14 дн.", color: C.green, sub: "из 24 дней", onClick: null },
                 { icon: "📋", label: "Мои заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке", onClick: () => navigate("my") },
-                { icon: "📚", label: "Курсы к прохождению", value: "2", color: C.blue, sub: "срок до 15 июля", onClick: null },
+                { icon: "📚", label: "Курсы", value: "2", color: C.blue, sub: "срок до 15 июля", onClick: null },
                 { icon: "⭐", label: "Performance", value: "4.2/5", color: C.greenDark, sub: "за квартал", onClick: null },
               ].map(m => (
                 <div key={m.label} onClick={m.onClick || undefined}
@@ -1413,8 +1413,8 @@ export default function App() {
               </div>
             </div>
 
-            {/* Курсы к прохождению */}
-            <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>📚 Обучение</div>
+            {/* Курсы */}
+            <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>📚 Курсы</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 8 }}>
               {[
                 { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 40, urgent: true },
@@ -1815,7 +1815,7 @@ export default function App() {
                           {/* Обучение */}
                           {emp.courseList && emp.courseList.length > 0 && (
                             <div style={{ marginTop: 16 }}>
-                              <div style={{ fontSize: 12, fontWeight: 700, color: C.dark, marginBottom: 8 }}>📚 Обучение</div>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: C.dark, marginBottom: 8 }}>📚 Курсы</div>
                               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                                 {emp.courseList.map((course, ci) => (
                                   <div key={ci} style={{ background: course.urgent ? C.red+"08" : C.bg, borderRadius: 10,
