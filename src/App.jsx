@@ -694,6 +694,7 @@ export default function App() {
   const [showKpi,           setShowKpi]           = useState(false);
   const [showCommunity,     setShowCommunity]     = useState(false);
   const [showSport,         setShowSport]         = useState(false);
+  const [hrGroups,          setHrGroups]          = useState({});
   const [expandedEmployee,  setExpandedEmployee]  = useState(null);
   const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my","team"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
@@ -2980,34 +2981,75 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                    {list.map(r => {
-                      const tc = tagColor[r.tag] || C.gray500;
-                      return (
-                        <div key={r.id}
-                          style={{ background:C.white, borderRadius:12, padding:"12px 14px",
-                            boxShadow:C.shadow, transition:"box-shadow .12s", cursor:"default",
-                            borderLeft:`3px solid ${tc}` }}
-                          onMouseEnter={e=>e.currentTarget.style.boxShadow=C.shadowMd}
-                          onMouseLeave={e=>e.currentTarget.style.boxShadow=C.shadow}>
-                          <div style={{ display:"flex", alignItems:"flex-start", gap:12 }}>
-                            <div style={{ width:38, height:38, borderRadius:9, background:tc+"15",
-                              display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>{r.icon}</div>
-                            <div style={{ flex:1, minWidth:0 }}>
-                              <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:3 }}>{r.title}</div>
-                              <div style={{ fontSize:11, color:C.gray500 }}>
-                                <span style={{ fontWeight:600, color:C.dark }}>{r.from}</span>
-                                {" · "}{r.id}{" · "}{r.date}
-                              </div>
-                              <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>⏱ SLA {r.sla}</div>
+                  {(() => {
+                    const groupOrder = ["Просроченные","Срочные","Новые","Согласование","В работе"];
+                    const groupMeta  = {
+                      "Просроченные": { tagVal:"Просрочена", color:C.red,     icon:"🔴" },
+                      "Срочные":      { tagVal:"Срочная",    color:C.orange,  icon:"🟠" },
+                      "Новые":        { tagVal:"Новая",      color:C.blue,    icon:"🔵" },
+                      "Согласование": { tagVal:"Согласование",color:C.gray500,icon:"⚫" },
+                      "В работе":     { tagVal:"В работе",   color:C.green,   icon:"🟢" },
+                    };
+                    return (
+                      <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                        {groupOrder.map(grpName => {
+                          const gm      = groupMeta[grpName];
+                          const items   = list.filter(r => r.tag === gm.tagVal);
+                          if (!items.length) return null;
+                          const key     = (hrCatFilter||"all")+"_"+grpName;
+                          const open    = !!hrGroups[key];
+                          return (
+                            <div key={grpName} style={{ borderRadius:14, overflow:"hidden",
+                              boxShadow:C.shadow, background:C.white }}>
+                              {/* Group header */}
+                              <button onClick={() => setHrGroups(p=>({...p,[key]:!p[key]}))}
+                                style={{ width:"100%", display:"flex", alignItems:"center", gap:12,
+                                  padding:"13px 14px", background:C.white, border:"none",
+                                  borderLeft:`4px solid ${gm.color}`, cursor:"pointer",
+                                  fontFamily:"inherit", textAlign:"left" }}>
+                                <span style={{ fontSize:16 }}>{gm.icon}</span>
+                                <div style={{ flex:1 }}>
+                                  <span style={{ fontSize:13, fontWeight:700, color:C.dark }}>{grpName}</span>
+                                </div>
+                                <span style={{ fontSize:12, fontWeight:800, color:gm.color,
+                                  background:gm.color+"18", borderRadius:100,
+                                  padding:"2px 10px", marginRight:8 }}>{items.length}</span>
+                                <span style={{ fontSize:14, color:C.gray500, display:"inline-block",
+                                  transition:"transform .2s",
+                                  transform: open?"rotate(180deg)":"rotate(0deg)" }}>▾</span>
+                              </button>
+                              {/* Requests */}
+                              {open && (
+                                <div style={{ borderTop:`1px solid ${C.gray100}` }}>
+                                  {items.map((r,ri) => (
+                                    <div key={r.id}
+                                      style={{ display:"flex", alignItems:"flex-start", gap:12,
+                                        padding:"11px 14px",
+                                        borderBottom: ri<items.length-1?`1px solid ${C.gray100}`:"none",
+                                        transition:"background .1s" }}
+                                      onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
+                                      onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                                      <div style={{ width:36, height:36, borderRadius:9,
+                                        background:gm.color+"15", display:"flex", alignItems:"center",
+                                        justifyContent:"center", fontSize:17, flexShrink:0 }}>{r.icon}</div>
+                                      <div style={{ flex:1, minWidth:0 }}>
+                                        <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:2 }}>{r.title}</div>
+                                        <div style={{ fontSize:11, color:C.gray500 }}>
+                                          <span style={{ fontWeight:600, color:C.dark }}>{r.from}</span>
+                                          {" · "}{r.id}{" · "}{r.date}
+                                        </div>
+                                        <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>⏱ SLA {r.sla}</div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
-                            <span style={{ fontSize:10, fontWeight:700, color:tc, background:tc+"18",
-                              borderRadius:100, padding:"3px 8px", flexShrink:0, whiteSpace:"nowrap" }}>{r.tag}</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                 </>
               );
             })() : (
