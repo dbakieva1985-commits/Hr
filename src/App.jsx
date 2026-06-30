@@ -1060,7 +1060,7 @@ export default function App() {
           {PORTAL_ROLES.map(r => {
             const isActive = portalRole === r.id;
             return (
-              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate(r.id === "employee" ? "onboarding" : "catalog"); setSelectedGroup(null); setSearch(""); setCatFilter("Подбор персонала"); setDetail(null); }} style={{
+              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate(r.id==="employee" ? "onboarding" : "home"); setSelectedGroup(null); setSearch(""); setCatFilter("Подбор персонала"); setDetail(null); setHrCatFilter(null); }} style={{
                 display: "flex", alignItems: "center", gap: 10, width: "100%",
                 padding: "10px 14px", borderRadius: 12, border: "none",
                 background: isActive ? C.green : "transparent",
@@ -1154,7 +1154,7 @@ export default function App() {
           {PORTAL_ROLES.map(r => {
             const isActive = portalRole === r.id;
             return (
-              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate(r.id === "employee" ? "onboarding" : "catalog"); setSelectedGroup(null); setSearch(""); setCatFilter("Подбор персонала"); setDetail(null); }} style={{
+              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate(r.id==="employee" ? "onboarding" : "home"); setSelectedGroup(null); setSearch(""); setCatFilter("Подбор персонала"); setDetail(null); setHrCatFilter(null); }} style={{
                 flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
                 background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
                 color: isActive ? C.green : C.gray500, padding:"4px 2px", gap:2,
