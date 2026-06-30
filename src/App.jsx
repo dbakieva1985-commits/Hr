@@ -1161,69 +1161,69 @@ export default function App() {
         {/* ── HOME / WORKSPACE SELECTION ── */}
         {page === "home" && !selected && (
           <div>
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 11, color: C.gray500, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 10, color: C.gray500, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 4 }}>
                 Halyk Bank · HR Service Portal
               </div>
-              <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800, color: C.dark, marginBottom: 6 }}>
+              <div style={{ fontSize: isMobile ? 18 : 24, fontWeight: 800, color: C.dark, marginBottom: 4 }}>
                 Выберите пространство
               </div>
-              <div style={{ fontSize: 14, color: C.gray500, lineHeight: 1.55 }}>
+              <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.45 }}>
                 Портал покажет сервисы и данные, доступные именно вам.
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12 }}>
               {/* Мой HR */}
               <div onClick={() => navigate("catalog")}
-                style={{ background: C.white, borderRadius: 24, padding: "28px 24px", boxShadow: C.shadow,
+                style={{ background: C.white, borderRadius: 18, padding: "16px 18px", boxShadow: C.shadow,
                   cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
                   display: "flex", flexDirection: "column", gap: 0 }}
                 onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
                 onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
               >
-                <div style={{ width: 64, height: 64, borderRadius: 20, background: C.greenPale,
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 16 }}>🏠</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: C.dark, marginBottom: 6 }}>Мой HR</div>
-                <div style={{ fontSize: 12, color: C.green, fontWeight: 700, marginBottom: 12 }}>Для всех сотрудников</div>
-                <div style={{ fontSize: 13, color: C.gray500, lineHeight: 1.6, marginBottom: 20, flex: 1 }}>
-                  Все HR-сервисы: справки, отпуск, зарплата, обучение, льготы, документы, подбор и многое другое.
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: C.greenPale,
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, marginBottom: 10 }}>🏠</div>
+                <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Мой HR</div>
+                <div style={{ fontSize: 11, color: C.green, fontWeight: 700, marginBottom: 8 }}>Для всех сотрудников</div>
+                <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.5, marginBottom: 10, flex: 1 }}>
+                  Все HR-сервисы: справки, отпуск, зарплата, обучение, льготы, документы.
                 </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
                   {["Кадровое","Отпуск","Зарплата","Обучение","C&B","Резерв"].map(t => (
-                    <span key={t} style={{ fontSize: 11, color: C.green, background: C.greenPale,
-                      borderRadius: 100, padding: "3px 10px", fontWeight: 600 }}>{t}</span>
+                    <span key={t} style={{ fontSize: 10, color: C.green, background: C.greenPale,
+                      borderRadius: 100, padding: "2px 8px", fontWeight: 600 }}>{t}</span>
                   ))}
                 </div>
-                <div style={{ background: C.green, color: C.white, borderRadius: 100, padding: "12px 0",
-                  textAlign: "center", fontSize: 14, fontWeight: 700, boxShadow: `0 4px 12px ${C.green}44` }}>
+                <div style={{ background: C.green, color: C.white, borderRadius: 100, padding: "9px 0",
+                  textAlign: "center", fontSize: 13, fontWeight: 700, boxShadow: `0 4px 12px ${C.green}44` }}>
                   → Открыть каталог
                 </div>
               </div>
 
               {/* Мой профиль */}
               <div onClick={() => navigate("profile")}
-                style={{ background: C.white, borderRadius: 24, padding: "28px 24px", boxShadow: C.shadow,
+                style={{ background: C.white, borderRadius: 18, padding: "16px 18px", boxShadow: C.shadow,
                   cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
                   display: "flex", flexDirection: "column", gap: 0 }}
                 onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.blue}`; e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
                 onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
               >
-                <div style={{ width: 64, height: 64, borderRadius: 20, background: C.blue+"15",
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 16 }}>👤</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: C.dark, marginBottom: 6 }}>Мой профиль</div>
-                <div style={{ fontSize: 12, color: C.blue, fontWeight: 700, marginBottom: 12 }}>Личный кабинет</div>
-                <div style={{ fontSize: 13, color: C.gray500, lineHeight: 1.6, marginBottom: 20, flex: 1 }}>
-                  Ваши показатели, остаток отпуска, трудовая дисциплина, активные заявки и курсы обучения.
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: C.blue+"15",
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, marginBottom: 10 }}>👤</div>
+                <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Мой профиль</div>
+                <div style={{ fontSize: 11, color: C.blue, fontWeight: 700, marginBottom: 8 }}>Личный кабинет</div>
+                <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.5, marginBottom: 10, flex: 1 }}>
+                  Ваши показатели, остаток отпуска, трудовая дисциплина, активные заявки.
                 </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
                   {["Показатели","Отпуск","Дисциплина","Заявки","Обучение"].map(t => (
-                    <span key={t} style={{ fontSize: 11, color: C.blue, background: C.blue+"15",
-                      borderRadius: 100, padding: "3px 10px", fontWeight: 600 }}>{t}</span>
+                    <span key={t} style={{ fontSize: 10, color: C.blue, background: C.blue+"15",
+                      borderRadius: 100, padding: "2px 8px", fontWeight: 600 }}>{t}</span>
                   ))}
                 </div>
-                <div style={{ background: C.blue, color: C.white, borderRadius: 100, padding: "12px 0",
-                  textAlign: "center", fontSize: 14, fontWeight: 700, boxShadow: `0 4px 12px ${C.blue}44` }}>
+                <div style={{ background: C.blue, color: C.white, borderRadius: 100, padding: "9px 0",
+                  textAlign: "center", fontSize: 13, fontWeight: 700, boxShadow: `0 4px 12px ${C.blue}44` }}>
                   → Открыть профиль
                 </div>
               </div>
