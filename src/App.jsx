@@ -691,6 +691,8 @@ export default function App() {
   const [lifeEventModal,    setLifeEventModal]    = useState(null);
   const [lifeEventSelected, setLifeEventSelected] = useState({});
   const [showBenefits,      setShowBenefits]      = useState(false);
+  const [showDiscipline,    setShowDiscipline]    = useState(false);
+  const [showCourses,       setShowCourses]       = useState(false);
   const [showKpi,           setShowKpi]           = useState(false);
   const [showCommunity,     setShowCommunity]     = useState(false);
   const [showSport,         setShowSport]         = useState(false);
@@ -1513,68 +1515,103 @@ export default function App() {
               );
             })()}
 
-            {/* Трудовая дисциплина */}
-            <div style={{ background: C.card, borderRadius: 20, padding: isMobile ? "16px" : "20px", boxShadow: C.shadow, marginBottom: 20 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>📜 Трудовая дисциплина</div>
-                <span style={{ fontSize: 11, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 10px" }}>Июнь 2026</span>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "8px 12px", alignItems: "center",
-                fontSize: 11, fontWeight: 700, color: C.gray500, marginBottom: 8, paddingBottom: 8, borderBottom: `1px solid ${C.gray300}` }}>
-                <span>Дата</span><span>Вход</span><span>Выход</span><span>Статус</span>
-              </div>
-              {[
-                { date: "30.06 Сег.", enter: "09:15", exit: "—",    ok: true,  label: "В норме" },
-                { date: "27.06 Пт",  enter: "09:20", exit: "18:05", ok: true,  label: "В норме" },
-                { date: "26.06 Чт",  enter: "09:05", exit: "18:10", ok: true,  label: "В норме" },
-                { date: "25.06 Ср",  enter: "09:37", exit: "18:58", ok: false, label: "Нарушение" },
-                { date: "24.06 Вт",  enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
-              ].map((row, i) => (
-                <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "8px 12px",
-                  alignItems: "center", padding: "10px 0", borderBottom: i < 4 ? `1px solid ${C.gray300}` : "none",
-                  background: !row.ok ? C.red+"08" : "transparent", borderRadius: !row.ok ? 8 : 0,
-                  paddingLeft: !row.ok ? 8 : 0, paddingRight: !row.ok ? 8 : 0 }}>
-                  <div style={{ fontSize: 12, color: C.gray500, fontWeight: 600, whiteSpace: "nowrap" }}>{row.date}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{row.enter}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{row.exit}</div>
-                  <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100, whiteSpace: "nowrap",
-                    background: row.ok ? C.green+"18" : C.red+"18", color: row.ok ? C.green : C.red }}>
-                    {row.label}
-                  </span>
+            {/* Трудовая дисциплина — аккордеон */}
+            <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
+              <div onClick={() => setShowDiscipline(v=>!v)}
+                style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
+                  padding: isMobile ? "16px" : "20px", cursor:"pointer" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <div style={{ fontSize:18 }}>📜</div>
+                  <div>
+                    <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Трудовая дисциплина</div>
+                    <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Июнь 2026 · 1 нарушение</div>
+                  </div>
                 </div>
-              ))}
-              <div style={{ marginTop: 12, display: "flex", gap: 20, fontSize: 12 }}>
-                <span>Нарушений за месяц: <b style={{ color: C.red }}>1</b></span>
-                <span>Рабочих дней: <b style={{ color: C.dark }}>20</b></span>
+                <span style={{ fontSize:16, color:C.gray500, display:"inline-block",
+                  transition:"transform .2s", transform: showDiscipline?"rotate(180deg)":"rotate(0deg)" }}>⌄</span>
               </div>
+              {showDiscipline && (
+                <div style={{ padding: isMobile?"0 16px 16px":"0 20px 20px" }}>
+                  <div style={{ display:"grid", gridTemplateColumns:"auto 1fr 1fr auto", gap:"8px 12px",
+                    alignItems:"center", fontSize:11, fontWeight:700, color:C.gray500,
+                    marginBottom:8, paddingBottom:8, borderBottom:`1px solid ${C.gray300}` }}>
+                    <span>Дата</span><span>Вход</span><span>Выход</span><span>Статус</span>
+                  </div>
+                  {[
+                    { date:"30.06 Сег.", enter:"09:15", exit:"—",     ok:true,  label:"В норме" },
+                    { date:"27.06 Пт",  enter:"09:20", exit:"18:05",  ok:true,  label:"В норме" },
+                    { date:"26.06 Чт",  enter:"09:05", exit:"18:10",  ok:true,  label:"В норме" },
+                    { date:"25.06 Ср",  enter:"09:37", exit:"18:58",  ok:false, label:"Нарушение" },
+                    { date:"24.06 Вт",  enter:"09:00", exit:"18:00",  ok:true,  label:"В норме" },
+                  ].map((row,i) => (
+                    <div key={i} style={{ display:"grid", gridTemplateColumns:"auto 1fr 1fr auto", gap:"8px 12px",
+                      alignItems:"center", padding:"10px 0", borderBottom: i<4?`1px solid ${C.gray300}`:"none",
+                      background:!row.ok?C.red+"08":"transparent", borderRadius:!row.ok?8:0,
+                      paddingLeft:!row.ok?8:0, paddingRight:!row.ok?8:0 }}>
+                      <div style={{ fontSize:12, color:C.gray500, fontWeight:600, whiteSpace:"nowrap" }}>{row.date}</div>
+                      <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{row.enter}</div>
+                      <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{row.exit}</div>
+                      <span style={{ fontSize:10, fontWeight:700, padding:"3px 8px", borderRadius:100, whiteSpace:"nowrap",
+                        background:row.ok?C.green+"18":C.red+"18", color:row.ok?C.green:C.red }}>
+                        {row.label}
+                      </span>
+                    </div>
+                  ))}
+                  <div style={{ marginTop:12, display:"flex", gap:20, fontSize:12 }}>
+                    <span>Нарушений за месяц: <b style={{ color:C.red }}>1</b></span>
+                    <span>Рабочих дней: <b style={{ color:C.dark }}>20</b></span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Курсы */}
-            <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>📚 Курсы</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 8 }}>
-              {[
-                { title: "Compliance & Ethics 2025", deadline: "15 июля 2026", progress: 40, urgent: true },
-                { title: "Противодействие мошенничеству", deadline: "31 июля 2026", progress: 0, urgent: false },
-              ].map((course, i) => (
-                <div key={i} style={{ background: C.card, borderRadius: 16, padding: "16px 18px", boxShadow: C.shadow }}>
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 10 }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 4 }}>{course.title}</div>
-                      <div style={{ fontSize: 12, color: course.urgent ? C.red : C.gray500, fontWeight: course.urgent ? 700 : 400 }}>
-                        {course.urgent ? "⚠ " : ""}Срок: {course.deadline}
-                      </div>
-                    </div>
-                    <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 100, flexShrink: 0,
-                      background: course.progress === 0 ? C.gray300 : C.green+"22",
-                      color: course.progress === 0 ? C.gray500 : C.green }}>
-                      {course.progress === 0 ? "Не начат" : `${course.progress}%`}
-                    </span>
-                  </div>
-                  <div style={{ height: 6, background: C.gray100, borderRadius: 3, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${course.progress}%`, background: C.green, borderRadius: 3, transition: "width .4s" }} />
+            {/* Курсы — аккордеон */}
+            <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
+              <div onClick={() => setShowCourses(v=>!v)}
+                style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
+                  padding: isMobile ? "16px" : "20px", cursor:"pointer" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <div style={{ fontSize:18 }}>📚</div>
+                  <div>
+                    <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Курсы</div>
+                    <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>2 курса · срок до 15 июля</div>
                   </div>
                 </div>
-              ))}
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <span style={{ fontSize:11, fontWeight:700, color:C.red, background:C.red+"15",
+                    borderRadius:100, padding:"2px 8px" }}>⚠ Срочно</span>
+                  <span style={{ fontSize:16, color:C.gray500, display:"inline-block",
+                    transition:"transform .2s", transform: showCourses?"rotate(180deg)":"rotate(0deg)" }}>⌄</span>
+                </div>
+              </div>
+              {showCourses && (
+                <div style={{ padding: isMobile?"0 16px 16px":"0 20px 20px", display:"flex", flexDirection:"column", gap:10 }}>
+                  {[
+                    { title:"Compliance & Ethics 2025",      deadline:"15 июля 2026",  progress:40, urgent:true },
+                    { title:"Противодействие мошенничеству", deadline:"31 июля 2026",  progress:0,  urgent:false },
+                  ].map((course,i) => (
+                    <div key={i} style={{ background:C.gray100, borderRadius:14, padding:"14px 16px" }}>
+                      <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:10, marginBottom:10 }}>
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4 }}>{course.title}</div>
+                          <div style={{ fontSize:11, color:course.urgent?C.red:C.gray500, fontWeight:course.urgent?700:400 }}>
+                            {course.urgent?"⚠ ":""}Срок: {course.deadline}
+                          </div>
+                        </div>
+                        <span style={{ fontSize:11, fontWeight:700, padding:"3px 10px", borderRadius:100, flexShrink:0,
+                          background:course.progress===0?C.gray300:C.green+"22",
+                          color:course.progress===0?C.gray500:C.green }}>
+                          {course.progress===0?"Не начат":`${course.progress}%`}
+                        </span>
+                      </div>
+                      <div style={{ height:5, background:C.white, borderRadius:3, overflow:"hidden" }}>
+                        <div style={{ height:"100%", width:`${course.progress}%`, background:C.green, borderRadius:3 }}/>
+                      </div>
+                    </div>
+                  ))}
+                  <Btn small onClick={() => navigate("courses")}>Открыть все курсы</Btn>
+                </div>
+              )}
             </div>
 
             {/* KPI */}
