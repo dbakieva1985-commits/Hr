@@ -1167,9 +1167,25 @@ export default function App() {
 
         {/* ── HOME / WORKSPACE SELECTION ── */}
         {page === "home" && !selected && (
-          <div>
-            <div style={{ marginBottom: isMobile ? 12 : 20 }}>
-              <div style={{ fontSize: isMobile ? 16 : 24, fontWeight: 800, color: C.dark, marginBottom: 3 }}>
+          <div style={{ display:"flex", flexDirection:"column", justifyContent:"center",
+            minHeight: isMobile ? "calc(100vh - 140px)" : "calc(100vh - 120px)" }}>
+            {/* Greeting banner */}
+            <div style={{ background:`linear-gradient(135deg, ${C.green} 0%, ${C.greenDark} 100%)`,
+              borderRadius:20, padding: isMobile ? "20px 18px" : "28px 32px",
+              marginBottom:16, position:"relative", overflow:"hidden" }}>
+              <div style={{ position:"absolute", top:-20, right:-20, width:100, height:100,
+                borderRadius:"50%", background:"rgba(255,255,255,0.08)", pointerEvents:"none" }}/>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,0.7)", fontWeight:600,
+                textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Добро пожаловать</div>
+              <div style={{ fontSize: isMobile ? 20 : 26, fontWeight:800, color:C.white, marginBottom:4 }}>
+                Фируза Б.
+              </div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,0.75)" }}>
+                ДУП · HR Specialist · АО «Народный Банк»
+              </div>
+            </div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: isMobile ? 15 : 20, fontWeight: 800, color: C.dark, marginBottom: 2 }}>
                 Выберите пространство
               </div>
               <div style={{ fontSize: 11, color: C.gray500 }}>
@@ -1496,11 +1512,11 @@ export default function App() {
             {/* ── LEFT SIDEBAR ── */}
             <div style={{
               width: sidebarW, flexShrink:0,
-              position:"sticky", top:0, alignSelf:"flex-start",
-              maxHeight:"100vh", overflowY:"auto",
+              position:"sticky", top: isMobile ? 60 : 0, alignSelf:"flex-start",
+              maxHeight: isMobile ? "calc(100vh - 124px)" : "100vh", overflowY:"auto",
               background: C.white,
               borderRight:`1px solid ${C.gray300}`,
-              paddingTop:12, paddingBottom:24,
+              paddingTop:12, paddingBottom: isMobile ? 16 : 24,
               scrollbarWidth:"none",
             }}>
               {/* Мои заявки — top of sidebar */}
