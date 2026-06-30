@@ -1194,8 +1194,7 @@ export default function App() {
                 <div style={{ width: 52, height: 52, borderRadius: 14, background: C.greenPale,
                   display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>🏠</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Мой HR</div>
-                  <div style={{ fontSize: 11, color: C.green, fontWeight: 600, marginBottom: 7 }}>Справки, отпуск, зарплата, обучение, льготы</div>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой HR</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                     {["Кадровое","Отпуск","Зарплата","Обучение","C&B"].map(t => (
                       <span key={t} style={{ fontSize: 10, color: C.green, background: C.greenPale,
@@ -1219,8 +1218,7 @@ export default function App() {
                 <div style={{ width: 52, height: 52, borderRadius: 14, background: C.blue+"15",
                   display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👤</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Мой профиль</div>
-                  <div style={{ fontSize: 11, color: C.blue, fontWeight: 600, marginBottom: 7 }}>Показатели, дисциплина, заявки, обучение</div>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой профиль</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                     {["Показатели","Отпуск","Дисциплина","Заявки"].map(t => (
                       <span key={t} style={{ fontSize: 10, color: C.blue, background: C.blue+"15",
@@ -1245,8 +1243,7 @@ export default function App() {
                   <div style={{ width: 52, height: 52, borderRadius: 14, background: C.orange+"15",
                     display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👥</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Моя команда</div>
-                    <div style={{ fontSize: 11, color: C.orange, fontWeight: 600, marginBottom: 7 }}>Дисциплина, показатели, performance</div>
+                    <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Моя команда</div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                       {["Дисциплина","Показатели","Performance"].map(t => (
                         <span key={t} style={{ fontSize: 10, color: C.orange, background: C.orange+"15",
