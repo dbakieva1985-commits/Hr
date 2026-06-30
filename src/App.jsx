@@ -202,9 +202,9 @@ const CATS = [
 ].filter(c => SERVICES.some(s => s.cat === c));
 
 // ── Tiny helpers ────────────────────────────────────────────────────────────
-const Badge = ({ text, color = C.green, wrap = false }) => (
+const Badge = ({ text, color = C.green }) => (
   <span style={{ background: color + "15", color, borderRadius: 100,
-    padding: "3px 10px", fontSize: 11, fontWeight: 700, whiteSpace: wrap ? "normal" : "nowrap" }}>
+    padding: "3px 10px", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }}>
     {text}
   </span>
 );
@@ -691,7 +691,6 @@ export default function App() {
   const VALID_PAGES = ["home","catalog","requests","onboarding","analytics"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
-  const [workspace, setWorkspace] = useState(null);
   const navigate = p => { window.location.hash = p; setPage(p); };
   useEffect(() => {
     setPage(readHash());
@@ -944,8 +943,7 @@ export default function App() {
                 setPortalRole(loginRole);
                 if (r?.obView) setObView(r.obView);
                 setCompany(selectedCompany);
-                setWorkspace(null);
-                navigate("home");
+                navigate("catalog");
               }}
               disabled={!loginRole}
               style={{ width:"100%", background: loginRole ? C.green : C.gray300,
@@ -1008,7 +1006,7 @@ export default function App() {
           {PORTAL_ROLES.map(r => {
             const isActive = portalRole === r.id;
             return (
-              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); setWorkspace(null); navigate("home"); setSelectedGroup(null); setSearch(""); setCatFilter("Все"); setDetail(null); }} style={{
+              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate("catalog"); setSelectedGroup(null); setSearch(""); setCatFilter("Все"); setDetail(null); }} style={{
                 display: "flex", alignItems: "center", gap: 10, width: "100%",
                 padding: "10px 14px", borderRadius: 12, border: "none",
                 background: isActive ? C.green : "transparent",
@@ -1102,7 +1100,7 @@ export default function App() {
           {PORTAL_ROLES.map(r => {
             const isActive = portalRole === r.id;
             return (
-              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); setWorkspace(null); navigate("home"); setSelectedGroup(null); setSearch(""); setCatFilter("Все"); setDetail(null); }} style={{
+              <button key={r.id} onClick={() => { setPortalRole(r.id); if(r.obView) setObView(r.obView); navigate("catalog"); setSelectedGroup(null); setSearch(""); setCatFilter("Все"); setDetail(null); }} style={{
                 flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
                 background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
                 color: isActive ? C.green : C.gray500, padding:"4px 2px", gap:2,
@@ -1154,65 +1152,17 @@ export default function App() {
 
         {/* ── HOME ── */}
         {page === "home" && !selected && (() => {
-          const WORKSPACES = [
-            { id: "personal",  icon: "👤", label: "Моё пространство",      sub: "Личный кабинет",        desc: "Ваши данные, документы, расчётные листки, отпуск, обучение и показатели эффективности.", roles: ["employee","worker","manager","mentor","hr"] },
-            { id: "employee",  icon: "🏠", label: "Мой HR",                sub: "Для всех сотрудников",  desc: "Все HR-сервисы для сотрудника: справки, отпуск, зарплата, обучение, льготы и документы.", roles: ["employee","worker","manager","mentor","hr"] },
-            { id: "manager",   icon: "👥", label: "Руководитель команды",  sub: "Для руководителей",    desc: "Согласования, управление командой, подбор, performance и развитие сотрудников.", roles: ["manager"] },
-            { id: "mentor",    icon: "🎓", label: "Наставник",             sub: "Для наставников",      desc: "Адаптация новичков, чек-листы, встречи 1:1 и прогресс новичка.", roles: ["mentor"] },
-            { id: "hr",        icon: "💚", label: "HR",                    sub: "Для HR-команды",       desc: "Подбор, кадровое администрирование, C&B, обучение, резерв и аналитика.", roles: ["hr"] },
-          ];
-          const userWorkspaces = WORKSPACES.filter(w => w.roles.includes(portalRole));
 
-          // ── WORKSPACE SELECTION ──────────────────────────────────────────
-          if (!workspace) return (
-            <div>
-              <div style={{ marginBottom: 28 }}>
-                <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800, color: C.dark, marginBottom: 6 }}>Выберите рабочее пространство</div>
-                <div style={{ fontSize: 14, color: C.gray500, lineHeight: 1.55 }}>Портал покажет сервисы, задачи и данные, доступные именно вам.</div>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : userWorkspaces.length === 1 ? "1fr" : "1fr 1fr", gap: 16 }}>
-                {userWorkspaces.map(ws => (
-                  <div key={ws.id} onClick={() => setWorkspace(ws.id)}
-                    style={{ background: C.white, borderRadius: 20, padding: "24px 22px", boxShadow: C.shadow,
-                      cursor: "pointer", border: `2px solid transparent`, transition: "all .2s" }}
-                    onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
-                    onMouseLeave={e => { e.currentTarget.style.border=`2px solid transparent`; e.currentTarget.style.boxShadow=C.shadow; }}
-                  >
-                    <div style={{ fontSize: 40, marginBottom: 12 }}>{ws.icon}</div>
-                    <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 4 }}>{ws.label}</div>
-                    <div style={{ fontSize: 12, color: C.green, fontWeight: 600, marginBottom: 10 }}>{ws.sub}</div>
-                    <div style={{ fontSize: 13, color: C.gray500, lineHeight: 1.55, marginBottom: 16 }}>{ws.desc}</div>
-                    <div style={{ color: C.green, fontSize: 13, fontWeight: 700 }}>→ Открыть</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-
-          // ── HOME (after workspace selected) ─────────────────────────────
-          const ws = WORKSPACES.find(w => w.id === workspace);
-
-          // workspace switch pill shown at top
-          const WsSwitcher = () => userWorkspaces.length > 1 ? (
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-              <span style={{ fontSize:10, color:C.gray500, fontWeight:700, textTransform:"uppercase", letterSpacing:1 }}>Workspace:</span>
-              <span style={{ fontSize:13, fontWeight:700, color:C.dark }}>{ws?.icon} {ws?.label}</span>
-              <button onClick={() => setWorkspace(null)} style={{ background:C.greenPale, color:C.green, border:"none",
-                borderRadius:100, padding:"4px 12px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
-                Сменить
-              </button>
-            </div>
-          ) : null;
-
-          // ── Quick-card helper ──────────────────────────────────────────────
-          const RoleServiceRow = ({ ids }) => {
+          // ── Quick-card helper used in role dashboards ──────────────────────
+          const RoleServiceRow = ({ ids, onOpenCatalog }) => {
             const svcs = ids.map(id => SERVICES.find(s => s.id === id)).filter(Boolean);
             return (
               <div style={{ background:C.card, borderRadius:16, overflow:"hidden", boxShadow:C.shadow }}>
                 {svcs.map((s, i) => (
                   <div key={s.id} onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link,"_blank"); } else { setSelected(s); setPage("form"); } }}
                     style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 16px", cursor:"pointer",
-                      borderBottom: i < svcs.length-1 ? `1px solid ${C.gray300}` : "none", transition:"background .12s" }}
+                      borderBottom: i < svcs.length-1 ? `1px solid ${C.gray300}` : "none",
+                      transition:"background .12s" }}
                     onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
                     onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                     <div style={{ width:36, height:36, borderRadius:10, background:C.greenPale,
@@ -1257,7 +1207,6 @@ export default function App() {
           // ── РУКОВОДИТЕЛЬ ──────────────────────────────────────────────────
           if (portalRole === "manager") return (
             <div>
-              <WsSwitcher />
               <RoleHero
                 title="Панель руководителя 👔"
                 sub="Управление командой и кадровые процессы"
@@ -1267,17 +1216,29 @@ export default function App() {
                   { label:"Всего заявок", value: requests.length },
                 ]}
               />
+
               <RoleSectionLabel text="Подбор и найм" />
               <RoleServiceRow ids={[37, 82]} />
+
               <RoleSectionLabel text="Управление командой" />
               <RoleServiceRow ids={[44, 1, 20, 8]} />
+
               <RoleSectionLabel text="Отсутствие и графики" />
               <RoleServiceRow ids={[3, 13, 5, 11, 33]} />
+
               <RoleSectionLabel text="Кадровые данные и отчёты" />
               <RoleServiceRow ids={[28, 30, 41, 31]} />
+
               <div style={{ marginTop:20, display:"flex", gap:10 }}>
-                <button onClick={() => navigate("catalog")} style={{ flex:1, background:C.green, color:C.white, border:"none", borderRadius:100, padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 2px 8px ${C.green}44` }}>☰ Весь каталог</button>
-                <button onClick={() => navigate("analytics")} style={{ flex:1, background:C.white, color:C.dark, border:`1px solid ${C.gray300}`, borderRadius:100, padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>⊡ Аналитика</button>
+                <button onClick={() => navigate("catalog")} style={{
+                  flex:1, background:C.green, color:C.white, border:"none", borderRadius:100,
+                  padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
+                  boxShadow:`0 2px 8px ${C.green}44`,
+                }}>☰ Весь каталог</button>
+                <button onClick={() => navigate("analytics")} style={{
+                  flex:1, background:C.white, color:C.dark, border:`1px solid ${C.gray300}`, borderRadius:100,
+                  padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
+                }}>⊡ Аналитика</button>
               </div>
               <div style={{ height:8 }} />
             </div>
@@ -1286,7 +1247,6 @@ export default function App() {
           // ── HR ────────────────────────────────────────────────────────────
           if (portalRole === "hr") return (
             <div>
-              <WsSwitcher />
               <RoleHero
                 title="HR-панель 👩‍💼"
                 sub="Полный доступ к кадровым процессам"
@@ -1296,25 +1256,38 @@ export default function App() {
                   { label:"Кандидатов", value: requests.filter(r=>r.isApproval).length },
                 ]}
               />
+
               <RoleSectionLabel text="Подбор персонала" />
               <RoleServiceRow ids={[37, 82]} />
+
               <RoleSectionLabel text="Онбординг и адаптация" />
               <RoleServiceRow ids={[43]} />
+
               <RoleSectionLabel text="Кадровое делопроизводство" />
               <RoleServiceRow ids={[44, 1, 20, 6, 22]} />
+
               <RoleSectionLabel text="Аналитика и отчёты" />
               <RoleServiceRow ids={[41, 30, 36, 33, 35]} />
+
               <RoleSectionLabel text="Компенсации и льготы" />
               <RoleServiceRow ids={[39, 91, 95]} />
+
               <div style={{ marginTop:20, display:"flex", gap:10 }}>
-                <button onClick={() => navigate("catalog")} style={{ flex:1, background:C.green, color:C.white, border:"none", borderRadius:100, padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 2px 8px ${C.green}44` }}>☰ Весь каталог</button>
-                <button onClick={() => navigate("analytics")} style={{ flex:1, background:C.white, color:C.dark, border:`1px solid ${C.gray300}`, borderRadius:100, padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>⊡ Аналитика</button>
+                <button onClick={() => navigate("catalog")} style={{
+                  flex:1, background:C.green, color:C.white, border:"none", borderRadius:100,
+                  padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
+                  boxShadow:`0 2px 8px ${C.green}44`,
+                }}>☰ Весь каталог</button>
+                <button onClick={() => navigate("analytics")} style={{
+                  flex:1, background:C.white, color:C.dark, border:`1px solid ${C.gray300}`, borderRadius:100,
+                  padding:"12px 20px", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
+                }}>⊡ Аналитика</button>
               </div>
               <div style={{ height:8 }} />
             </div>
           );
 
-          // ── СОТРУДНИК / НОВИЧОК / НАСТАВНИК ──────────────────────────────
+          // ── СОТРУДНИК (existing home) ─────────────────────────────────────
           const QUICK = [
             { icon: "📋", label: "Подать\nзаявку",   action: () => navigate("catalog") },
             { icon: "📁", label: "Мои\nзаявки",      action: () => navigate("my") },
@@ -1325,38 +1298,53 @@ export default function App() {
           const popular = SERVICES.filter(s => POP_IDS.includes(s.id) && !s.hidden);
           return (
           <div>
-            <WsSwitcher />
 
             {/* ── Life Event modal overlay ── */}
             {lifeEventModal && (
               <div onClick={() => setLifeEventModal(null)} style={{
                 position:"fixed", inset:0, background:"rgba(0,0,0,0.55)", zIndex:9998,
-                display:"flex", alignItems:"flex-end", justifyContent:"center", backdropFilter:"blur(4px)",
+                display:"flex", alignItems:"flex-end", justifyContent:"center",
+                backdropFilter:"blur(4px)",
               }}>
                 <div onClick={e => e.stopPropagation()} style={{
                   background:C.white, borderRadius:"28px 28px 0 0",
                   padding:isMobile?"24px 20px 36px":"32px 32px 44px",
-                  maxWidth:500, width:"100%", boxSizing:"border-box", maxHeight:"85vh", overflowY:"auto",
+                  maxWidth:500, width:"100%", boxSizing:"border-box",
+                  maxHeight:"85vh", overflowY:"auto",
                 }}>
                   <div style={{ width:40, height:4, borderRadius:100, background:C.gray300, margin:"0 auto 20px" }} />
                   <div style={{ display:"flex", alignItems:"center", gap:14, marginBottom:20 }}>
-                    <div style={{ width:58, height:58, borderRadius:18, background:lifeEventModal.bgColor, display:"flex", alignItems:"center", justifyContent:"center", fontSize:30, flexShrink:0 }}>{lifeEventModal.icon}</div>
+                    <div style={{ width:58, height:58, borderRadius:18, background:lifeEventModal.bgColor,
+                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:30, flexShrink:0 }}>
+                      {lifeEventModal.icon}
+                    </div>
                     <div>
                       <div style={{ fontSize:18, fontWeight:800, color:C.dark }}>{lifeEventModal.title}</div>
                       <div style={{ fontSize:13, color:C.gray500, marginTop:3, lineHeight:1.4 }}>{lifeEventModal.desc}</div>
                     </div>
                   </div>
-                  <div style={{ fontSize:11, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:1, marginBottom:12 }}>Что будет оформлено — выберите нужное:</div>
+                  <div style={{ fontSize:11, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:1, marginBottom:12 }}>
+                    Что будет оформлено — выберите нужное:
+                  </div>
                   {lifeEventModal.services.map(svc => {
                     const svcData = SERVICES.find(x => x.id === svc.serviceId);
                     const isSel = !!lifeEventSelected[svc.serviceId];
                     return (
                       <div key={svc.serviceId} onClick={() => setLifeEventSelected(prev => ({...prev, [svc.serviceId]: !prev[svc.serviceId]}))}
-                        style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 14px", borderRadius:14, marginBottom:8, cursor:"pointer",
-                          background: isSel ? C.greenPale : C.gray100, border:`2px solid ${isSel ? C.green : "transparent"}`, transition:"all .15s" }}>
-                        <div style={{ width:42, height:42, borderRadius:13, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20,
-                          background: isSel ? C.green : C.white, color: isSel ? C.white : C.gray500,
-                          border:`2px solid ${isSel ? C.green : C.gray300}`, transition:"all .15s", fontWeight:800 }}>{isSel ? "✓" : svc.icon}</div>
+                        style={{
+                          display:"flex", alignItems:"center", gap:12, padding:"12px 14px",
+                          borderRadius:14, marginBottom:8, cursor:"pointer",
+                          background: isSel ? C.greenPale : C.gray100,
+                          border:`2px solid ${isSel ? C.green : "transparent"}`,
+                          transition:"all .15s",
+                        }}>
+                        <div style={{ width:42, height:42, borderRadius:13, flexShrink:0,
+                          display:"flex", alignItems:"center", justifyContent:"center", fontSize:20,
+                          background: isSel ? C.green : C.white,
+                          color: isSel ? C.white : C.gray500,
+                          border:`2px solid ${isSel ? C.green : C.gray300}`,
+                          transition:"all .15s", fontWeight:800,
+                        }}>{isSel ? "✓" : svc.icon}</div>
                         <div style={{ flex:1 }}>
                           <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{svc.label}</div>
                           {svcData && <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>⏱ {svcData.sla}</div>}
@@ -1365,7 +1353,9 @@ export default function App() {
                       </div>
                     );
                   })}
-                  <div style={{ fontSize:11, color:C.gray500, marginTop:4, marginBottom:20, lineHeight:1.5 }}>После нажатия кнопки все выбранные заявки будут созданы автоматически.</div>
+                  <div style={{ fontSize:11, color:C.gray500, marginTop:4, marginBottom:20, lineHeight:1.5 }}>
+                    После нажатия кнопки все выбранные заявки будут созданы автоматически. Специалист HR свяжется с вами по каждой из них.
+                  </div>
                   <Btn onClick={() => {
                     const toSubmit = lifeEventModal.services.filter(s => lifeEventSelected[s.serviceId]);
                     if (!toSubmit.length) return;
@@ -1376,35 +1366,61 @@ export default function App() {
                     setRequests(prev => [...newReqs, ...prev]);
                     setLifeEventModal(null);
                     setObToast({ title:"Заявки поданы!", reward:`Оформлено ${newReqs.length} заявки по ситуации «${lifeEventModal.title}»`, icon:lifeEventModal.icon });
-                  }}>Подать {Object.values(lifeEventSelected).filter(Boolean).length || lifeEventModal.services.length} заявки сразу</Btn>
-                  <button onClick={() => setLifeEventModal(null)} style={{ marginTop:12, width:"100%", background:"none", border:"none", color:C.gray500, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:"8px 0" }}>Отмена</button>
+                  }}>
+                    Подать {Object.values(lifeEventSelected).filter(Boolean).length || lifeEventModal.services.length} заявки сразу
+                  </Btn>
+                  <button onClick={() => setLifeEventModal(null)} style={{
+                    marginTop:12, width:"100%", background:"none", border:"none", color:C.gray500,
+                    fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:"8px 0",
+                  }}>Отмена</button>
                 </div>
               </div>
             )}
 
-            {/* Hero card */}
-            <div style={{ background:`linear-gradient(145deg, ${C.green} 0%, ${C.greenMid} 55%, #00A855 100%)`, borderRadius: isMobile ? 20 : 24, padding: isMobile ? "24px 20px 28px" : "32px 32px 36px", marginBottom:16, boxShadow:`0 8px 32px ${C.green}55`, position:"relative", overflow:"hidden" }}>
+            {/* Hero card — Revolut style */}
+            <div style={{
+              background: `linear-gradient(145deg, ${C.green} 0%, ${C.greenMid} 55%, #00A855 100%)`,
+              borderRadius: isMobile ? 20 : 24,
+              padding: isMobile ? "24px 20px 28px" : "32px 32px 36px",
+              marginBottom: 16,
+              boxShadow: `0 8px 32px ${C.green}55`,
+              position: "relative", overflow: "hidden",
+            }}>
+              {/* decorative circle */}
               <div style={{ position:"absolute", top:-40, right:-30, width:160, height:160, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
               <div style={{ position:"absolute", bottom:-60, right:60, width:200, height:200, borderRadius:"50%", background:"rgba(255,255,255,0.05)", pointerEvents:"none" }} />
-              <div style={{ fontSize:12, color:"rgba(255,255,255,0.75)", fontWeight:600, marginBottom:6, letterSpacing:0.5 }}>HALYK BANK · HR SERVICE PORTAL</div>
-              <div style={{ fontSize: isMobile ? 22 : 28, fontWeight:800, color:C.white, marginBottom:4, lineHeight:1.2 }}>Добро пожаловать,<br/>Фируза 👋</div>
-              <div style={{ fontSize:13, color:"rgba(255,255,255,0.80)", marginBottom:20 }}>ДУП · HR Specialist</div>
+
+              <div style={{ fontSize: 12, color:"rgba(255,255,255,0.75)", fontWeight:600, marginBottom:6, letterSpacing:0.5 }}>
+                HALYK BANK · HR SERVICE PORTAL
+              </div>
+              <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800, color: C.white, marginBottom: 4, lineHeight: 1.2 }}>
+                Добро пожаловать,<br/>Фируза 👋
+              </div>
+              <div style={{ fontSize: 13, color:"rgba(255,255,255,0.80)", marginBottom: 20 }}>
+                ДУП · HR Specialist
+              </div>
               <div style={{ display:"flex", gap: isMobile ? 16 : 32 }}>
-                {[{ label:"Сервисов", value: SERVICES.filter(s=>!s.hidden).length }, { label:"Мои заявки", value: requests.length }, { label:"В работе", value: requests.filter(r=>r.status==="inwork").length }].map(st => (
+                {[
+                  { label: "Сервисов", value: SERVICES.filter(s=>!s.hidden).length },
+                  { label: "Мои заявки", value: requests.length },
+                  { label: "В работе", value: requests.filter(r=>r.status==="inwork").length },
+                ].map(st => (
                   <div key={st.label}>
                     <div style={{ fontSize: isMobile ? 22 : 26, fontWeight:800, color:C.white }}>{st.value}</div>
-                    <div style={{ fontSize:11, color:"rgba(255,255,255,0.70)", marginTop:2 }}>{st.label}</div>
+                    <div style={{ fontSize: 11, color:"rgba(255,255,255,0.70)", marginTop:2 }}>{st.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Мои задачи */}
-            <div style={{ background:C.card, borderRadius:20, padding:isMobile?"16px":"20px", boxShadow:C.shadow, marginBottom:16 }}>
+            {/* ── Мои задачи — Revolut People To-Do style ── */}
+            <div style={{ background:C.card, borderRadius:20, padding:isMobile?"16px 16px":"20px 20px", boxShadow:C.shadow, marginBottom:16 }}>
               <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:14 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                   <span style={{ fontSize:15, fontWeight:700, color:C.dark }}>Мои задачи</span>
-                  <span style={{ background:C.red, color:C.white, borderRadius:100, padding:"1px 8px", fontSize:11, fontWeight:800 }}>{MY_TASKS.length}</span>
+                  <span style={{ background:C.red, color:C.white, borderRadius:100, padding:"1px 8px", fontSize:11, fontWeight:800 }}>
+                    {MY_TASKS.length}
+                  </span>
                 </div>
                 <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
                   {[["Обучение",C.blue],["Оценка",C.orange],["HR",C.green],["Кадровое",C.greenDark]].map(([cat,col]) => {
@@ -1414,50 +1430,83 @@ export default function App() {
                 </div>
               </div>
               {MY_TASKS.map((task, i) => (
-                <div key={task.id} style={{ display:"flex", alignItems:"center", gap:12, padding:"10px 0", borderBottom: i < MY_TASKS.length - 1 ? `1px solid ${C.gray300}` : "none" }}>
-                  <div style={{ width:38, height:38, borderRadius:12, background:task.urgent?C.red+"18":C.greenPale, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>{task.icon}</div>
+                <div key={task.id} style={{
+                  display:"flex", alignItems:"center", gap:12, padding:"10px 0",
+                  borderBottom: i < MY_TASKS.length - 1 ? `1px solid ${C.gray300}` : "none",
+                }}>
+                  <div style={{ width:38, height:38, borderRadius:12, background:task.urgent?C.red+"18":C.greenPale, flexShrink:0,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>{task.icon}</div>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontSize:13, fontWeight:600, color:C.dark, lineHeight:1.35, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{task.title}</div>
                     <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:3, flexWrap:"wrap" }}>
-                      <span style={{ fontSize:11, color:task.urgent?C.red:C.gray500, fontWeight:task.urgent?700:400 }}>{task.urgent ? `⚠ Срок: ${task.dueIn} дн.` : `Срок: ${task.dueIn} дн.`}</span>
-                      <span style={{ fontSize:10, fontWeight:700, padding:"1px 7px", borderRadius:100, color:task.cat==="Обучение"?C.blue:task.cat==="Оценка"?C.orange:C.green, background:(task.cat==="Обучение"?C.blue:task.cat==="Оценка"?C.orange:C.green)+"18" }}>{task.cat}</span>
+                      <span style={{ fontSize:11, color:task.urgent?C.red:C.gray500, fontWeight:task.urgent?700:400 }}>
+                        {task.urgent ? `⚠ Срок: ${task.dueIn} дн.` : `Срок: ${task.dueIn} дн.`}
+                      </span>
+                      <span style={{ fontSize:10, fontWeight:700, padding:"1px 7px", borderRadius:100,
+                        color:task.cat==="Обучение"?C.blue:task.cat==="Оценка"?C.orange:C.green,
+                        background:(task.cat==="Обучение"?C.blue:task.cat==="Оценка"?C.orange:C.green)+"18" }}>
+                        {task.cat}
+                      </span>
                     </div>
                   </div>
-                  <button onClick={() => { const s=SERVICES.find(x=>x.id===task.serviceId); if(s){ setSelected(s); setPage("form"); } else navigate("catalog"); }}
-                    style={{ flexShrink:0, background:C.green, color:C.white, border:"none", borderRadius:100, padding:"7px 14px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 2px 6px ${C.green}44`, whiteSpace:"nowrap" }}>
+                  <button onClick={() => { const s = SERVICES.find(x=>x.id===task.serviceId); if(s){ setSelected(s); setPage("form"); } else navigate("catalog"); }}
+                    style={{ flexShrink:0, background:C.green, color:C.white, border:"none", borderRadius:100,
+                      padding:"7px 14px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit",
+                      boxShadow:`0 2px 6px ${C.green}44`, whiteSpace:"nowrap" }}>
                     {task.action}
                   </button>
                 </div>
               ))}
             </div>
 
-            {/* Quick actions */}
-            <div style={{ background:C.card, borderRadius:20, padding: isMobile ? "16px 8px" : "20px 16px", boxShadow:C.shadow, marginBottom:16, display:"flex", justifyContent:"space-around" }}>
+            {/* Quick actions — Revolut circular buttons */}
+            <div style={{ background:C.card, borderRadius:20, padding: isMobile ? "16px 8px" : "20px 16px",
+              boxShadow: C.shadow, marginBottom:16,
+              display:"flex", justifyContent:"space-around" }}>
               {QUICK.map(q => (
-                <button key={q.label} onClick={q.action} style={{ background:"none", border:"none", cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:8, padding:"4px 8px" }}>
-                  <div style={{ width: isMobile ? 52 : 60, height: isMobile ? 52 : 60, borderRadius:"50%", background:C.greenPale, display:"flex", alignItems:"center", justifyContent:"center", fontSize: isMobile ? 22 : 26, boxShadow:`0 2px 8px ${C.green}22`, transition:"transform .15s" }}
-                    onMouseEnter={e=>e.currentTarget.style.transform="scale(1.07)"}
-                    onMouseLeave={e=>e.currentTarget.style.transform="scale(1)"}>{q.icon}</div>
+                <button key={q.label} onClick={q.action} style={{
+                  background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
+                  display:"flex", flexDirection:"column", alignItems:"center", gap:8, padding: "4px 8px",
+                }}>
+                  <div style={{ width: isMobile ? 52 : 60, height: isMobile ? 52 : 60, borderRadius:"50%",
+                    background: C.greenPale, display:"flex", alignItems:"center", justifyContent:"center",
+                    fontSize: isMobile ? 22 : 26, boxShadow: `0 2px 8px ${C.green}22`,
+                    transition:"transform .15s"
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.transform="scale(1.07)"}
+                    onMouseLeave={e => e.currentTarget.style.transform="scale(1)"}
+                  >{q.icon}</div>
                   <span style={{ fontSize:11, fontWeight:600, color:C.gray700, textAlign:"center", whiteSpace:"pre-line", lineHeight:1.3 }}>{q.label}</span>
                 </button>
               ))}
             </div>
 
-            {/* Жизненные ситуации */}
+            {/* ── Жизненные ситуации ── */}
             <div style={{ marginBottom:16 }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
                 <div>
-                  <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Типовые кейсы</div>
+                  <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Жизненные ситуации</div>
                   <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>Несколько заявок — один шаг</div>
                 </div>
               </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+              <div style={{ display:"flex", gap:12, overflowX:"auto", paddingBottom:6, scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
                 {LIFE_EVENTS.map(ev => (
-                  <button key={ev.id} onClick={() => { const sel={}; ev.services.forEach(s => { if(s.rec) sel[s.serviceId]=true; }); setLifeEventSelected(sel); setLifeEventModal(ev); }}
-                    style={{ background:C.card, borderRadius:18, padding:"16px 14px 14px", border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left", boxShadow:C.shadow, transition:"box-shadow .15s, transform .15s" }}
-                    onMouseEnter={e=>{ e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
-                    onMouseLeave={e=>{ e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}>
-                    <div style={{ width:46, height:46, borderRadius:14, background:ev.bgColor, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:10 }}>{ev.icon}</div>
+                  <button key={ev.id} onClick={() => {
+                    const sel = {};
+                    ev.services.forEach(s => { if(s.rec) sel[s.serviceId] = true; });
+                    setLifeEventSelected(sel);
+                    setLifeEventModal(ev);
+                  }} style={{
+                    flexShrink:0, width:isMobile?148:166, background:C.card, borderRadius:18,
+                    padding:"16px 14px 14px", border:"none", cursor:"pointer", fontFamily:"inherit",
+                    textAlign:"left", boxShadow:C.shadow, transition:"box-shadow .15s, transform .15s",
+                  }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
+                  >
+                    <div style={{ width:46, height:46, borderRadius:14, background:ev.bgColor, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:10, flexShrink:0 }}>
+                      {ev.icon}
+                    </div>
                     <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4, lineHeight:1.3 }}>{ev.title}</div>
                     <div style={{ fontSize:11, color:C.gray500, lineHeight:1.5, marginBottom:8 }}>{ev.desc}</div>
                     <div style={{ fontSize:11, color:ev.color, fontWeight:700 }}>{ev.services.length} заявки →</div>
@@ -1466,7 +1515,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Популярные сервисы */}
+            {/* Popular services */}
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
               <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Популярные сервисы</div>
               <button onClick={() => navigate("catalog")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Все →</button>
@@ -1474,10 +1523,13 @@ export default function App() {
             <div style={{ background:C.card, borderRadius:20, overflow:"hidden", boxShadow:C.shadow, marginBottom:16 }}>
               {popular.map((s, i) => (
                 <div key={s.id} onClick={() => { setSelected(s); setPage("form"); }}
-                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", cursor:"pointer", borderBottom: i < popular.length-1 ? `1px solid ${C.gray300}` : "none", transition:"background .12s" }}
+                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", cursor:"pointer",
+                    borderBottom: i < popular.length-1 ? `1px solid ${C.gray300}` : "none",
+                    transition:"background .12s" }}
                   onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
                   onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <div style={{ width:44, height:44, borderRadius:14, background:C.greenPale, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>{s.icon}</div>
+                  <div style={{ width:44, height:44, borderRadius:14, background:C.greenPale, flexShrink:0,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>{s.icon}</div>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontSize:14, fontWeight:600, color:C.dark, lineHeight:1.3 }}>{s.title}</div>
                     <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>⏱ {s.sla}</div>
@@ -1487,7 +1539,7 @@ export default function App() {
               ))}
             </div>
 
-            {/* Последние заявки */}
+            {/* Recent requests */}
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
               <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Последние заявки</div>
               <button onClick={() => navigate("my")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Все →</button>
@@ -1495,10 +1547,13 @@ export default function App() {
             <div style={{ background:C.card, borderRadius:20, overflow:"hidden", boxShadow:C.shadow }}>
               {requests.slice(0,3).map((r, i) => (
                 <div key={r.id} onClick={() => { setDetail(r); navigate("my"); }}
-                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", cursor:"pointer", borderBottom: i < 2 ? `1px solid ${C.gray300}` : "none", transition:"background .12s" }}
+                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", cursor:"pointer",
+                    borderBottom: i < 2 ? `1px solid ${C.gray300}` : "none",
+                    transition:"background .12s" }}
                   onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
                   onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <div style={{ width:44, height:44, borderRadius:14, background:C.greenPale, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>{r.icon}</div>
+                  <div style={{ width:44, height:44, borderRadius:14, background:C.greenPale, flexShrink:0,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>{r.icon}</div>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>{r.title}</div>
                     <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>{r.id} · {r.date}</div>
@@ -1509,7 +1564,6 @@ export default function App() {
             </div>
           </div>
           );
-
         })()}
 
         {/* ── CATALOG ── */}
@@ -1856,7 +1910,7 @@ export default function App() {
                 <div style={{ fontSize: 12, color: C.gray500, marginTop: 2, wordBreak: "break-word" }}>{selected.desc}</div>
                 <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
                   <Badge text={`SLA: ${selected.sla}`} />
-                  <Badge text={selected.who} color={C.gray500} wrap />
+                  <Badge text={selected.who} color={C.gray500} />
                 </div>
               </div>
             </div>
