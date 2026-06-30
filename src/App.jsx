@@ -857,20 +857,23 @@ export default function App() {
       <div style={{ minHeight:"100vh", fontFamily:"'Inter','Segoe UI',sans-serif",
         background:`linear-gradient(160deg, ${C.green} 0%, ${C.greenDark} 100%)`,
         display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-        padding:"24px 16px",
+        padding: isMobile ? "12px 16px" : "24px 16px",
       }}>
         {/* Logo */}
-        <div style={{ textAlign:"center", marginBottom: isMobile ? 12 : 28 }}>
-          <div style={{ width: isMobile ? 44 : 64, height: isMobile ? 44 : 64, borderRadius: isMobile ? 14 : 20,
+        <div style={{ display:"flex", alignItems:"center", gap: isMobile ? 8 : 12,
+          marginBottom: isMobile ? 10 : 28, textAlign: isMobile ? "left" : "center" }}>
+          <div style={{ width: isMobile ? 36 : 64, height: isMobile ? 36 : 64, borderRadius: isMobile ? 12 : 20,
             background:"rgba(255,255,255,0.18)", display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize: isMobile ? 22 : 32, margin:`0 auto ${isMobile ? 8 : 12}px`,
+            fontSize: isMobile ? 18 : 32, flexShrink: 0,
             border:"2px solid rgba(255,255,255,0.35)" }}>🏦</div>
-          <div style={{ fontSize: isMobile ? 17 : 22, fontWeight:800, color:C.white }}>HR Service Portal</div>
-          <div style={{ fontSize:11, color:"rgba(255,255,255,0.70)", marginTop:2 }}>Halyk Bank Group</div>
+          <div>
+            <div style={{ fontSize: isMobile ? 15 : 22, fontWeight:800, color:C.white, lineHeight:1.2 }}>HR Service Portal</div>
+            <div style={{ fontSize:10, color:"rgba(255,255,255,0.70)", marginTop:2 }}>Halyk Bank Group</div>
+          </div>
         </div>
 
         {/* Card */}
-        <div style={{ background:C.white, borderRadius:24, padding:isMobile?"16px 16px":"28px 28px",
+        <div style={{ background:C.white, borderRadius:24, padding:isMobile?"14px 14px":"28px 28px",
           maxWidth:440, width:"100%", boxShadow:"0 20px 60px rgba(0,0,0,0.25)" }}>
 
             {/* ── ШАГ 1: выбор компании ── */}
@@ -1162,70 +1165,61 @@ export default function App() {
         {/* ── HOME / WORKSPACE SELECTION ── */}
         {page === "home" && !selected && (
           <div>
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ fontSize: 10, color: C.gray500, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 4 }}>
-                Halyk Bank · HR Service Portal
-              </div>
-              <div style={{ fontSize: isMobile ? 18 : 24, fontWeight: 800, color: C.dark, marginBottom: 4 }}>
+            <div style={{ marginBottom: isMobile ? 12 : 20 }}>
+              <div style={{ fontSize: isMobile ? 16 : 24, fontWeight: 800, color: C.dark, marginBottom: 3 }}>
                 Выберите пространство
               </div>
-              <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.45 }}>
+              <div style={{ fontSize: 11, color: C.gray500 }}>
                 Портал покажет сервисы и данные, доступные именно вам.
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: isMobile ? 10 : 16 }}>
               {/* Мой HR */}
               <div onClick={() => navigate("catalog")}
-                style={{ background: C.white, borderRadius: 18, padding: "16px 18px", boxShadow: C.shadow,
+                style={{ background: C.white, borderRadius: 16, padding: isMobile ? "14px 12px" : "20px 18px", boxShadow: C.shadow,
                   cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
                   display: "flex", flexDirection: "column", gap: 0 }}
-                onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
-                onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
+                onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
               >
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: C.greenPale,
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, marginBottom: 10 }}>🏠</div>
-                <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Мой HR</div>
-                <div style={{ fontSize: 11, color: C.green, fontWeight: 700, marginBottom: 8 }}>Для всех сотрудников</div>
-                <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.5, marginBottom: 10, flex: 1 }}>
-                  Все HR-сервисы: справки, отпуск, зарплата, обучение, льготы, документы.
-                </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
-                  {["Кадровое","Отпуск","Зарплата","Обучение","C&B","Резерв"].map(t => (
-                    <span key={t} style={{ fontSize: 10, color: C.green, background: C.greenPale,
-                      borderRadius: 100, padding: "2px 8px", fontWeight: 600 }}>{t}</span>
+                <div style={{ width: isMobile ? 40 : 48, height: isMobile ? 40 : 48, borderRadius: 12, background: C.greenPale,
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 20 : 24, marginBottom: 8 }}>🏠</div>
+                <div style={{ fontSize: isMobile ? 14 : 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Мой HR</div>
+                <div style={{ fontSize: 10, color: C.green, fontWeight: 700, marginBottom: 6 }}>Для всех сотрудников</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 10 }}>
+                  {["Кадровое","Отпуск","Зарплата","Обучение"].map(t => (
+                    <span key={t} style={{ fontSize: 9, color: C.green, background: C.greenPale,
+                      borderRadius: 100, padding: "2px 6px", fontWeight: 600 }}>{t}</span>
                   ))}
                 </div>
-                <div style={{ background: C.green, color: C.white, borderRadius: 100, padding: "9px 0",
-                  textAlign: "center", fontSize: 13, fontWeight: 700, boxShadow: `0 4px 12px ${C.green}44` }}>
-                  → Открыть каталог
+                <div style={{ background: C.green, color: C.white, borderRadius: 100, padding: "8px 0",
+                  textAlign: "center", fontSize: isMobile ? 11 : 13, fontWeight: 700 }}>
+                  → Открыть
                 </div>
               </div>
 
               {/* Мой профиль */}
               <div onClick={() => navigate("profile")}
-                style={{ background: C.white, borderRadius: 18, padding: "16px 18px", boxShadow: C.shadow,
+                style={{ background: C.white, borderRadius: 16, padding: isMobile ? "14px 12px" : "20px 18px", boxShadow: C.shadow,
                   cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
                   display: "flex", flexDirection: "column", gap: 0 }}
-                onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.blue}`; e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
-                onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
+                onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.blue}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
               >
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: C.blue+"15",
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, marginBottom: 10 }}>👤</div>
-                <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 4 }}>Мой профиль</div>
-                <div style={{ fontSize: 11, color: C.blue, fontWeight: 700, marginBottom: 8 }}>Личный кабинет</div>
-                <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.5, marginBottom: 10, flex: 1 }}>
-                  Ваши показатели, остаток отпуска, трудовая дисциплина, активные заявки.
-                </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 12 }}>
-                  {["Показатели","Отпуск","Дисциплина","Заявки","Обучение"].map(t => (
-                    <span key={t} style={{ fontSize: 10, color: C.blue, background: C.blue+"15",
-                      borderRadius: 100, padding: "2px 8px", fontWeight: 600 }}>{t}</span>
+                <div style={{ width: isMobile ? 40 : 48, height: isMobile ? 40 : 48, borderRadius: 12, background: C.blue+"15",
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 20 : 24, marginBottom: 8 }}>👤</div>
+                <div style={{ fontSize: isMobile ? 14 : 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Мой профиль</div>
+                <div style={{ fontSize: 10, color: C.blue, fontWeight: 700, marginBottom: 6 }}>Личный кабинет</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 10 }}>
+                  {["Показатели","Отпуск","Заявки","Обучение"].map(t => (
+                    <span key={t} style={{ fontSize: 9, color: C.blue, background: C.blue+"15",
+                      borderRadius: 100, padding: "2px 6px", fontWeight: 600 }}>{t}</span>
                   ))}
                 </div>
-                <div style={{ background: C.blue, color: C.white, borderRadius: 100, padding: "9px 0",
-                  textAlign: "center", fontSize: 13, fontWeight: 700, boxShadow: `0 4px 12px ${C.blue}44` }}>
-                  → Открыть профиль
+                <div style={{ background: C.blue, color: C.white, borderRadius: 100, padding: "8px 0",
+                  textAlign: "center", fontSize: isMobile ? 11 : 13, fontWeight: 700 }}>
+                  → Открыть
                 </div>
               </div>
             </div>
