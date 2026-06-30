@@ -2616,28 +2616,10 @@ export default function App() {
                 ← В каталог услуг
               </button>
 
-              {/* Header + view switcher */}
+              {/* Header */}
               <div style={{ marginBottom:20 }}>
                 <h1 style={{ fontSize: isMobile?18:22, fontWeight:700, color:C.dark, margin:"0 0 4px" }}>Трек адаптации</h1>
-                <p style={{ color:C.gray500, fontSize:13, margin:"0 0 16px" }}>Алия Сейткали · {candidateOrg} · Испытательный срок: 3 месяца</p>
-                <div style={{ display:"flex", gap:0, background:C.white, borderRadius:10, border:`1px solid ${C.gray300}`, overflow:"hidden" }}>
-                  {[
-                    {v:"employee", label:"Новичок"},
-                    {v:"manager",  label:"Руководитель"},
-                    {v:"mentor",   label:"Наставник"},
-                    {v:"it",       label:"IT"},
-                    {v:"hr",       label:"HR"},
-                  ].map(({v,label}) => (
-                    <button key={v} onClick={() => setObView(v)} style={{
-                      flex:1, padding:"9px 4px", fontSize:isMobile?11:12, cursor:"pointer", fontFamily:"inherit",
-                      background: obView===v ? C.green : "transparent",
-                      color: obView===v ? C.white : C.gray700,
-                      border:"none", borderRight:`1px solid ${C.gray300}`,
-                      fontWeight: obView===v ? 700 : 400, minWidth:0,
-                      whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis",
-                    }}>{label}</button>
-                  ))}
-                </div>
+                <p style={{ color:C.gray500, fontSize:13, margin:0 }}>Алия Сейткали · {candidateOrg} · Испытательный срок: 3 месяца</p>
               </div>
 
               {/* ── EMPLOYEE VIEW (shared with IT) ── */}
