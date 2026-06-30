@@ -345,7 +345,6 @@ const NAV = [
   { id: "home",      icon: "⊞", label: "Главная" },
   { id: "catalog",   icon: "☰", label: "Каталог" },
   { id: "my",        icon: "⊟", label: "Мои заявки" },
-  { id: "onboarding",icon: "◉", label: "Онбординг" },
   { id: "analytics", icon: "⊡", label: "Аналитика" },
 ];
 
@@ -1397,7 +1396,10 @@ export default function App() {
                 const short = CAT_SHORT[c] || c;
                 return (
                   <div key={c}
-                    onClick={() => { setCatFilter(c); setSelectedGroup(null); setSearch(""); }}
+                    onClick={() => {
+                      if (c === "Онбординг") { navigate("onboarding"); return; }
+                      setCatFilter(c); setSelectedGroup(null); setSearch("");
+                    }}
                     style={{
                       display:"flex", alignItems:"center", gap:8,
                       padding: isMobile ? "9px 10px 9px 10px" : "10px 14px",
