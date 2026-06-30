@@ -352,14 +352,10 @@ const PORTAL_ROLES = [
   { id: "employee", icon: "👤", label: "Сотрудник",    short: "Сотрудник" },
 ];
 const COMPANIES = [
-  { id: "halyk",      name: "АО «Halyk Bank»",            sub: "Головной банк",          icon: "🏦" },
+  { id: "narodny",    name: "АО «Народный Банк»",         sub: "Головной банк",          icon: "🏦" },
   { id: "kaztel",     name: "АО «Казтелепорт»",           sub: "Телеком-сервисы",        icon: "📡" },
   { id: "finservice", name: "АО «Halyk Finservice»",      sub: "Финансовые услуги",      icon: "💳" },
-  { id: "insurance",  name: "АО «Halyk-Страхование»",     sub: "Страхование",            icon: "🛡️" },
-  { id: "leasing",    name: "АО «Halyk-Leasing»",         sub: "Лизинговые продукты",    icon: "🚗" },
-  { id: "finance",    name: "АО «Halyk Finance»",         sub: "Инвестиции и рынки",     icon: "📈" },
-  { id: "digital",    name: "Digital / IT-подразделения", sub: "Цифровые сервисы банка", icon: "💻" },
-  { id: "epf",        name: "ООИУПА «ЕНПФ»",             sub: "Пенсионный фонд",        icon: "🏛" },
+  { id: "digital",    name: "Digital",                    sub: "Цифровые сервисы банка", icon: "💻" },
 ];
 
 // ── Onboarding data ─────────────────────────────────────────────────────────
@@ -870,30 +866,30 @@ export default function App() {
           <div style={{ fontSize:16, fontWeight:700, color:C.dark, marginBottom:4 }}>Выберите вашу организацию</div>
           <div style={{ fontSize:13, color:C.gray500, marginBottom:20 }}>Для входа в портал подтвердите вашу компанию</div>
 
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:24 }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:20 }}>
             {COMPANIES.map(co => {
               const isActive = selectedCompany === co.id;
               return (
                 <div key={co.id} onClick={() => setSelectedCompany(co.id)}
                   style={{
-                    display:"flex", alignItems:"center", gap:10, padding:"12px 12px",
-                    borderRadius:14, cursor:"pointer", transition:"all .15s",
+                    display:"flex", alignItems:"center", gap:14, padding:"14px 16px",
+                    borderRadius:16, cursor:"pointer", transition:"all .15s",
                     border:`2px solid ${isActive ? C.green : C.gray300}`,
                     background: isActive ? C.greenPale : C.white,
                   }}
                   onMouseEnter={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.green}55`; e.currentTarget.style.background=C.greenPale+"55"; }}}
                   onMouseLeave={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.gray300}`; e.currentTarget.style.background=C.white; }}}
                 >
-                  <div style={{ width:36, height:36, borderRadius:10, flexShrink:0,
+                  <div style={{ width:44, height:44, borderRadius:13, flexShrink:0,
                     background: isActive ? C.green : C.gray100,
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:18,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22,
                     transition:"all .15s",
                   }}>{co.icon}</div>
                   <div style={{ minWidth:0 }}>
-                    <div style={{ fontSize:12, fontWeight:700, color:isActive?C.green:C.dark,
-                      lineHeight:1.25, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{co.name}</div>
-                    <div style={{ fontSize:10, color:C.gray500, marginTop:1 }}>{co.sub}</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:isActive?C.green:C.dark, lineHeight:1.25 }}>{co.name}</div>
+                    <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>{co.sub}</div>
                   </div>
+                  {isActive && <span style={{ marginLeft:"auto", fontSize:18, color:C.green, flexShrink:0 }}>✓</span>}
                 </div>
               );
             })}
