@@ -1124,6 +1124,12 @@ export default function App() {
           display:"flex", alignItems:"center", justifyContent:"space-between",
           padding:"0 16px", zIndex:200, boxShadow:"0 1px 0 rgba(0,0,0,0.06)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            {(page === "catalog" || page === "profile") && (
+              <button onClick={() => navigate("home")} style={{
+                background:"none", border:"none", cursor:"pointer", padding:"4px 6px 4px 0",
+                color:C.dark, fontSize:22, lineHeight:1, display:"flex", alignItems:"center",
+              }}>←</button>
+            )}
             <div style={{ width:36, height:36, borderRadius:12, background:C.green,
               display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, color:C.white, fontWeight:800 }}>H</div>
             <div>
