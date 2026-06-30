@@ -1167,25 +1167,25 @@ export default function App() {
 
         {/* ── HOME / WORKSPACE SELECTION ── */}
         {page === "home" && !selected && (
-          <div style={{ display:"flex", flexDirection:"column", justifyContent:"center",
-            minHeight: isMobile ? "calc(100vh - 140px)" : "calc(100vh - 120px)" }}>
+          <div style={{ display:"flex", flexDirection:"column",
+            height: isMobile ? "calc(100vh - 140px)" : "calc(100vh - 120px)" }}>
             {/* Greeting banner */}
             <div style={{ background:`linear-gradient(135deg, ${C.green} 0%, ${C.greenDark} 100%)`,
               borderRadius:20, padding: isMobile ? "20px 18px" : "28px 32px",
-              marginBottom:16, position:"relative", overflow:"hidden" }}>
+              marginBottom:14, position:"relative", overflow:"hidden", flexShrink:0 }}>
               <div style={{ position:"absolute", top:-20, right:-20, width:100, height:100,
                 borderRadius:"50%", background:"rgba(255,255,255,0.08)", pointerEvents:"none" }}/>
-              <div style={{ fontSize:11, color:"rgba(255,255,255,0.7)", fontWeight:600,
-                textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Добро пожаловать</div>
-              <div style={{ fontSize: isMobile ? 20 : 26, fontWeight:800, color:C.white, marginBottom:4 }}>
+              <div style={{ fontSize:10, color:"rgba(255,255,255,0.7)", fontWeight:600,
+                textTransform:"uppercase", letterSpacing:1, marginBottom:4 }}>Добро пожаловать</div>
+              <div style={{ fontSize: isMobile ? 18 : 26, fontWeight:800, color:C.white, marginBottom:3 }}>
                 Фируза Б.
               </div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,0.75)" }}>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,0.75)" }}>
                 ДУП · HR Specialist · АО «Народный Банк»
               </div>
             </div>
-            <div style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: isMobile ? 15 : 20, fontWeight: 800, color: C.dark, marginBottom: 2 }}>
+            <div style={{ marginBottom: 10, flexShrink:0 }}>
+              <div style={{ fontSize: isMobile ? 14 : 20, fontWeight: 800, color: C.dark, marginBottom: 2 }}>
                 Выберите пространство
               </div>
               <div style={{ fontSize: 11, color: C.gray500 }}>
@@ -1193,55 +1193,55 @@ export default function App() {
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
               {/* Мой HR */}
               <div onClick={() => navigate("catalog")}
-                style={{ background: C.white, borderRadius: 16, padding: "14px 16px", boxShadow: C.shadow,
+                style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
                   cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                  display: "flex", alignItems: "center", gap: 14 }}
+                  display: "flex", alignItems: "center", gap: 14, flex: 1 }}
                 onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
                 onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
               >
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: C.greenPale,
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>🏠</div>
+                <div style={{ width: 52, height: 52, borderRadius: 14, background: C.greenPale,
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>🏠</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: C.dark, marginBottom: 2 }}>Мой HR</div>
-                  <div style={{ fontSize: 11, color: C.green, fontWeight: 600, marginBottom: 5 }}>Справки, отпуск, зарплата, обучение, льготы</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Мой HR</div>
+                  <div style={{ fontSize: 11, color: C.green, fontWeight: 600, marginBottom: 7 }}>Справки, отпуск, зарплата, обучение, льготы</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                     {["Кадровое","Отпуск","Зарплата","Обучение","C&B"].map(t => (
-                      <span key={t} style={{ fontSize: 9, color: C.green, background: C.greenPale,
-                        borderRadius: 100, padding: "2px 6px", fontWeight: 600 }}>{t}</span>
+                      <span key={t} style={{ fontSize: 10, color: C.green, background: C.greenPale,
+                        borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
                     ))}
                   </div>
                 </div>
-                <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.green,
+                <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.green,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  color: C.white, fontSize: 16, fontWeight: 700, flexShrink: 0 }}>→</div>
+                  color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
               </div>
 
               {/* Мой профиль */}
               <div onClick={() => navigate("profile")}
-                style={{ background: C.white, borderRadius: 16, padding: "14px 16px", boxShadow: C.shadow,
+                style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
                   cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                  display: "flex", alignItems: "center", gap: 14 }}
+                  display: "flex", alignItems: "center", gap: 14, flex: 1 }}
                 onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.blue}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
                 onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
               >
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: C.blue+"15",
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>👤</div>
+                <div style={{ width: 52, height: 52, borderRadius: 14, background: C.blue+"15",
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👤</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: C.dark, marginBottom: 2 }}>Мой профиль</div>
-                  <div style={{ fontSize: 11, color: C.blue, fontWeight: 600, marginBottom: 5 }}>Показатели, дисциплина, заявки, обучение</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                  <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Мой профиль</div>
+                  <div style={{ fontSize: 11, color: C.blue, fontWeight: 600, marginBottom: 7 }}>Показатели, дисциплина, заявки, обучение</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                     {["Показатели","Отпуск","Дисциплина","Заявки"].map(t => (
-                      <span key={t} style={{ fontSize: 9, color: C.blue, background: C.blue+"15",
-                        borderRadius: 100, padding: "2px 6px", fontWeight: 600 }}>{t}</span>
+                      <span key={t} style={{ fontSize: 10, color: C.blue, background: C.blue+"15",
+                        borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
                     ))}
                   </div>
                 </div>
-                <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.blue,
+                <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.blue,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  color: C.white, fontSize: 16, fontWeight: 700, flexShrink: 0 }}>→</div>
+                  color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
               </div>
             </div>
           </div>
