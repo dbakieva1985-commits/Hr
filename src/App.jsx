@@ -1843,6 +1843,52 @@ export default function App() {
               )}
             </div>
 
+            {/* Mentor: Спасибо */}
+            {portalRole === "mentor" && (() => {
+              const total = obSpasibo;
+              const next  = SPASIBO_REWARDS.find(r=>r.n > total);
+              const prev  = [...SPASIBO_REWARDS].reverse().find(r=>r.n <= total);
+              const pct   = next ? Math.round((total-(prev?.n||0))/(next.n-(prev?.n||0))*100) : 100;
+              return (
+                <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, padding:isMobile?"16px":"20px" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Мои «Спасибо»</div>
+                    <div style={{ fontSize:24, fontWeight:800, color:C.green }}>{total} <span style={{ fontSize:14 }}>⭐</span></div>
+                  </div>
+                  {spasiboSent && (
+                    <div style={{ background:C.greenPale, border:`1px solid ${C.green}30`, borderRadius:10, padding:"8px 12px", marginBottom:12 }}>
+                      <div style={{ fontSize:12, fontWeight:700, color:C.green }}>Новое Спасибо от новичка!</div>
+                      <div style={{ fontSize:11, color:C.dark, marginTop:2 }}>«Быстро помогла разобраться с системой»</div>
+                      <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>от Алия Сейткали · только что</div>
+                    </div>
+                  )}
+                  {next && (<>
+                    <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                      <span style={{ fontSize:11, color:C.gray500 }}>До следующей награды</span>
+                      <span style={{ fontSize:11, fontWeight:700, color:C.green }}>{next.n - total} Спасибо</span>
+                    </div>
+                    <div style={{ height:7, background:C.gray100, borderRadius:4, marginBottom:12, overflow:"hidden" }}>
+                      <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:4 }} />
+                    </div>
+                  </>)}
+                  <div style={{ fontSize:12, fontWeight:700, color:C.dark, marginBottom:8 }}>Магазин наград</div>
+                  <div style={{ display:"flex", gap:6, overflowX:"auto", paddingBottom:4 }}>
+                    {SPASIBO_REWARDS.map(r => {
+                      const unlocked = total >= r.n;
+                      return (
+                        <div key={r.n} style={{ minWidth:74, background:unlocked?C.greenPale:C.gray100, border:`1.5px solid ${unlocked?C.green:C.gray300}`, borderRadius:10, padding:"10px 6px", textAlign:"center", flexShrink:0 }}>
+                          <div style={{ fontSize:20, marginBottom:4 }}>{r.icon}</div>
+                          <div style={{ fontSize:11, fontWeight:800, color:unlocked?C.green:C.dark }}>{r.n} ⭐</div>
+                          <div style={{ fontSize:9, color:C.gray500, marginTop:2, lineHeight:1.3 }}>{r.reward}</div>
+                          {unlocked && <div style={{ fontSize:9, color:C.green, fontWeight:700, marginTop:3 }}>Обменять</div>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Mentor: Мой подопечный */}
             {portalRole === "mentor" && (() => {
               const done = obMentorTasks.filter(t=>t.done).length;
