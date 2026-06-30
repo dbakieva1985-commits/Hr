@@ -700,7 +700,7 @@ export default function App() {
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
-  const [catFilter, setCatFilter] = useState("Все");
+  const [catFilter, setCatFilter] = useState("Подбор персонала");
   const [search, setSearch] = useState("");
   const GROUP_ICONS = {
     "Трудовая дисциплина": "📜",
