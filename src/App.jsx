@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
-const _v = "6.5";
+const _v = "7.0";
 // ── Design tokens ──────────────────────────────────────────────────────────
 const C = {
-  bg:       "#FFFFFF",
+  bg:       "#F0F2F5",   // Revolut-style light gray page background
   white:    "#FFFFFF",
-  dark:     "#111827",
-  green:    "#00843D",   // Halyk green — corporate dark emerald
+  dark:     "#0D1117",
+  green:    "#00843D",
   greenDark:"#006830",
   greenMid: "#009B4A",
   greenPale:"#E6F5EE",
   gray700:  "#374151",
   gray500:  "#6B7280",
   gray300:  "#E5E7EB",
-  gray100:  "#F3F4F6",
+  gray100:  "#F7F9FC",
   orange:   "#EA7C1E",
   blue:     "#1D5CB4",
   red:      "#DC2626",
+  card:     "#FFFFFF",   // card surface
+  shadow:   "0 2px 12px rgba(0,0,0,0.07)",
+  shadowMd: "0 4px 24px rgba(0,0,0,0.10)",
 };
 
 // ── Data ───────────────────────────────────────────────────────────────────
@@ -200,18 +203,23 @@ const CATS = [
 
 // ── Tiny helpers ────────────────────────────────────────────────────────────
 const Badge = ({ text, color = C.green }) => (
-  <span style={{ background: color + "18", color, border: `1px solid ${color}40`,
-    borderRadius: 6, padding: "2px 10px", fontSize: 11, fontWeight: 700 }}>
+  <span style={{ background: color + "15", color, borderRadius: 100,
+    padding: "3px 10px", fontSize: 11, fontWeight: 700, whiteSpace: "nowrap" }}>
     {text}
   </span>
 );
 
 const Pill = ({ text, active, onClick }) => (
   <button onClick={onClick} style={{
-    background: active ? C.green : C.white, color: active ? C.white : C.gray700,
-    border: `1px solid ${active ? C.green : C.gray300}`, borderRadius: 20,
-    padding: "6px 16px", fontSize: 13, cursor: "pointer", transition: "all .15s",
-    fontFamily: "inherit", fontWeight: active ? 600 : 400
+    background: active ? C.green : C.white,
+    color: active ? C.white : C.gray700,
+    border: "none",
+    borderRadius: 100,
+    padding: "8px 18px",
+    fontSize: 13, cursor: "pointer", transition: "all .15s",
+    fontFamily: "inherit", fontWeight: active ? 700 : 500,
+    boxShadow: active ? `0 2px 12px ${C.green}44` : "0 1px 4px rgba(0,0,0,0.08)",
+    whiteSpace: "nowrap", flexShrink: 0,
   }}>{text}</button>
 );
 
@@ -235,10 +243,13 @@ const Btn = ({ children, onClick, variant = "primary", small }) => (
   <button onClick={onClick} style={{
     background: variant === "primary" ? C.green : variant === "ghost" ? "transparent" : C.gray100,
     color: variant === "primary" ? C.white : C.gray700,
-    border: variant === "ghost" ? `1px solid ${C.gray300}` : "none",
-    borderRadius: 8, padding: small ? "6px 14px" : "10px 20px",
-    fontSize: small ? 12 : 14, fontWeight: 600, cursor: "pointer",
-    fontFamily: "inherit", transition: "opacity .15s"
+    border: variant === "ghost" ? `1.5px solid ${C.gray300}` : "none",
+    borderRadius: 100,
+    padding: small ? "7px 16px" : "11px 24px",
+    fontSize: small ? 12 : 14, fontWeight: 700, cursor: "pointer",
+    fontFamily: "inherit", transition: "all .15s",
+    boxShadow: variant === "primary" ? `0 2px 8px ${C.green}40` : "none",
+    letterSpacing: 0.1,
   }}>{children}</button>
 );
 
@@ -793,27 +804,35 @@ export default function App() {
       <div style={{ width: sideW, background: C.dark, display: isMobile ? "none" : "flex", flexDirection: "column",
         position: "fixed", top: 0, left: 0, height: "100vh", zIndex: 100 }}>
         {/* Logo */}
-        <div style={{ padding: "24px 20px 16px" }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: C.green, letterSpacing: 2, marginBottom: 4 }}>HALYK BANK</div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.2 }}>HR Service<br/>Portal</div>
+        <div style={{ padding: "28px 20px 20px" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:0 }}>
+            <div style={{ width:36, height:36, borderRadius:12, background:C.green,
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, color:C.white, fontWeight:800 }}>H</div>
+            <div>
+              <div style={{ fontSize:14, fontWeight:800, color:C.white, lineHeight:1.2 }}>HR Portal</div>
+              <div style={{ fontSize:10, color:"#FFFFFF55", fontWeight:500 }}>Halyk Bank</div>
+            </div>
+          </div>
         </div>
-        <div style={{ height: 1, background: "#FFFFFF18", margin: "0 16px" }} />
+        <div style={{ height: 1, background: "#FFFFFF10", margin: "0 16px 8px" }} />
 
         {/* Nav */}
-        <nav style={{ padding: "12px 10px", flex: 1 }}>
-          {NAV.map(n => (
-            <button key={n.id} onClick={() => { navigate(n.id); setDetail(null); }} style={{
-              display: "flex", alignItems: "center", gap: 10, width: "100%",
-              padding: "10px 12px", borderRadius: 8, border: "none",
-              background: page === n.id ? C.green + "30" : "transparent",
-              color: page === n.id ? C.white : "#FFFFFF99",
-              fontSize: 13, fontWeight: page === n.id ? 600 : 400,
-              cursor: "pointer", fontFamily: "inherit", marginBottom: 2, transition: "all .15s",
-              borderLeft: page === n.id ? `3px solid ${C.green}` : "3px solid transparent"
-            }}>
-              <span style={{ fontSize: 16 }}>{n.icon}</span> {n.label}
-            </button>
-          ))}
+        <nav style={{ padding: "8px 10px", flex: 1 }}>
+          {NAV.map(n => {
+            const isActive = page === n.id;
+            return (
+              <button key={n.id} onClick={() => { navigate(n.id); setDetail(null); }} style={{
+                display: "flex", alignItems: "center", gap: 10, width: "100%",
+                padding: "11px 14px", borderRadius: 12, border: "none",
+                background: isActive ? C.green : "transparent",
+                color: isActive ? C.white : "#FFFFFF70",
+                fontSize: 13, fontWeight: isActive ? 700 : 500,
+                cursor: "pointer", fontFamily: "inherit", marginBottom: 3, transition: "all .15s",
+              }}>
+                <span style={{ fontSize: 17 }}>{n.icon}</span> {n.label}
+              </button>
+            );
+          })}
         </nav>
 
         {/* Role switcher */}
@@ -853,40 +872,46 @@ export default function App() {
         </div>
       </div>
 
-      {/* Mobile bottom nav */}
+      {/* Mobile bottom nav — Revolut style */}
       {isMobile && (
-        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:58, background:C.white,
-          borderTop:`1px solid ${C.gray300}`, display:"flex", zIndex:200, boxShadow:"0 -2px 8px rgba(0,0,0,0.08)" }}>
-          {NAV.map(n => (
-            <button key={n.id} onClick={() => { navigate(n.id); setDetail(null); }} style={{
-              flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-              background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
-              color: page===n.id ? C.green : C.gray500, padding:"6px 0",
-            }}>
-              <span style={{ fontSize:20, lineHeight:1 }}>{n.icon}</span>
-              <span style={{ fontSize:9, fontWeight: page===n.id ? 700 : 400, marginTop:3 }}>{n.label}</span>
-            </button>
-          ))}
+        <nav style={{ position:"fixed", bottom:0, left:0, right:0, height:66, background:C.white,
+          display:"flex", zIndex:200, boxShadow:"0 -1px 0 rgba(0,0,0,0.06), 0 -4px 16px rgba(0,0,0,0.06)" }}>
+          {NAV.map(n => {
+            const isActive = page === n.id;
+            return (
+              <button key={n.id} onClick={() => { navigate(n.id); setDetail(null); }} style={{
+                flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+                background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
+                color: isActive ? C.green : C.gray500, padding:"6px 0", gap:4,
+                position:"relative",
+              }}>
+                {isActive && <div style={{ position:"absolute", top:0, left:"50%", transform:"translateX(-50%)",
+                  width:24, height:3, borderRadius:100, background:C.green }} />}
+                <span style={{ fontSize:22, lineHeight:1 }}>{n.icon}</span>
+                <span style={{ fontSize:10, fontWeight: isActive ? 700 : 500 }}>{n.label}</span>
+              </button>
+            );
+          })}
         </nav>
       )}
 
-      {/* Mobile top header */}
+      {/* Mobile top header — clean white Revolut style */}
       {isMobile && (
-        <div style={{ position:"fixed", top:0, left:0, right:0, height:56, background:C.green,
+        <div style={{ position:"fixed", top:0, left:0, right:0, height:60, background:C.white,
           display:"flex", alignItems:"center", justifyContent:"space-between",
-          padding:"0 16px", zIndex:200 }}>
+          padding:"0 16px", zIndex:200, boxShadow:"0 1px 0 rgba(0,0,0,0.06)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            <div style={{ width:32, height:32, borderRadius:8, background:"rgba(255,255,255,0.25)",
-              display:"flex", alignItems:"center", justifyContent:"center", fontSize:15, color:C.white, fontWeight:800 }}>H</div>
+            <div style={{ width:36, height:36, borderRadius:12, background:C.green,
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, color:C.white, fontWeight:800 }}>H</div>
             <div>
-              <div style={{ fontSize:13, fontWeight:700, color:C.white }}>HR Service Portal</div>
-              <div style={{ fontSize:10, color:"rgba(255,255,255,0.8)" }}>Halyk Bank</div>
+              <div style={{ fontSize:14, fontWeight:700, color:C.dark, lineHeight:1.2 }}>HR Portal</div>
+              <div style={{ fontSize:10, color:C.gray500, fontWeight:500 }}>Halyk Bank</div>
             </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
             <select value={currentRole} onChange={e => setCurrentRole(e.target.value)}
-              style={{ background:"rgba(255,255,255,0.2)", color:C.white, border:"1px solid rgba(255,255,255,0.3)",
-                borderRadius:8, padding:"5px 8px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none" }}>
+              style={{ background:C.gray100, color:C.dark, border:"none",
+                borderRadius:100, padding:"6px 10px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none", fontWeight:600 }}>
               {[
                 { id:"recruiter", label:"Рекрутер ДО" },
                 { id:"do",        label:"Рук-ль ДО" },
@@ -895,119 +920,180 @@ export default function App() {
                 { id:"hr_dir",    label:"HRD ГБ" },
                 { id:"do_date",   label:"ДО (дата)" },
                 { id:"uap",       label:"УАП ГБ" },
-              ].map(r => <option key={r.id} value={r.id} style={{ background:C.dark }}>{r.label}</option>)}
+              ].map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
             </select>
-            <div style={{ width:30, height:30, borderRadius:"50%", background:"rgba(255,255,255,0.25)",
-              display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:C.white, fontWeight:700 }}>Ф</div>
+            <div style={{ width:34, height:34, borderRadius:"50%", background:C.greenPale,
+              display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, color:C.green, fontWeight:800,
+              border:`2px solid ${C.green}30` }}>Ф</div>
           </div>
         </div>
       )}
 
       {/* Main */}
       <div style={{ marginLeft: sideW, flex: 1,
-        padding: isMobile ? "68px 16px 80px" : "32px 36px",
+        padding: isMobile ? "72px 14px 86px" : "32px 40px",
         maxWidth: isMobile ? "100vw" : `calc(100vw - ${sideW}px)`,
-        boxSizing: "border-box", background: C.gray100 }}>
+        boxSizing: "border-box", background: C.bg }}>
 
         {/* ── HOME ── */}
-        {page === "home" && !selected && (
+        {page === "home" && !selected && (() => {
+          const QUICK = [
+            { icon: "📋", label: "Подать\nзаявку",   action: () => navigate("catalog") },
+            { icon: "📁", label: "Мои\nзаявки",      action: () => navigate("requests") },
+            { icon: "🎉", label: "Онбординг",         action: () => navigate("onboarding") },
+            { icon: "📊", label: "Аналитика",         action: () => navigate("analytics") },
+          ];
+          const POP_IDS = [2, 15, 9, 26, 59, 45];
+          const popular = SERVICES.filter(s => POP_IDS.includes(s.id) && !s.hidden);
+          return (
           <div>
-            {/* Welcome */}
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: isMobile ? 18 : 22, fontWeight: 700, color: C.dark }}>Добро пожаловать 👋</div>
-              <div style={{ fontSize: 13, color: C.gray500, marginTop: 4 }}>HR Service Portal · Halyk Bank · ДУП</div>
-            </div>
-
-            {/* Onboarding banner */}
-            <div onClick={() => navigate("onboarding")} style={{
-              background: `linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`,
-              borderRadius: 14, padding: "18px 20px", marginBottom: 22,
-              cursor: "pointer", color: C.white,
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-              boxShadow: `0 4px 16px ${C.green}44`
+            {/* Hero card — Revolut style */}
+            <div style={{
+              background: `linear-gradient(145deg, ${C.green} 0%, ${C.greenMid} 55%, #00A855 100%)`,
+              borderRadius: isMobile ? 20 : 24,
+              padding: isMobile ? "24px 20px 28px" : "32px 32px 36px",
+              marginBottom: 20,
+              boxShadow: `0 8px 32px ${C.green}55`,
+              position: "relative", overflow: "hidden",
             }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>🎉 Онбординг нового сотрудника</div>
-                <div style={{ fontSize: 12, opacity: 0.9 }}>Pre-boarding → Неделя 1 → Месяц 1 → Месяц 3</div>
+              {/* decorative circle */}
+              <div style={{ position:"absolute", top:-40, right:-30, width:160, height:160, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
+              <div style={{ position:"absolute", bottom:-60, right:60, width:200, height:200, borderRadius:"50%", background:"rgba(255,255,255,0.05)", pointerEvents:"none" }} />
+
+              <div style={{ fontSize: 12, color:"rgba(255,255,255,0.75)", fontWeight:600, marginBottom:6, letterSpacing:0.5 }}>
+                HALYK BANK · HR SERVICE PORTAL
               </div>
-              <div style={{ fontSize: 22, opacity: 0.9 }}>›</div>
+              <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 800, color: C.white, marginBottom: 4, lineHeight: 1.2 }}>
+                Добро пожаловать,<br/>Фируза 👋
+              </div>
+              <div style={{ fontSize: 13, color:"rgba(255,255,255,0.80)", marginBottom: 20 }}>
+                ДУП · HR Specialist
+              </div>
+              <div style={{ display:"flex", gap: isMobile ? 16 : 32 }}>
+                {[
+                  { label: "Сервисов", value: SERVICES.filter(s=>!s.hidden).length },
+                  { label: "Мои заявки", value: requests.length },
+                  { label: "В работе", value: requests.filter(r=>r.status==="inwork").length },
+                ].map(st => (
+                  <div key={st.label}>
+                    <div style={{ fontSize: isMobile ? 22 : 26, fontWeight:800, color:C.white }}>{st.value}</div>
+                    <div style={{ fontSize: 11, color:"rgba(255,255,255,0.70)", marginTop:2 }}>{st.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Quick service cards */}
-            <div style={{ fontSize: 13, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 12 }}>Популярные сервисы</div>
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4,1fr)", gap: 10, marginBottom: 24 }}>
-              {SERVICES.slice(0,4).map(s => (
+            {/* Quick actions — Revolut circular buttons */}
+            <div style={{ background:C.card, borderRadius:20, padding: isMobile ? "16px 8px" : "20px 16px",
+              boxShadow: C.shadow, marginBottom:16,
+              display:"flex", justifyContent:"space-around" }}>
+              {QUICK.map(q => (
+                <button key={q.label} onClick={q.action} style={{
+                  background:"none", border:"none", cursor:"pointer", fontFamily:"inherit",
+                  display:"flex", flexDirection:"column", alignItems:"center", gap:8, padding: "4px 8px",
+                }}>
+                  <div style={{ width: isMobile ? 52 : 60, height: isMobile ? 52 : 60, borderRadius:"50%",
+                    background: C.greenPale, display:"flex", alignItems:"center", justifyContent:"center",
+                    fontSize: isMobile ? 22 : 26, boxShadow: `0 2px 8px ${C.green}22`,
+                    transition:"transform .15s"
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.transform="scale(1.07)"}
+                    onMouseLeave={e => e.currentTarget.style.transform="scale(1)"}
+                  >{q.icon}</div>
+                  <span style={{ fontSize:11, fontWeight:600, color:C.gray700, textAlign:"center", whiteSpace:"pre-line", lineHeight:1.3 }}>{q.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Popular services */}
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
+              <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Популярные сервисы</div>
+              <button onClick={() => navigate("catalog")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Все →</button>
+            </div>
+            <div style={{ background:C.card, borderRadius:20, overflow:"hidden", boxShadow:C.shadow, marginBottom:16 }}>
+              {popular.map((s, i) => (
                 <div key={s.id} onClick={() => { setSelected(s); setPage("form"); }}
-                  style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`,
-                    padding: "16px 14px", cursor: "pointer", transition: "box-shadow .15s" }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.10)"}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}>
-                  <div style={{ width: 42, height: 42, borderRadius: 10, background: C.greenPale,
-                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 10 }}>{s.icon}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark, marginBottom: 3 }}>{s.title}</div>
-                  <div style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</div>
+                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", cursor:"pointer",
+                    borderBottom: i < popular.length-1 ? `1px solid ${C.gray300}` : "none",
+                    transition:"background .12s" }}
+                  onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <div style={{ width:44, height:44, borderRadius:14, background:C.greenPale, flexShrink:0,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>{s.icon}</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:14, fontWeight:600, color:C.dark, lineHeight:1.3 }}>{s.title}</div>
+                    <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>⏱ {s.sla}</div>
+                  </div>
+                  <span style={{ fontSize:18, color:C.gray300 }}>›</span>
                 </div>
               ))}
             </div>
 
             {/* Recent requests */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.8 }}>Последние заявки</div>
-              <button onClick={() => setPage("my")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Все ›</button>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
+              <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Последние заявки</div>
+              <button onClick={() => navigate("requests")} style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>Все →</button>
             </div>
-            <div style={{ background: C.white, borderRadius: 12, border: `1px solid ${C.gray300}`, overflow: "hidden" }}>
+            <div style={{ background:C.card, borderRadius:20, overflow:"hidden", boxShadow:C.shadow }}>
               {requests.slice(0,3).map((r, i) => (
-                <div key={r.id} onClick={() => { setDetail(r); setPage("my"); }}
-                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 16px", cursor:"pointer",
-                    borderBottom: i < 2 ? `1px solid ${C.gray300}` : "none" }}>
-                  <div style={{ width:38, height:38, borderRadius:10, background:C.greenPale,
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, flexShrink:0 }}>{r.icon}</div>
-                  <div style={{ flex:1 }}>
-                    <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{r.title}</div>
-                    <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>{r.id} · {r.date}</div>
+                <div key={r.id} onClick={() => { setDetail(r); navigate("requests"); }}
+                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", cursor:"pointer",
+                    borderBottom: i < 2 ? `1px solid ${C.gray300}` : "none",
+                    transition:"background .12s" }}
+                  onMouseEnter={e=>e.currentTarget.style.background=C.gray100}
+                  onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+                  <div style={{ width:44, height:44, borderRadius:14, background:C.greenPale, flexShrink:0,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22 }}>{r.icon}</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:14, fontWeight:600, color:C.dark }}>{r.title}</div>
+                    <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>{r.id} · {r.date}</div>
                   </div>
                   <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
                 </div>
               ))}
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* ── CATALOG ── */}
         {page === "catalog" && !selected && (
           <div>
             {/* Header */}
             {selectedGroup ? (
-              <div style={{ marginBottom: 22 }}>
+              <div style={{ marginBottom: 20 }}>
                 <button onClick={() => setSelectedGroup(null)} style={{
-                  background: "none", border: "none", color: C.green, fontSize: 13,
-                  fontWeight: 600, cursor: "pointer", padding: 0, fontFamily: "inherit", marginBottom: 10
-                }}>← Все группы</button>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: 14, background: C.greenPale,
-                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
-                    border: `1px solid ${C.green}22`, flexShrink: 0 }}>
+                  background: C.card, border: "none", color: C.green, fontSize: 13,
+                  fontWeight: 700, cursor: "pointer", padding: "8px 16px", fontFamily: "inherit", marginBottom: 14,
+                  borderRadius: 100, boxShadow: C.shadow, display:"inline-flex", alignItems:"center", gap:6
+                }}>← Назад</button>
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 18, background: C.greenPale,
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>
                     {GROUP_ICONS[selectedGroup] || "📝"}
                   </div>
-                  <h1 style={{ fontSize: 22, fontWeight: 700, color: C.dark, margin: 0 }}>{selectedGroup}</h1>
+                  <h1 style={{ fontSize: 22, fontWeight: 800, color: C.dark, margin: 0 }}>{selectedGroup}</h1>
                 </div>
               </div>
             ) : (
-              <div style={{ marginBottom: 22 }}>
-                <h1 style={{ fontSize: 24, fontWeight: 700, color: C.dark, margin: 0 }}>Каталог HR-сервисов</h1>
-                <p style={{ color: C.gray500, fontSize: 14, marginTop: 6 }}>Выберите нужную услугу и подайте заявку</p>
+              <div style={{ marginBottom: 20 }}>
+                <h1 style={{ fontSize: isMobile ? 22 : 26, fontWeight: 800, color: C.dark, margin: 0 }}>Каталог HR-сервисов</h1>
+                <p style={{ color: C.gray500, fontSize: 14, marginTop: 6, fontWeight:500 }}>Выберите нужную услугу и подайте заявку</p>
               </div>
             )}
 
-            {/* Search + filters */}
-            <div style={{ display: "flex", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
+            {/* Search */}
+            <div style={{ position:"relative", marginBottom:14 }}>
+              <span style={{ position:"absolute", left:16, top:"50%", transform:"translateY(-50%)", fontSize:16, pointerEvents:"none" }}>🔍</span>
               <input value={search} onChange={e => { setSearch(e.target.value); setSelectedGroup(null); }}
-                placeholder="🔍  Поиск сервиса..."
-                style={{ flex: 1, minWidth: 200, border: `1px solid ${C.gray300}`,
-                  borderRadius: 8, padding: "8px 14px", fontSize: 13,
-                  fontFamily: "inherit", color: C.dark, outline: "none" }} />
+                placeholder="Поиск сервиса..."
+                style={{ width:"100%", boxSizing:"border-box", border:"none", background:C.card,
+                  borderRadius:100, padding:"12px 18px 12px 44px", fontSize:14,
+                  fontFamily:"inherit", color:C.dark, outline:"none", boxShadow:C.shadow }} />
             </div>
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
+            {/* Category pills — horizontal scroll, no wrap */}
+            <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:8, marginBottom:18,
+              scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
               {["Все", ...CATS].map(c => (
                 <Pill key={c} text={c} active={catFilter === c} onClick={() => { setCatFilter(c); setSelectedGroup(null); }} />
               ))}
@@ -1016,49 +1102,48 @@ export default function App() {
             {(() => {
               const ServiceCard = ({ s }) => s.featured ? (
                 <div style={{
-                  background: C.white, borderRadius: 16, border: `2px solid ${C.green}55`,
-                  overflow: "hidden", boxShadow: `0 4px 20px ${C.green}1A`,
+                  background: C.card, borderRadius: 20,
+                  overflow: "hidden", boxShadow: C.shadowMd,
                   display: "flex", flexDirection: "column"
                 }}>
                   <div style={{
-                    background: `linear-gradient(135deg, ${C.green} 0%, ${C.greenMid} 100%)`,
-                    padding: "22px 16px 18px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10
+                    background: `linear-gradient(145deg, ${C.green} 0%, ${C.greenMid} 100%)`,
+                    padding: "28px 20px 22px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10
                   }}>
-                    <div style={{ fontSize: 48, lineHeight: 1 }}>{s.icon}</div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", textAlign: "center", lineHeight: 1.3 }}>{s.title}</div>
+                    <div style={{ fontSize: 52, lineHeight: 1 }}>{s.icon}</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", textAlign: "center", lineHeight: 1.3 }}>{s.title}</div>
                   </div>
-                  <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", flex: 1 }}>
-                    <div style={{ fontSize: 12, color: C.gray500, lineHeight: 1.7, flex: 1 }}>{s.desc}</div>
-                    <div style={{ marginTop: 10, fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</div>
+                  <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", flex: 1 }}>
+                    <div style={{ fontSize: 13, color: C.gray500, lineHeight: 1.7, flex: 1, whiteSpace:"pre-line" }}>{s.desc}</div>
+                    <div style={{ marginTop: 12, fontSize: 12, color: C.gray500 }}>⏱ {s.sla}</div>
                   </div>
                 </div>
               ) : (
                 <div style={{
-                  background: C.white, borderRadius: 16, border: `1px solid ${C.gray300}`,
-                  padding: "16px", cursor: "pointer", transition: "box-shadow .15s",
-                  display: "flex", flexDirection: "column"
+                  background: C.card, borderRadius: 20,
+                  padding: "18px 18px 16px", cursor: "pointer", transition: "box-shadow .15s, transform .15s",
+                  display: "flex", flexDirection: "column", boxShadow: C.shadow,
                 }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 14px #0000000F"}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = "none"}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 12, background: C.greenPale,
-                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0,
-                      border: `1px solid ${C.green}22` }}>
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = C.shadowMd; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = C.shadow; e.currentTarget.style.transform = "translateY(0)"; }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 16, background: C.greenPale,
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }}>
                       {s.icon}
                     </div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: C.green, textTransform: "uppercase", letterSpacing: 0.5, lineHeight: 1.4 }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, color: C.green, textTransform: "uppercase", letterSpacing: 0.8, lineHeight: 1.4 }}>
                       {s.group || s.cat}
                     </div>
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 5 }}>{s.title}</div>
-                  <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 12, lineHeight: 1.5 }}>{s.desc}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 6, lineHeight: 1.3 }}>{s.title}</div>
+                  <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 14, lineHeight: 1.6 }}>{s.desc}</div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 11, color: C.gray500 }}>⏱ {s.sla}</span>
+                    <span style={{ fontSize: 11, color: C.gray500, fontWeight:500 }}>⏱ {s.sla}</span>
                     <div style={{ display: "flex", gap: 6 }}>
                       {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link, "_blank"); } else { setSelected(s); setPage("form"); } }}>
                         {s.btnText || (s.isOnboarding || s.link ? "Открыть" : "Подать заявку")}
                       </Btn>}
-                      {s.secondBtnText && <Btn small onClick={() => { const sec = SERVICES.find(x => x.id === s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
+                      {s.secondBtnText && <Btn small variant="ghost" onClick={() => { const sec = SERVICES.find(x => x.id === s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
                         {s.secondBtnText}
                       </Btn>}
                     </div>
@@ -1097,22 +1182,22 @@ export default function App() {
                         const count = filteredServices.filter(s => s.group === grp).length;
                         return (
                           <div key={grp} onClick={() => setSelectedGroup(grp)}
-                            style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.gray300}`,
-                              padding: isMobile ? "16px 12px" : "20px 18px", cursor: "pointer",
-                              transition: "box-shadow .15s, border-color .15s",
-                              display: "flex", flexDirection: "column", gap: 10 }}
-                            onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 4px 18px ${C.green}22`; e.currentTarget.style.borderColor = `${C.green}55`; }}
-                            onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = C.gray300; }}>
-                            <div style={{ width: 52, height: 52, borderRadius: 14, background: C.greenPale,
-                              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
-                              border: `1px solid ${C.green}22` }}>
+                            style={{ background: C.card, borderRadius: 20,
+                              padding: isMobile ? "18px 14px" : "22px 20px", cursor: "pointer",
+                              transition: "box-shadow .15s, transform .15s",
+                              display: "flex", flexDirection: "column", gap: 12,
+                              boxShadow: C.shadow }}
+                            onMouseEnter={e => { e.currentTarget.style.boxShadow = C.shadowMd; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                            onMouseLeave={e => { e.currentTarget.style.boxShadow = C.shadow; e.currentTarget.style.transform = "translateY(0)"; }}>
+                            <div style={{ width: 56, height: 56, borderRadius: 18, background: C.greenPale,
+                              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>
                               {GROUP_ICONS[grp] || "📝"}
                             </div>
                             <div style={{ flex: 1 }}>
                               <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: C.dark, lineHeight: 1.3, marginBottom: 4 }}>{grp}</div>
-                              <div style={{ fontSize: 12, color: C.gray500 }}>{count} сервисов</div>
+                              <div style={{ fontSize: 12, color: C.gray500, fontWeight:500 }}>{count} сервисов</div>
                             </div>
-                            <div style={{ fontSize: 20, color: C.green, textAlign: "right" }}>›</div>
+                            <div style={{ fontSize: 18, color: C.green, fontWeight:700 }}>→</div>
                           </div>
                         );
                       })}
