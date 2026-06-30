@@ -1196,7 +1196,7 @@ export default function App() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой HR</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                    {["Кадровое","Отпуск","Зарплата","Обучение","C&B"].map(t => (
+                    {["Справки","Подбор персонала","Отпуск","Зарплата","Обучение","C&B"].map(t => (
                       <span key={t} style={{ fontSize: 10, color: C.green, background: C.greenPale,
                         borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
                     ))}
