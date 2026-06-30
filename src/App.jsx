@@ -914,26 +914,26 @@ export default function App() {
             </div>
             <div style={{ fontSize:15, fontWeight:700, color:C.dark, marginBottom:3 }}>Выберите вашу роль</div>
             <div style={{ fontSize:12, color:C.gray500, marginBottom:14 }}>Портал покажет сервисы, нужные именно вам</div>
-            <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:20 }}>
+            <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
               {PORTAL_ROLES.map(r => {
                 const isActive = loginRole === r.id;
                 return (
                   <div key={r.id} onClick={() => setLoginRole(r.id)}
-                    style={{ display:"flex", alignItems:"center", gap:12, padding:"13px 14px",
-                      borderRadius:14, cursor:"pointer", transition:"all .15s",
+                    style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 12px",
+                      borderRadius:12, cursor:"pointer", transition:"all .15s",
                       border:`2px solid ${isActive ? C.green : C.gray300}`,
                       background: isActive ? C.greenPale : C.white,
                     }}
                     onMouseEnter={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.green}55`; e.currentTarget.style.background=C.greenPale+"55"; }}}
                     onMouseLeave={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.gray300}`; e.currentTarget.style.background=C.white; }}}
                   >
-                    <div style={{ width:42, height:42, borderRadius:12, flexShrink:0,
+                    <div style={{ width:34, height:34, borderRadius:10, flexShrink:0,
                       background: isActive ? C.green : C.gray100,
-                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, transition:"all .15s" }}>
+                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:17, transition:"all .15s" }}>
                       {r.icon}
                     </div>
-                    <div style={{ fontSize:14, fontWeight:700, color: isActive ? C.green : C.dark }}>{r.label}</div>
-                    {isActive && <span style={{ marginLeft:"auto", color:C.green, fontSize:16, flexShrink:0 }}>✓</span>}
+                    <div style={{ fontSize:13, fontWeight:700, color: isActive ? C.green : C.dark }}>{r.label}</div>
+                    {isActive && <span style={{ marginLeft:"auto", color:C.green, fontSize:15, flexShrink:0 }}>✓</span>}
                   </div>
                 );
               })}
