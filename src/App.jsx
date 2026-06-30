@@ -646,7 +646,12 @@ const LIFE_EVENTS = [
     services:[
       { serviceId:1,  label:"Перевод на другую должность",    icon:"🔄", rec:true  },
       { serviceId:6,  label:"Обновление персональных данных", icon:"📝", rec:false },
-      { serviceId:19, label:"Обходной лист",                  icon:"📑", rec:false },
+    ]},
+  { id:"dismiss", icon:"👋", title:"Увольнение",           desc:"Оформление всех документов при уходе из компании",             color:"#6B7280", bgColor:"#F3F4F6",
+    services:[
+      { serviceId:20, label:"Заявка на увольнение",            icon:"👋", rec:true  },
+      { serviceId:19, label:"Обходной лист",                   icon:"📑", rec:true  },
+      { serviceId:15, label:"Справка с места работы",          icon:"📄", rec:false },
     ]},
 ];
 
