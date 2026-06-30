@@ -1406,181 +1406,216 @@ export default function App() {
             );
           };
 
+          // ── sidebar icons + short labels ──────────────────────────────
+          const CAT_ICONS = {
+            "Все":                                "🗂",
+            "Подбор персонала":                   "🔍",
+            "Онбординг":                          "🎉",
+            "Кадровое администрирование":         "📋",
+            "Заработная плата и командировки":    "💰",
+            "Compensation & Benefits":            "🎁",
+            "Обучение и развитие":                "📚",
+            "Оценка и Performance":               "📊",
+            "Кадровый резерв":                    "⭐",
+            "HR Analytics":                       "📈",
+          };
+          const CAT_SHORT = {
+            "Все":                                "Все",
+            "Подбор персонала":                   "Подбор",
+            "Онбординг":                          "Онборд.",
+            "Кадровое администрирование":         "Кадровое",
+            "Заработная плата и командировки":    "Зарплата",
+            "Compensation & Benefits":            "C&B",
+            "Обучение и развитие":                "Обучение",
+            "Оценка и Performance":               "Оценка",
+            "Кадровый резерв":                    "Резерв",
+            "HR Analytics":                       "Аналитика",
+          };
+
+          const sidebarW = isMobile ? 80 : 200;
+
           return (
-          <div>
-            {/* Header */}
-            {selectedGroup ? (
-              <div style={{ marginBottom:20 }}>
-                <button onClick={() => setSelectedGroup(null)} style={{
-                  background:C.card, border:"none", color:C.green, fontSize:13,
-                  fontWeight:700, cursor:"pointer", padding:"8px 16px", fontFamily:"inherit", marginBottom:14,
-                  borderRadius:100, boxShadow:C.shadow, display:"inline-flex", alignItems:"center", gap:6
-                }}>← Назад</button>
-                <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-                  <div style={{ width:56, height:56, borderRadius:18,
-                    background:catColor(SERVICES.find(s=>s.group===selectedGroup)?.cat||"")+"18",
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, flexShrink:0 }}>
-                    {GROUP_ICONS[selectedGroup] || "📝"}
-                  </div>
-                  <div>
-                    <h1 style={{ fontSize:22, fontWeight:800, color:C.dark, margin:0 }}>{selectedGroup}</h1>
-                    <div style={{ fontSize:12, color:C.gray500, marginTop:3 }}>
-                      {SERVICES.filter(s=>s.group===selectedGroup).length} сервисов
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div style={{ marginBottom:16 }}>
-                <h1 style={{ fontSize:isMobile?22:26, fontWeight:800, color:C.dark, margin:0 }}>Каталог HR-сервисов</h1>
-                <p style={{ color:C.gray500, fontSize:13, marginTop:5, fontWeight:500 }}>
-                  {SERVICES.filter(s=>!s.hidden).length} сервисов · выберите нужный и подайте заявку
-                </p>
-              </div>
-            )}
+          <div style={{ display:"flex", gap:0, alignItems:"flex-start", margin: isMobile ? "0 -16px" : "0 -24px" }}>
 
-            {/* Search */}
-            <div style={{ position:"relative", marginBottom:12 }}>
-              <span style={{ position:"absolute", left:16, top:"50%", transform:"translateY(-50%)", fontSize:16, pointerEvents:"none" }}>🔍</span>
-              <input value={search} onChange={e => { setSearch(e.target.value); setSelectedGroup(null); }}
-                placeholder="Поиск по названию, описанию или категории..."
-                style={{ width:"100%", boxSizing:"border-box", border:"none", background:C.card,
-                  borderRadius:100, padding:"12px 18px 12px 44px", fontSize:14,
-                  fontFamily:"inherit", color:C.dark, outline:"none", boxShadow:C.shadow }} />
-              {search && <button onClick={() => setSearch("")} style={{ position:"absolute", right:16, top:"50%", transform:"translateY(-50%)",
-                background:"none", border:"none", fontSize:16, cursor:"pointer", color:C.gray500, lineHeight:1 }}>✕</button>}
-            </div>
-
-            {/* Category pills with counts */}
-            <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:8, marginBottom:16,
-              scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
+            {/* ── LEFT SIDEBAR ── */}
+            <div style={{
+              width: sidebarW, flexShrink:0,
+              position:"sticky", top:0, alignSelf:"flex-start",
+              maxHeight:"100vh", overflowY:"auto",
+              background: C.white,
+              borderRight:`1px solid ${C.gray300}`,
+              paddingTop:8, paddingBottom:20,
+              scrollbarWidth:"none",
+            }}>
               {["Все", ...CATS].map(c => {
-                const cnt = c === "Все" ? SERVICES.filter(s=>!s.hidden).length : SERVICES.filter(s=>s.cat===c&&!s.hidden).length;
+                const isActive = catFilter === c;
+                const cc = c === "Все" ? C.green : catColor(c);
+                const icon = CAT_ICONS[c] || "📝";
+                const short = CAT_SHORT[c] || c;
                 return (
-                  <button key={c} onClick={() => { setCatFilter(c); setSelectedGroup(null); }} style={{
-                    background: catFilter===c ? (c==="Все"?C.green:catColor(c)) : C.white,
-                    color: catFilter===c ? C.white : C.gray700,
-                    border:"none", borderRadius:100, padding:"8px 16px",
-                    fontSize:13, cursor:"pointer", fontFamily:"inherit",
-                    fontWeight:catFilter===c ? 700 : 500,
-                    boxShadow:catFilter===c ? `0 2px 12px ${c==="Все"?C.green:catColor(c)}44` : "0 1px 4px rgba(0,0,0,0.08)",
-                    whiteSpace:"nowrap", flexShrink:0, display:"flex", alignItems:"center", gap:6, transition:"all .15s",
-                  }}>
-                    {c}
-                  </button>
+                  <div key={c}
+                    onClick={() => { setCatFilter(c); setSelectedGroup(null); setSearch(""); }}
+                    style={{
+                      display:"flex", flexDirection:"column", alignItems:"center",
+                      padding: isMobile ? "10px 6px" : "11px 14px",
+                      margin:"1px 6px",
+                      borderRadius:12,
+                      cursor:"pointer",
+                      background: isActive ? cc : "transparent",
+                      transition:"background .12s",
+                      gap: 4,
+                      borderLeft: isActive ? "none" : `3px solid ${cc}33`,
+                    }}
+                    onMouseEnter={e => { if(!isActive) e.currentTarget.style.background=cc+"15"; }}
+                    onMouseLeave={e => { if(!isActive) e.currentTarget.style.background="transparent"; }}
+                  >
+                    <span style={{ fontSize: isMobile ? 18 : 20, lineHeight:1 }}>{icon}</span>
+                    <span style={{
+                      fontSize: isMobile ? 9 : 10, fontWeight: isActive ? 700 : 500,
+                      color: isActive ? C.white : C.gray700,
+                      lineHeight:1.25, textAlign:"center", wordBreak:"break-word",
+                    }}>{short}</span>
+                  </div>
                 );
               })}
             </div>
 
-            {/* Life Events — only show when not searching and not in a group */}
-            {!search && !selectedGroup && catFilter==="Все" && (
-              <div style={{ marginBottom:20 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
-                  <div>
-                    <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Жизненные ситуации</div>
-                    <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Несколько заявок за один шаг</div>
-                  </div>
-                </div>
-                <div style={{ display:"flex", gap:12, overflowX:"auto", paddingBottom:4, scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
-                  {LIFE_EVENTS.map(ev => (
-                    <button key={ev.id} onClick={() => {
-                      const sel={};
-                      ev.services.forEach(s => { if(s.rec) sel[s.serviceId]=true; });
-                      setLifeEventSelected(sel);
-                      setLifeEventModal(ev);
-                    }} style={{
-                      flexShrink:0, width:isMobile?148:170, background:C.card, borderRadius:18,
-                      padding:"16px 14px 14px", border:`1.5px solid ${ev.color}22`, cursor:"pointer",
-                      fontFamily:"inherit", textAlign:"left", boxShadow:C.shadow,
-                      transition:"box-shadow .15s, transform .15s",
-                    }}
-                      onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
-                      onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
-                    >
-                      <div style={{ width:46, height:46, borderRadius:14, background:ev.bgColor,
-                        display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:10 }}>
-                        {ev.icon}
-                      </div>
-                      <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4, lineHeight:1.3 }}>{ev.title}</div>
-                      <div style={{ fontSize:11, color:C.gray500, lineHeight:1.5, marginBottom:8 }}>{ev.desc}</div>
-                      <div style={{ display:"flex", alignItems:"center", gap:4 }}>
-                        <span style={{ fontSize:10, fontWeight:800, color:ev.color, background:ev.color+"18", borderRadius:100, padding:"2px 8px" }}>
-                          {ev.services.length} заявки
-                        </span>
-                        <span style={{ fontSize:11, color:ev.color, fontWeight:700 }}>→</span>
-                      </div>
-                    </button>
-                  ))}
+            {/* ── RIGHT PANEL ── */}
+            <div style={{ flex:1, minWidth:0, padding: isMobile ? "0 12px 20px" : "0 20px 28px" }}>
+
+              {/* Search */}
+              <div style={{ position:"sticky", top:0, zIndex:10, background:C.bg, paddingTop:10, paddingBottom:8 }}>
+                <div style={{ position:"relative" }}>
+                  <span style={{ position:"absolute", left:14, top:"50%", transform:"translateY(-50%)", fontSize:15, pointerEvents:"none" }}>🔍</span>
+                  <input value={search} onChange={e => { setSearch(e.target.value); setSelectedGroup(null); }}
+                    placeholder="Поиск..."
+                    style={{ width:"100%", boxSizing:"border-box", border:"none", background:C.card,
+                      borderRadius:100, padding:"10px 14px 10px 38px", fontSize:13,
+                      fontFamily:"inherit", color:C.dark, outline:"none", boxShadow:C.shadow }} />
+                  {search && <button onClick={() => setSearch("")} style={{ position:"absolute", right:12, top:"50%", transform:"translateY(-50%)",
+                    background:"none", border:"none", fontSize:15, cursor:"pointer", color:C.gray500, lineHeight:1 }}>✕</button>}
                 </div>
               </div>
-            )}
 
-            {/* Inside a group */}
-            {selectedGroup && (() => {
-              const grpItems = SERVICES.filter(s => s.group===selectedGroup && !s.hidden);
-              return (
-                <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(1,1fr)":"repeat(2,1fr)", gap:isMobile?10:14 }}>
-                  {grpItems.map(s => <ServiceCard key={s.id} s={s} />)}
-                </div>
-              );
-            })()}
-
-            {/* Search results */}
-            {!selectedGroup && search && (() => {
-              if (!filteredServices.length) return (
-                <div style={{ textAlign:"center", padding:"60px 20px" }}>
-                  <div style={{ fontSize:48, marginBottom:16 }}>🔍</div>
-                  <div style={{ fontSize:16, fontWeight:700, color:C.dark, marginBottom:8 }}>Ничего не найдено</div>
-                  <div style={{ fontSize:13, color:C.gray500 }}>Попробуйте другой запрос или выберите категорию</div>
-                  <button onClick={() => setSearch("")} style={{ marginTop:16, background:C.green, color:C.white,
-                    border:"none", borderRadius:100, padding:"10px 24px", fontSize:13, fontWeight:700,
-                    cursor:"pointer", fontFamily:"inherit" }}>Сбросить поиск</button>
-                </div>
-              );
-              return (
-                <div>
-                  <div style={{ fontSize:13, color:C.gray500, marginBottom:14 }}>
-                    Найдено: <b style={{ color:C.dark }}>{filteredServices.length}</b> сервисов
-                  </div>
-                  <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(1,1fr)":"repeat(2,1fr)", gap:isMobile?10:14 }}>
-                    {filteredServices.map(s => <ServiceCard key={s.id} s={s} />)}
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Default — group tiles + ungrouped */}
-            {!selectedGroup && !search && (() => {
-              const groupNames = [...new Set(filteredServices.filter(s=>s.group).map(s=>s.group))];
-              const ungrouped = filteredServices.filter(s=>!s.group);
-              return (
-                <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
-                  {groupNames.length > 0 && (
-                    <div>
-                      {catFilter !== "Все" && (
-                        <div style={{ fontSize:12, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:1, marginBottom:12 }}>Разделы</div>
-                      )}
-                      <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(3,1fr)", gap:isMobile?10:14 }}>
-                        {groupNames.map(grp => {
-                          const count = filteredServices.filter(s=>s.group===grp).length;
-                          return <GroupTile key={grp} grp={grp} count={count} />;
-                        })}
+              {/* Category / group header */}
+              {!search && (
+                <div style={{ marginBottom:14, paddingTop:4 }}>
+                  {selectedGroup ? (
+                    <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                      <button onClick={() => setSelectedGroup(null)} style={{
+                        background:"none", border:"none", color:C.green, fontSize:12,
+                        fontWeight:700, cursor:"pointer", padding:"4px 0", fontFamily:"inherit",
+                        display:"inline-flex", alignItems:"center", gap:4
+                      }}>← Назад</button>
+                      <span style={{ color:C.gray300 }}>|</span>
+                      <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>{selectedGroup}</div>
+                      <span style={{ fontSize:11, color:C.gray500 }}>
+                        {SERVICES.filter(s=>s.group===selectedGroup).length} сервисов
+                      </span>
+                    </div>
+                  ) : catFilter !== "Все" ? (
+                    <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                      <span style={{ fontSize:18 }}>{CAT_ICONS[catFilter] || "📝"}</span>
+                      <div>
+                        <div style={{ fontSize:15, fontWeight:800, color:C.dark, lineHeight:1.2 }}>{catFilter}</div>
+                        <div style={{ fontSize:11, color:C.gray500 }}>
+                          {SERVICES.filter(s=>s.cat===catFilter&&!s.hidden).length} сервисов
+                        </div>
                       </div>
                     </div>
-                  )}
-                  {ungrouped.length > 0 && (
-                    <div>
-                      {groupNames.length > 0 && (
-                        <div style={{ fontSize:12, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:1, marginBottom:12 }}>Отдельные сервисы</div>
-                      )}
-                      <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(1,1fr)":"repeat(2,1fr)", gap:isMobile?10:14 }}>
-                        {ungrouped.map(s => <ServiceCard key={s.id} s={s} />)}
-                      </div>
-                    </div>
+                  ) : (
+                    <div style={{ fontSize:15, fontWeight:800, color:C.dark }}>Все HR-сервисы</div>
                   )}
                 </div>
-              );
-            })()}
+              )}
+
+              {/* Life Events strip — only on "Все", no search, no group */}
+              {!search && !selectedGroup && catFilter==="Все" && (
+                <div style={{ marginBottom:16 }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:0.8, marginBottom:8 }}>
+                    Жизненные ситуации
+                  </div>
+                  <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:4, scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
+                    {LIFE_EVENTS.map(ev => (
+                      <button key={ev.id} onClick={() => {
+                        const sel={};
+                        ev.services.forEach(s => { if(s.rec) sel[s.serviceId]=true; });
+                        setLifeEventSelected(sel); setLifeEventModal(ev);
+                      }} style={{
+                        flexShrink:0, width:130, background:C.card, borderRadius:14,
+                        padding:"12px 10px", border:`1.5px solid ${ev.color}22`, cursor:"pointer",
+                        fontFamily:"inherit", textAlign:"left", boxShadow:C.shadow,
+                        transition:"box-shadow .15s",
+                      }}>
+                        <div style={{ fontSize:20, marginBottom:6 }}>{ev.icon}</div>
+                        <div style={{ fontSize:11, fontWeight:700, color:C.dark, lineHeight:1.3, marginBottom:4 }}>{ev.title}</div>
+                        <div style={{ fontSize:9, fontWeight:800, color:ev.color, background:ev.color+"18", borderRadius:100, padding:"2px 7px", display:"inline-block" }}>
+                          {ev.services.length} заявки →
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Inside a group */}
+              {!search && selectedGroup && (() => {
+                const grpItems = SERVICES.filter(s => s.group===selectedGroup && !s.hidden);
+                return (
+                  <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                    {grpItems.map(s => <ServiceCard key={s.id} s={s} />)}
+                  </div>
+                );
+              })()}
+
+              {/* Search results */}
+              {search && (() => {
+                if (!filteredServices.length) return (
+                  <div style={{ textAlign:"center", padding:"40px 10px" }}>
+                    <div style={{ fontSize:36, marginBottom:12 }}>🔍</div>
+                    <div style={{ fontSize:15, fontWeight:700, color:C.dark, marginBottom:6 }}>Ничего не найдено</div>
+                    <div style={{ fontSize:12, color:C.gray500, marginBottom:14 }}>Попробуйте другой запрос</div>
+                    <button onClick={() => setSearch("")} style={{ background:C.green, color:C.white,
+                      border:"none", borderRadius:100, padding:"8px 20px", fontSize:12, fontWeight:700,
+                      cursor:"pointer", fontFamily:"inherit" }}>Сбросить</button>
+                  </div>
+                );
+                return (
+                  <div>
+                    <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>
+                      Найдено: <b style={{ color:C.dark }}>{filteredServices.length}</b> сервисов
+                    </div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                      {filteredServices.map(s => <ServiceCard key={s.id} s={s} />)}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Default — groups as sections + ungrouped */}
+              {!search && !selectedGroup && (() => {
+                const groupNames = [...new Set(filteredServices.filter(s=>s.group).map(s=>s.group))];
+                const ungrouped  = filteredServices.filter(s=>!s.group);
+                return (
+                  <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
+                    {groupNames.map(grp => {
+                      const count = filteredServices.filter(s=>s.group===grp).length;
+                      return <GroupTile key={grp} grp={grp} count={count} />;
+                    })}
+                    {ungrouped.length > 0 && (
+                      <div>
+                        {groupNames.length > 0 && (
+                          <div style={{ fontSize:11, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:0.8, marginBottom:10 }}>Сервисы</div>
+                        )}
+                        <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                          {ungrouped.map(s => <ServiceCard key={s.id} s={s} />)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
           </div>
           );
         })()}
