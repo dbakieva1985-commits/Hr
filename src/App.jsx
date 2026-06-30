@@ -750,19 +750,6 @@ export default function App() {
     { id: "HR-001", title: "Справка с места работы", status: "inwork",  sla: "1 раб. день",  date: "09.06.2026", icon: "📄" },
     { id: "HR-002", title: "Заявка на отпуск",        status: "closed",  sla: "1 раб. день",  date: "02.06.2026", icon: "🏖" },
     { id: "HR-003", title: "Заявка на подбор",        status: "review",  sla: "5 раб. дней",  date: "11.06.2026", icon: "🔍" },
-    { id: "HR-004", title: "Согласование кандидата",  status: "inwork",  sla: "2 раб. дня",   date: "12.06.2026", icon: "✅",
-      isApproval: true,
-      candidate: "Алия Сейткали", position: "Senior Product Manager", dept: "Цифровой бизнес",
-      salary: "850 000 ₸", start: "", businessDir: "МСБ", org: "ГБ",
-      decisions: { recruiter: "approved", do: "approved", business: "approved", usot: null, hr_dir: null, do_date: null, uap: null },
-      personal: { lastName: "Сейткали", firstName: "Алия", patronymic: "Маратовна", dob: "15.03.1992", iin: "920315401234", passportNo: "N12345678", passportIssued: "10.05.2018", passportExpiry: "10.05.2028" },
-      education: [{ institution: "КазНУ им. аль-Фараби", degree: "Магистр менеджмента", year: "2015" }],
-      experience: [{ company: "Kaspi Bank", role: "Product Manager", period: "2019–2024", duties: "Запуск мобильных продуктов" }],
-      relatives: [
-        { lastName: "Сейткали", firstName: "Марат", patronymic: "Ахметович", relation: "Отец", address: "Алматы, ул. Абая 12", workplace: "АО «Казмунайгаз»", iin: "620510301234", phone: "+7 701 000 0001" },
-        { lastName: "Сейткали", firstName: "Гульнара", patronymic: "Жаксыбековна", relation: "Мать", address: "Алматы, ул. Абая 12", workplace: "СШ №45", iin: "650820401235", phone: "+7 701 000 0002" },
-      ],
-    },
   ]);
   const [detail, setDetail] = useState(null);       // request detail view
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 768);
@@ -1282,16 +1269,20 @@ export default function App() {
             <div style={{ fontSize: 16, fontWeight: 700, color: C.dark, marginBottom: 12 }}>Мои показатели</div>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
               {[
-                { icon: "🏖", label: "Остаток отпуска", value: "14 дн.", color: C.green, sub: "из 24 дней" },
-                { icon: "📋", label: "Активные заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке" },
-                { icon: "📚", label: "Курсы к прохождению", value: "2", color: C.blue, sub: "срок до 15 июля" },
-                { icon: "⭐", label: "Performance", value: "4.2/5", color: C.greenDark, sub: "за квартал" },
+                { icon: "🏖", label: "Остаток отпуска", value: "14 дн.", color: C.green, sub: "из 24 дней", onClick: null },
+                { icon: "📋", label: "Активные заявки", value: requests.filter(r=>["sent","inwork","review"].includes(r.status)).length, color: C.orange, sub: "в обработке", onClick: () => navigate("my") },
+                { icon: "📚", label: "Курсы к прохождению", value: "2", color: C.blue, sub: "срок до 15 июля", onClick: null },
+                { icon: "⭐", label: "Performance", value: "4.2/5", color: C.greenDark, sub: "за квартал", onClick: null },
               ].map(m => (
-                <div key={m.label} style={{ background: C.card, borderRadius: 14, padding: "12px 10px", boxShadow: C.shadow }}>
+                <div key={m.label} onClick={m.onClick || undefined}
+                  style={{ background: C.card, borderRadius: 14, padding: "12px 10px", boxShadow: C.shadow,
+                    cursor: m.onClick ? "pointer" : "default",
+                    border: m.onClick ? `2px solid ${C.orange}22` : "2px solid transparent" }}>
                   <div style={{ fontSize: 22, marginBottom: 6 }}>{m.icon}</div>
                   <div style={{ fontSize: isMobile ? 17 : 19, fontWeight: 800, color: m.color, marginBottom: 2 }}>{m.value}</div>
                   <div style={{ fontSize: 11, fontWeight: 600, color: C.dark, marginBottom: 2, lineHeight: 1.3 }}>{m.label}</div>
                   <div style={{ fontSize: 10, color: C.gray500 }}>{m.sub}</div>
+                  {m.onClick && <div style={{ fontSize: 9, color: C.orange, fontWeight: 700, marginTop: 4 }}>Открыть →</div>}
                 </div>
               ))}
             </div>
@@ -1331,39 +1322,6 @@ export default function App() {
                 <span>Рабочих дней: <b style={{ color: C.dark }}>20</b></span>
               </div>
             </div>
-
-            {/* Мои заявки */}
-            <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span>Мои заявки</span>
-              <button onClick={() => navigate("my")} style={{ background: "none", border: "none", color: C.green, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Все →</button>
-            </div>
-            {requests.length === 0 ? (
-              <div style={{ background: C.card, borderRadius: 16, padding: "32px 20px", textAlign: "center", boxShadow: C.shadow }}>
-                <div style={{ fontSize: 32, marginBottom: 10 }}>📋</div>
-                <div style={{ fontSize: 14, color: C.gray500 }}>У вас пока нет заявок</div>
-                <button onClick={() => navigate("catalog")} style={{ marginTop: 16, background: C.green, color: C.white, border: "none", borderRadius: 100, padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Подать заявку</button>
-              </div>
-            ) : (
-              <div style={{ background: C.card, borderRadius: 20, overflow: "hidden", boxShadow: C.shadow, marginBottom: 16 }}>
-                {requests.slice(0, 5).map((r, i) => (
-                  <div key={r.id} onClick={() => { setDetail(r); navigate("my"); }}
-                    style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 18px", cursor: "pointer",
-                      borderBottom: i < Math.min(requests.length, 5) - 1 ? `1px solid ${C.gray300}` : "none", transition: "background .12s" }}
-                    onMouseEnter={e => e.currentTarget.style.background = C.gray100}
-                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                    <div style={{ width: 44, height: 44, borderRadius: 14, background: C.greenPale, flexShrink: 0,
-                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>{r.icon}</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: C.dark, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.title}</div>
-                      <div style={{ fontSize: 12, color: C.gray500, marginTop: 2 }}>{r.id} · {r.date} · SLA: {r.sla}</div>
-                    </div>
-                    <div style={{ flexShrink: 0, textAlign: "right" }}>
-                      <Badge text={STATUSES[r.status]} color={STATUS_COLOR[r.status]} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
 
             {/* Курсы к прохождению */}
             <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>📚 Обучение</div>
