@@ -662,6 +662,7 @@ export default function App() {
   const [portalRole, setPortalRole] = useState("employee");
   const [company, setCompany] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [loginStep, setLoginStep] = useState("select"); // "select" | "confirm"
   const [obTasks, setObTasks]   = useState(OB_TASKS_INIT);
   const [obDocs,  setObDocs]    = useState(OB_DOCS_INIT);
   const [obPhase, setObPhase]   = useState("week1");
@@ -845,84 +846,87 @@ export default function App() {
 
   // ── Login / Company-select screen ───────────────────────────────────────
   if (!company) {
+    const co = COMPANIES.find(c => c.id === selectedCompany);
     return (
       <div style={{ minHeight:"100vh", fontFamily:"'Inter','Segoe UI',sans-serif",
         background:`linear-gradient(160deg, ${C.green} 0%, ${C.greenDark} 100%)`,
         display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
         padding:"24px 16px",
       }}>
-        {/* Logo block */}
-        <div style={{ textAlign:"center", marginBottom:32 }}>
-          <div style={{ width:72, height:72, borderRadius:22, background:"rgba(255,255,255,0.18)",
+        {/* Logo */}
+        <div style={{ textAlign:"center", marginBottom:28 }}>
+          <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,0.18)",
             display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:38, margin:"0 auto 14px", border:"2px solid rgba(255,255,255,0.35)" }}>🏦</div>
-          <div style={{ fontSize:24, fontWeight:800, color:C.white, lineHeight:1.2 }}>HR Service Portal</div>
-          <div style={{ fontSize:13, color:"rgba(255,255,255,0.75)", marginTop:6, fontWeight:500 }}>Halyk Bank Group</div>
+            fontSize:32, margin:"0 auto 12px", border:"2px solid rgba(255,255,255,0.35)" }}>🏦</div>
+          <div style={{ fontSize:22, fontWeight:800, color:C.white }}>HR Service Portal</div>
+          <div style={{ fontSize:12, color:"rgba(255,255,255,0.70)", marginTop:4 }}>Halyk Bank Group</div>
         </div>
 
         {/* Card */}
-        <div style={{ background:C.white, borderRadius:24, padding:isMobile?"24px 18px":"32px 32px",
-          maxWidth:520, width:"100%", boxShadow:"0 20px 60px rgba(0,0,0,0.25)" }}>
-          <div style={{ fontSize:16, fontWeight:700, color:C.dark, marginBottom:4 }}>Выберите вашу организацию</div>
-          <div style={{ fontSize:13, color:C.gray500, marginBottom:20 }}>Для входа в портал подтвердите вашу компанию</div>
+        <div style={{ background:C.white, borderRadius:24, padding:isMobile?"22px 18px":"28px 28px",
+          maxWidth:440, width:"100%", boxShadow:"0 20px 60px rgba(0,0,0,0.25)" }}>
 
-          <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:20 }}>
-            {COMPANIES.map(co => {
-              const isActive = selectedCompany === co.id;
-              return (
-                <div key={co.id} onClick={() => setSelectedCompany(co.id)}
-                  style={{
-                    display:"flex", alignItems:"center", gap:14, padding:"14px 16px",
+          {/* ── ШАГ 1: выбор компании ── */}
+          {loginStep === "select" && (<>
+            <div style={{ fontSize:16, fontWeight:700, color:C.dark, marginBottom:3 }}>Выберите организацию</div>
+            <div style={{ fontSize:12, color:C.gray500, marginBottom:18 }}>Нажмите на вашу компанию для входа</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+              {COMPANIES.map(c => (
+                <div key={c.id}
+                  onClick={() => { setSelectedCompany(c.id); setLoginStep("confirm"); }}
+                  style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 16px",
                     borderRadius:16, cursor:"pointer", transition:"all .15s",
-                    border:`2px solid ${isActive ? C.green : C.gray300}`,
-                    background: isActive ? C.greenPale : C.white,
+                    border:`2px solid ${C.gray300}`, background:C.white,
                   }}
-                  onMouseEnter={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.green}55`; e.currentTarget.style.background=C.greenPale+"55"; }}}
-                  onMouseLeave={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.gray300}`; e.currentTarget.style.background=C.white; }}}
+                  onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.background=C.greenPale; }}
+                  onMouseLeave={e => { e.currentTarget.style.border=`2px solid ${C.gray300}`; e.currentTarget.style.background=C.white; }}
                 >
                   <div style={{ width:44, height:44, borderRadius:13, flexShrink:0,
-                    background: isActive ? C.green : C.gray100,
-                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:22,
-                    transition:"all .15s",
-                  }}>{co.icon}</div>
+                    background:C.gray100, display:"flex", alignItems:"center",
+                    justifyContent:"center", fontSize:22 }}>{c.icon}</div>
                   <div style={{ minWidth:0 }}>
-                    <div style={{ fontSize:14, fontWeight:700, color:isActive?C.green:C.dark, lineHeight:1.25 }}>{co.name}</div>
-                    <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>{co.sub}</div>
+                    <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>{c.name}</div>
+                    <div style={{ fontSize:12, color:C.gray500, marginTop:1 }}>{c.sub}</div>
                   </div>
-                  {isActive && <span style={{ marginLeft:"auto", fontSize:18, color:C.green, flexShrink:0 }}>✓</span>}
+                  <span style={{ marginLeft:"auto", color:C.gray300, fontSize:18, flexShrink:0 }}>›</span>
                 </div>
-              );
-            })}
-          </div>
-
-          {selectedCompany && (
-            <div style={{ background:C.greenPale, borderRadius:12, padding:"10px 14px", marginBottom:16,
-              display:"flex", alignItems:"center", gap:10, border:`1px solid ${C.green}33` }}>
-              <span style={{ fontSize:20 }}>{COMPANIES.find(c=>c.id===selectedCompany)?.icon}</span>
-              <div>
-                <div style={{ fontSize:12, color:C.gray500, fontWeight:600 }}>Вы входите как сотрудник</div>
-                <div style={{ fontSize:14, fontWeight:700, color:C.green }}>{COMPANIES.find(c=>c.id===selectedCompany)?.name}</div>
-              </div>
+              ))}
             </div>
-          )}
+          </>)}
 
-          <button
-            onClick={() => { if(selectedCompany){ setCompany(selectedCompany); navigate("catalog"); } }}
-            disabled={!selectedCompany}
-            style={{
-              width:"100%", background: selectedCompany ? C.green : C.gray300,
-              color: selectedCompany ? C.white : C.gray500,
-              border:"none", borderRadius:100, padding:"14px 0",
-              fontSize:15, fontWeight:700, cursor: selectedCompany ? "pointer" : "default",
-              fontFamily:"inherit", transition:"all .2s",
-              boxShadow: selectedCompany ? `0 4px 16px ${C.green}55` : "none",
-            }}
-          >
-            {selectedCompany ? "Войти в портал →" : "Выберите организацию"}
-          </button>
+          {/* ── ШАГ 2: подтверждение ── */}
+          {loginStep === "confirm" && co && (<>
+            <button onClick={() => setLoginStep("select")}
+              style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700,
+                cursor:"pointer", fontFamily:"inherit", padding:"0 0 16px", display:"flex", alignItems:"center", gap:4 }}>
+              ← Назад
+            </button>
+
+            {/* Большая карточка выбранной компании */}
+            <div style={{ background:C.greenPale, border:`2px solid ${C.green}`, borderRadius:20,
+              padding:"24px 20px", textAlign:"center", marginBottom:24 }}>
+              <div style={{ width:72, height:72, borderRadius:22, background:C.green,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                fontSize:36, margin:"0 auto 14px" }}>{co.icon}</div>
+              <div style={{ fontSize:11, color:C.gray500, fontWeight:600, textTransform:"uppercase",
+                letterSpacing:1, marginBottom:6 }}>Вы входите как сотрудник</div>
+              <div style={{ fontSize:20, fontWeight:800, color:C.dark, lineHeight:1.2 }}>{co.name}</div>
+              <div style={{ fontSize:13, color:C.green, marginTop:6, fontWeight:600 }}>{co.sub}</div>
+            </div>
+
+            <button
+              onClick={() => { setCompany(selectedCompany); navigate("catalog"); }}
+              style={{ width:"100%", background:C.green, color:C.white,
+                border:"none", borderRadius:100, padding:"16px 0",
+                fontSize:16, fontWeight:800, cursor:"pointer", fontFamily:"inherit",
+                boxShadow:`0 6px 20px ${C.green}55`, letterSpacing:0.3,
+              }}>
+              Войти в портал →
+            </button>
+          </>)}
         </div>
 
-        <div style={{ marginTop:20, fontSize:11, color:"rgba(255,255,255,0.55)", textAlign:"center" }}>
+        <div style={{ marginTop:20, fontSize:11, color:"rgba(255,255,255,0.50)", textAlign:"center" }}>
           HR Service Portal · Halyk Bank · {new Date().getFullYear()}
         </div>
       </div>
@@ -1048,7 +1052,7 @@ export default function App() {
               </div>
             </div>
           ) : null; })()}
-          <button onClick={() => { setCompany(null); setSelectedCompany(null); }}
+          <button onClick={() => { setCompany(null); setSelectedCompany(null); setLoginStep("select"); }}
             style={{ marginTop:8, width:"100%", background:"rgba(255,255,255,0.07)", color:"#FFFFFF60",
               border:"none", borderRadius:8, padding:"5px 0", fontSize:10, fontWeight:600,
               cursor:"pointer", fontFamily:"inherit", letterSpacing:0.3 }}>
@@ -1096,7 +1100,7 @@ export default function App() {
             </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <button onClick={() => { setCompany(null); setSelectedCompany(null); }}
+            <button onClick={() => { setCompany(null); setSelectedCompany(null); setLoginStep("select"); }}
               style={{ background:C.gray100, color:C.gray700, border:"none", borderRadius:100,
                 padding:"6px 10px", fontSize:10, fontFamily:"inherit", cursor:"pointer", fontWeight:600 }}>
               Сменить
