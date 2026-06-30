@@ -692,7 +692,7 @@ export default function App() {
   const [lifeEventSelected, setLifeEventSelected] = useState({});
   const [showBenefits,      setShowBenefits]      = useState(false);
   const [expandedEmployee,  setExpandedEmployee]  = useState(null);
-  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my"];
+  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my","team"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
   const navigate = p => { window.location.hash = p; setPage(p); };
@@ -1120,7 +1120,7 @@ export default function App() {
           display:"flex", alignItems:"center", justifyContent:"space-between",
           padding:"0 16px", zIndex:200, boxShadow:"0 1px 0 rgba(0,0,0,0.06)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            {(page === "catalog" || page === "profile") && (
+            {(page === "catalog" || page === "profile" || page === "team") && (
               <button onClick={() => navigate("home")} style={{
                 background:"none", border:"none", cursor:"pointer", padding:"4px 6px 4px 0",
                 color:C.dark, fontSize:22, lineHeight:1, display:"flex", alignItems:"center",
@@ -1232,6 +1232,33 @@ export default function App() {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
               </div>
+
+              {/* Моя команда — только руководитель/hr */}
+              {(portalRole === "manager" || portalRole === "hr") && (
+                <div onClick={() => navigate("team")}
+                  style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
+                    cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
+                    display: "flex", alignItems: "center", gap: 14, flex: 1 }}
+                  onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.orange}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                  onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
+                >
+                  <div style={{ width: 52, height: 52, borderRadius: 14, background: C.orange+"15",
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>👥</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Моя команда</div>
+                    <div style={{ fontSize: 11, color: C.orange, fontWeight: 600, marginBottom: 7 }}>Дисциплина, показатели, performance</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                      {["Дисциплина","Показатели","Performance"].map(t => (
+                        <span key={t} style={{ fontSize: 10, color: C.orange, background: C.orange+"15",
+                          borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.orange,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1417,8 +1444,8 @@ export default function App() {
               ))}
             </div>
 
-            {/* Моя команда — только для руководителя */}
-            {(portalRole === "manager" || portalRole === "hr") && (() => {
+            {/* Команда вынесена на отдельную страницу team */}
+            {false && (() => {
               const team = [
                 {
                   id: 1, name: "Алия К.", pos: "HR Analyst", dept: "ДУП", avatar: "А",
@@ -1600,6 +1627,188 @@ export default function App() {
             })()}
           </div>
         )}
+
+        {/* ── TEAM ── */}
+        {page === "team" && (() => {
+          const team = [
+            {
+              id: 1, name: "Алия К.", pos: "HR Analyst", dept: "ДУП", avatar: "А",
+              vacation: "18 дн.", requests: 1, courses: 1, perf: "4.5/5",
+              discipline: [
+                { date: "30.06", enter: "09:00", exit: "—",    ok: true,  label: "В норме" },
+                { date: "27.06", enter: "08:55", exit: "18:00", ok: true,  label: "В норме" },
+                { date: "26.06", enter: "09:02", exit: "18:05", ok: true,  label: "В норме" },
+                { date: "25.06", enter: "09:10", exit: "18:00", ok: true,  label: "В норме" },
+                { date: "24.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+              ],
+            },
+            {
+              id: 2, name: "Марат С.", pos: "HR Specialist", dept: "ДУП", avatar: "М",
+              vacation: "12 дн.", requests: 2, courses: 3, perf: "3.8/5",
+              discipline: [
+                { date: "30.06", enter: "09:45", exit: "—",    ok: false, label: "Нарушение" },
+                { date: "27.06", enter: "09:30", exit: "18:10", ok: false, label: "Нарушение" },
+                { date: "26.06", enter: "09:05", exit: "18:00", ok: true,  label: "В норме" },
+                { date: "25.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                { date: "24.06", enter: "09:15", exit: "18:00", ok: true,  label: "В норме" },
+              ],
+            },
+            {
+              id: 3, name: "Диана Ж.", pos: "Recruiter", dept: "ДУП", avatar: "Д",
+              vacation: "21 дн.", requests: 0, courses: 1, perf: "4.7/5",
+              discipline: [
+                { date: "30.06", enter: "09:00", exit: "—",    ok: true,  label: "В норме" },
+                { date: "27.06", enter: "08:50", exit: "17:55", ok: true,  label: "В норме" },
+                { date: "26.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                { date: "25.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                { date: "24.06", enter: "09:03", exit: "18:00", ok: true,  label: "В норме" },
+              ],
+            },
+            {
+              id: 4, name: "Нурлан Б.", pos: "HR BP", dept: "ДУП", avatar: "Н",
+              vacation: "7 дн.", requests: 3, courses: 2, perf: "4.0/5",
+              discipline: [
+                { date: "30.06", enter: "10:10", exit: "—",    ok: false, label: "Нарушение" },
+                { date: "27.06", enter: "09:05", exit: "18:00", ok: true,  label: "В норме" },
+                { date: "26.06", enter: "09:40", exit: "18:30", ok: false, label: "Нарушение" },
+                { date: "25.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+                { date: "24.06", enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+              ],
+            },
+          ];
+          const avgPerf = (team.reduce((s, e) => s + parseFloat(e.perf), 0) / team.length).toFixed(1);
+          return (
+            <div>
+              {/* Шапка */}
+              <div style={{ background: `linear-gradient(135deg, ${C.orange} 0%, #d97706 100%)`,
+                borderRadius: isMobile ? 20 : 24, padding: isMobile ? "24px 20px" : "28px 28px",
+                marginBottom: 20, boxShadow: `0 8px 32px ${C.orange}44`, position: "relative", overflow: "hidden" }}>
+                <div style={{ position:"absolute", top:-30, right:-20, width:140, height:140, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+                  <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,0.2)",
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>👥</div>
+                  <div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: C.white }}>Моя команда</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", marginTop: 2 }}>ДУП · {team.length} сотрудника</div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 24 }}>
+                  <div><div style={{ fontSize: 14, fontWeight: 700, color: C.white }}>{avgPerf}/5</div><div style={{ fontSize: 10, color:"rgba(255,255,255,0.65)" }}>Ср. рейтинг</div></div>
+                  <div><div style={{ fontSize: 14, fontWeight: 700, color: C.white }}>{team.filter(e=>e.discipline.some(d=>!d.ok)).length}</div><div style={{ fontSize: 10, color:"rgba(255,255,255,0.65)" }}>Нарушителей</div></div>
+                  <div><div style={{ fontSize: 14, fontWeight: 700, color: C.white }}>{team.reduce((s,e)=>s+e.requests,0)}</div><div style={{ fontSize: 10, color:"rgba(255,255,255,0.65)" }}>Заявок</div></div>
+                </div>
+              </div>
+
+              {/* Performance команды */}
+              <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>⭐ Performance команды</div>
+              <div style={{ background: C.card, borderRadius: 20, padding: isMobile ? "16px" : "20px", boxShadow: C.shadow, marginBottom: 20 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {team.map(emp => {
+                    const score = parseFloat(emp.perf);
+                    const pct = (score / 5) * 100;
+                    const color = score >= 4.5 ? C.green : score >= 4.0 ? C.greenDark : score >= 3.5 ? C.orange : C.red;
+                    return (
+                      <div key={emp.id}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                          <div style={{ width: 30, height: 30, borderRadius: "50%", background: color+"22",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontSize: 13, fontWeight: 800, color, flexShrink: 0 }}>{emp.avatar}</div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                              <div>
+                                <span style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{emp.name}</span>
+                                <span style={{ fontSize: 11, color: C.gray500, marginLeft: 6 }}>{emp.pos}</span>
+                              </div>
+                              <span style={{ fontSize: 13, fontWeight: 800, color }}>{emp.perf}</span>
+                            </div>
+                            <div style={{ height: 6, background: C.gray100, borderRadius: 3, overflow: "hidden" }}>
+                              <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 3 }} />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Карточки сотрудников */}
+              <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>👥 Сотрудники</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {team.map(emp => {
+                  const violations = emp.discipline.filter(d => !d.ok).length;
+                  const isOpen = expandedEmployee === emp.id;
+                  return (
+                    <div key={emp.id} style={{ background: C.card, borderRadius: 20, boxShadow: C.shadow, overflow: "hidden" }}>
+                      <div onClick={() => setExpandedEmployee(isOpen ? null : emp.id)}
+                        style={{ display: "flex", alignItems: "center", gap: 12,
+                          padding: isMobile ? "14px 16px" : "16px 20px", cursor: "pointer" }}>
+                        <div style={{ width: 42, height: 42, borderRadius: "50%",
+                          background: violations > 0 ? C.red+"22" : C.greenPale,
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 16, fontWeight: 800, color: violations > 0 ? C.red : C.green, flexShrink: 0 }}>
+                          {emp.avatar}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: C.dark }}>{emp.name}</div>
+                          <div style={{ fontSize: 11, color: C.gray500, marginTop: 1 }}>{emp.pos} · {emp.dept}</div>
+                        </div>
+                        {violations > 0
+                          ? <span style={{ fontSize: 10, fontWeight: 700, color: C.red, background: C.red+"15", borderRadius: 100, padding: "3px 8px", flexShrink: 0 }}>{violations} нарушения</span>
+                          : <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 8px", flexShrink: 0 }}>В норме</span>
+                        }
+                        <span style={{ fontSize: 16, color: C.gray500, transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block", transition: "transform .2s", marginLeft: 4 }}>⌄</span>
+                      </div>
+                      {isOpen && (
+                        <div style={{ padding: isMobile ? "0 16px 16px" : "0 20px 20px", borderTop: `1px solid ${C.gray300}` }}>
+                          {/* Показатели */}
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, margin: "14px 0 16px" }}>
+                            {[
+                              { icon: "🏖", label: "Отпуск", value: emp.vacation, color: C.green },
+                              { icon: "📋", label: "Заявки", value: emp.requests, color: C.orange },
+                              { icon: "📚", label: "Курсы", value: emp.courses, color: C.blue },
+                              { icon: "⭐", label: "Рейтинг", value: emp.perf, color: C.greenDark },
+                            ].map(m => (
+                              <div key={m.label} style={{ background: C.bg, borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
+                                <div style={{ fontSize: 18, marginBottom: 4 }}>{m.icon}</div>
+                                <div style={{ fontSize: 13, fontWeight: 800, color: m.color }}>{m.value}</div>
+                                <div style={{ fontSize: 9, color: C.gray500, marginTop: 2, fontWeight: 600 }}>{m.label}</div>
+                              </div>
+                            ))}
+                          </div>
+                          {/* Трудовая дисциплина */}
+                          <div style={{ fontSize: 12, fontWeight: 700, color: C.dark, marginBottom: 8 }}>📜 Трудовая дисциплина</div>
+                          <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "6px 10px",
+                            alignItems: "center", fontSize: 10, fontWeight: 700, color: C.gray500,
+                            marginBottom: 6, paddingBottom: 6, borderBottom: `1px solid ${C.gray300}` }}>
+                            <span>Дата</span><span>Вход</span><span>Выход</span><span>Статус</span>
+                          </div>
+                          {emp.discipline.map((row, i) => (
+                            <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "6px 10px",
+                              alignItems: "center", padding: "8px 0", borderBottom: i < 4 ? `1px solid ${C.gray300}` : "none",
+                              background: !row.ok ? C.red+"08" : "transparent", borderRadius: !row.ok ? 6 : 0,
+                              paddingLeft: !row.ok ? 6 : 0, paddingRight: !row.ok ? 6 : 0 }}>
+                              <div style={{ fontSize: 11, color: C.gray500, fontWeight: 600 }}>{row.date}</div>
+                              <div style={{ fontSize: 12, fontWeight: 600, color: C.dark }}>{row.enter}</div>
+                              <div style={{ fontSize: 12, fontWeight: 600, color: C.dark }}>{row.exit}</div>
+                              <span style={{ fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 100, whiteSpace: "nowrap",
+                                background: row.ok ? C.green+"18" : C.red+"18", color: row.ok ? C.green : C.red }}>
+                                {row.label}
+                              </span>
+                            </div>
+                          ))}
+                          <div style={{ marginTop: 10, fontSize: 11, color: violations > 0 ? C.red : C.green, fontWeight: 600 }}>
+                            {violations > 0 ? `Нарушений за неделю: ${violations}` : "Нарушений нет ✓"}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* ── CATALOG ── */}
         {page === "catalog" && !selected && (() => {
