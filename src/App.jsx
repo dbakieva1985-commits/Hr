@@ -1287,42 +1287,6 @@ export default function App() {
               ))}
             </div>
 
-            {/* Трудовая дисциплина */}
-            <div style={{ background: C.card, borderRadius: 20, padding: isMobile ? "16px" : "20px", boxShadow: C.shadow, marginBottom: 20 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>📜 Трудовая дисциплина</div>
-                <span style={{ fontSize: 11, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 10px" }}>Июнь 2026</span>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "8px 12px", alignItems: "center",
-                fontSize: 11, fontWeight: 700, color: C.gray500, marginBottom: 8, paddingBottom: 8, borderBottom: `1px solid ${C.gray300}` }}>
-                <span>Дата</span><span>Вход</span><span>Выход</span><span>Статус</span>
-              </div>
-              {[
-                { date: "30.06 Сег.", enter: "09:15", exit: "—",    ok: true,  label: "В норме" },
-                { date: "27.06 Пт",  enter: "09:20", exit: "18:05", ok: true,  label: "В норме" },
-                { date: "26.06 Чт",  enter: "09:05", exit: "18:10", ok: true,  label: "В норме" },
-                { date: "25.06 Ср",  enter: "09:37", exit: "18:58", ok: false, label: "Нарушение" },
-                { date: "24.06 Вт",  enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
-              ].map((row, i) => (
-                <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "8px 12px",
-                  alignItems: "center", padding: "10px 0", borderBottom: i < 4 ? `1px solid ${C.gray300}` : "none",
-                  background: !row.ok ? C.red+"08" : "transparent", borderRadius: !row.ok ? 8 : 0,
-                  paddingLeft: !row.ok ? 8 : 0, paddingRight: !row.ok ? 8 : 0 }}>
-                  <div style={{ fontSize: 12, color: C.gray500, fontWeight: 600, whiteSpace: "nowrap" }}>{row.date}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{row.enter}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{row.exit}</div>
-                  <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100, whiteSpace: "nowrap",
-                    background: row.ok ? C.green+"18" : C.red+"18", color: row.ok ? C.green : C.red }}>
-                    {row.label}
-                  </span>
-                </div>
-              ))}
-              <div style={{ marginTop: 12, display: "flex", gap: 20, fontSize: 12 }}>
-                <span>Нарушений за месяц: <b style={{ color: C.red }}>1</b></span>
-                <span>Рабочих дней: <b style={{ color: C.dark }}>20</b></span>
-              </div>
-            </div>
-
             {/* Мои льготы */}
             {(() => {
               const isManager = portalRole === "manager" || portalRole === "hr";
@@ -1376,6 +1340,42 @@ export default function App() {
                 </div>
               );
             })()}
+
+            {/* Трудовая дисциплина */}
+            <div style={{ background: C.card, borderRadius: 20, padding: isMobile ? "16px" : "20px", boxShadow: C.shadow, marginBottom: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>📜 Трудовая дисциплина</div>
+                <span style={{ fontSize: 11, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 10px" }}>Июнь 2026</span>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "8px 12px", alignItems: "center",
+                fontSize: 11, fontWeight: 700, color: C.gray500, marginBottom: 8, paddingBottom: 8, borderBottom: `1px solid ${C.gray300}` }}>
+                <span>Дата</span><span>Вход</span><span>Выход</span><span>Статус</span>
+              </div>
+              {[
+                { date: "30.06 Сег.", enter: "09:15", exit: "—",    ok: true,  label: "В норме" },
+                { date: "27.06 Пт",  enter: "09:20", exit: "18:05", ok: true,  label: "В норме" },
+                { date: "26.06 Чт",  enter: "09:05", exit: "18:10", ok: true,  label: "В норме" },
+                { date: "25.06 Ср",  enter: "09:37", exit: "18:58", ok: false, label: "Нарушение" },
+                { date: "24.06 Вт",  enter: "09:00", exit: "18:00", ok: true,  label: "В норме" },
+              ].map((row, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr 1fr auto", gap: "8px 12px",
+                  alignItems: "center", padding: "10px 0", borderBottom: i < 4 ? `1px solid ${C.gray300}` : "none",
+                  background: !row.ok ? C.red+"08" : "transparent", borderRadius: !row.ok ? 8 : 0,
+                  paddingLeft: !row.ok ? 8 : 0, paddingRight: !row.ok ? 8 : 0 }}>
+                  <div style={{ fontSize: 12, color: C.gray500, fontWeight: 600, whiteSpace: "nowrap" }}>{row.date}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{row.enter}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: C.dark }}>{row.exit}</div>
+                  <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100, whiteSpace: "nowrap",
+                    background: row.ok ? C.green+"18" : C.red+"18", color: row.ok ? C.green : C.red }}>
+                    {row.label}
+                  </span>
+                </div>
+              ))}
+              <div style={{ marginTop: 12, display: "flex", gap: 20, fontSize: 12 }}>
+                <span>Нарушений за месяц: <b style={{ color: C.red }}>1</b></span>
+                <span>Рабочих дней: <b style={{ color: C.dark }}>20</b></span>
+              </div>
+            </div>
 
             {/* Курсы к прохождению */}
             <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>📚 Обучение</div>
