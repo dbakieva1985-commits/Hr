@@ -1235,9 +1235,9 @@ export default function App() {
         {page === "profile" && !selected && (
           <div>
             {/* Header */}
-            <div style={{ background: `linear-gradient(135deg, ${C.blue} 0%, #2563EB 100%)`,
+            <div style={{ background: `linear-gradient(135deg, ${C.green} 0%, ${C.greenDark} 100%)`,
               borderRadius: isMobile ? 20 : 24, padding: isMobile ? "24px 20px" : "28px 28px",
-              marginBottom: 20, boxShadow: `0 8px 32px ${C.blue}44`, position: "relative", overflow: "hidden" }}>
+              marginBottom: 20, boxShadow: `0 8px 32px ${C.green}44`, position: "relative", overflow: "hidden" }}>
               <div style={{ position:"absolute", top:-30, right:-20, width:140, height:140, borderRadius:"50%", background:"rgba(255,255,255,0.07)", pointerEvents:"none" }} />
               <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
                 <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(255,255,255,0.2)",
@@ -1271,9 +1271,9 @@ export default function App() {
                 { icon: "📚", label: "Курсы к прохождению", value: "2", color: C.blue, sub: "срок до 15 июля" },
                 { icon: "⭐", label: "Performance", value: "4.2/5", color: C.greenDark, sub: "за квартал" },
               ].map(m => (
-                <div key={m.label} style={{ background: C.card, borderRadius: 16, padding: "16px 14px", boxShadow: C.shadow }}>
-                  <div style={{ fontSize: 26, marginBottom: 8 }}>{m.icon}</div>
-                  <div style={{ fontSize: isMobile ? 20 : 22, fontWeight: 800, color: m.color, marginBottom: 2 }}>{m.value}</div>
+                <div key={m.label} style={{ background: C.card, borderRadius: 14, padding: "12px 10px", boxShadow: C.shadow }}>
+                  <div style={{ fontSize: 22, marginBottom: 6 }}>{m.icon}</div>
+                  <div style={{ fontSize: isMobile ? 17 : 19, fontWeight: 800, color: m.color, marginBottom: 2 }}>{m.value}</div>
                   <div style={{ fontSize: 11, fontWeight: 600, color: C.dark, marginBottom: 2, lineHeight: 1.3 }}>{m.label}</div>
                   <div style={{ fontSize: 10, color: C.gray500 }}>{m.sub}</div>
                 </div>
