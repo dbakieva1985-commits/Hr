@@ -1263,158 +1263,311 @@ export default function App() {
         })()}
 
         {/* ── CATALOG ── */}
-        {page === "catalog" && !selected && (
+        {page === "catalog" && !selected && (() => {
+          // ── colour accent per category ────────────────────────────────
+          const CAT_COLOR = {
+            "Подбор персонала":               C.blue,
+            "Онбординг":                       C.orange,
+            "Кадровое администрирование":      C.green,
+            "Заработная плата и командировки": C.greenDark,
+            "Compensation & Benefits":         "#7C3AED",
+            "Обучение и развитие":             "#0891B2",
+            "Оценка и Performance":            C.orange,
+            "Кадровый резерв":                 C.greenMid,
+            "HR Analytics":                    C.blue,
+          };
+          const catColor = (cat) => CAT_COLOR[cat] || C.green;
+
+          // ── tag label + color ─────────────────────────────────────────
+          const tagInfo = (s) => {
+            if (s.noBtn)         return { label:"Справочно", color:C.gray500 };
+            if (s.tag === "ИТ")  return { label:"ИТ", color:C.blue };
+            if (s.tag === "рук") return { label:"Рук-ль", color:C.orange };
+            return null;
+          };
+
+          // ── redesigned ServiceCard ────────────────────────────────────
+          const ServiceCard = ({ s }) => {
+            const ti = tagInfo(s);
+            const cc = catColor(s.cat);
+            if (s.featured) return (
+              <div style={{ background:C.card, borderRadius:20, overflow:"hidden", boxShadow:C.shadowMd, display:"flex", flexDirection:"column" }}>
+                <div style={{ background:`linear-gradient(145deg,${C.green} 0%,${C.greenMid} 100%)`, padding:"28px 20px 22px", display:"flex", flexDirection:"column", alignItems:"center", gap:10 }}>
+                  <div style={{ fontSize:52, lineHeight:1 }}>{s.icon}</div>
+                  <div style={{ fontSize:16, fontWeight:800, color:"#fff", textAlign:"center", lineHeight:1.3 }}>{s.title}</div>
+                </div>
+                <div style={{ padding:"16px 20px", display:"flex", flexDirection:"column", flex:1 }}>
+                  <div style={{ fontSize:13, color:C.gray500, lineHeight:1.7, flex:1, whiteSpace:"pre-line" }}>{s.desc}</div>
+                  <div style={{ marginTop:12, fontSize:12, color:C.gray500 }}>⏱ {s.sla}</div>
+                </div>
+              </div>
+            );
+            return (
+              <div style={{ background:C.card, borderRadius:20, overflow:"hidden",
+                boxShadow:C.shadow, display:"flex", flexDirection:"column",
+                transition:"box-shadow .15s, transform .15s",
+                borderTop:`3px solid ${cc}22`,
+              }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}>
+
+                {/* Card header */}
+                <div style={{ padding:"16px 16px 0", display:"flex", alignItems:"flex-start", gap:12 }}>
+                  <div style={{ width:48, height:48, borderRadius:14, background:cc+"18",
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>
+                    {s.icon}
+                  </div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:10, fontWeight:800, color:cc, textTransform:"uppercase", letterSpacing:0.8, marginBottom:2 }}>
+                      {s.group || s.cat}
+                    </div>
+                    {ti && (
+                      <span style={{ fontSize:9, fontWeight:700, color:ti.color, background:ti.color+"18",
+                        borderRadius:100, padding:"1px 7px" }}>{ti.label}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Title + desc */}
+                <div style={{ padding:"10px 16px 0" }}>
+                  <div style={{ fontSize:14, fontWeight:700, color:C.dark, lineHeight:1.35, marginBottom:6 }}>{s.title}</div>
+                  <div style={{ fontSize:12, color:C.gray500, lineHeight:1.65, marginBottom:10 }}>{s.desc}</div>
+                </div>
+
+                {/* Meta row */}
+                <div style={{ margin:"0 16px 12px", padding:"10px 12px", background:C.gray100, borderRadius:12, display:"flex", flexDirection:"column", gap:5 }}>
+                  {s.who && (
+                    <div style={{ display:"flex", alignItems:"flex-start", gap:6, fontSize:11 }}>
+                      <span style={{ color:C.gray500, flexShrink:0 }}>👤</span>
+                      <span style={{ color:C.gray700, fontWeight:500, lineHeight:1.4 }}>{s.who}</span>
+                    </div>
+                  )}
+                  {s.docs && s.docs !== "Не требуются" && (
+                    <div style={{ display:"flex", alignItems:"flex-start", gap:6, fontSize:11 }}>
+                      <span style={{ color:C.gray500, flexShrink:0 }}>📋</span>
+                      <span style={{ color:C.gray700, fontWeight:500, lineHeight:1.4 }}>{s.docs}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div style={{ padding:"0 16px 16px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:6, marginTop:"auto" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                    <span style={{ fontSize:11, color:C.gray500 }}>⏱</span>
+                    <span style={{ fontSize:11, fontWeight:700, color: s.sla==="Онлайн"||s.sla==="Справочно"||s.sla==="Актуально" ? C.green : C.dark }}>{s.sla}</span>
+                  </div>
+                  <div style={{ display:"flex", gap:6 }}>
+                    {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link,"_blank"); } else { setSelected(s); setPage("form"); } }}>
+                      {s.btnText || (s.isOnboarding||s.link ? "Открыть" : "Подать заявку")}
+                    </Btn>}
+                    {s.secondBtnText && <Btn small variant="ghost" onClick={() => { const sec=SERVICES.find(x=>x.id===s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
+                      {s.secondBtnText}
+                    </Btn>}
+                    {s.noBtn && <span style={{ fontSize:11, color:C.gray500, fontWeight:600, padding:"7px 0" }}>Информация</span>}
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          // ── improved group tile ───────────────────────────────────────
+          const GroupTile = ({ grp, count }) => {
+            const cc = catColor(filteredServices.find(s=>s.group===grp)?.cat || "");
+            return (
+              <div onClick={() => setSelectedGroup(grp)}
+                style={{ background:C.card, borderRadius:20, padding:isMobile?"16px 14px":"20px 18px",
+                  cursor:"pointer", transition:"box-shadow .15s, transform .15s",
+                  display:"flex", flexDirection:"column", gap:10, boxShadow:C.shadow,
+                  borderLeft:`4px solid ${cc}`,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                  <div style={{ width:48, height:48, borderRadius:14, background:cc+"18",
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:24 }}>
+                    {GROUP_ICONS[grp] || "📝"}
+                  </div>
+                  <span style={{ fontSize:11, fontWeight:800, color:cc, background:cc+"18",
+                    borderRadius:100, padding:"3px 10px" }}>{count}</span>
+                </div>
+                <div>
+                  <div style={{ fontSize:isMobile?13:14, fontWeight:700, color:C.dark, lineHeight:1.3, marginBottom:3 }}>{grp}</div>
+                  <div style={{ fontSize:11, color:C.gray500 }}>Нажмите для просмотра</div>
+                </div>
+                <div style={{ fontSize:13, color:cc, fontWeight:700 }}>Смотреть {count} сервисов →</div>
+              </div>
+            );
+          };
+
+          return (
           <div>
             {/* Header */}
             {selectedGroup ? (
-              <div style={{ marginBottom: 20 }}>
+              <div style={{ marginBottom:20 }}>
                 <button onClick={() => setSelectedGroup(null)} style={{
-                  background: C.card, border: "none", color: C.green, fontSize: 13,
-                  fontWeight: 700, cursor: "pointer", padding: "8px 16px", fontFamily: "inherit", marginBottom: 14,
-                  borderRadius: 100, boxShadow: C.shadow, display:"inline-flex", alignItems:"center", gap:6
+                  background:C.card, border:"none", color:C.green, fontSize:13,
+                  fontWeight:700, cursor:"pointer", padding:"8px 16px", fontFamily:"inherit", marginBottom:14,
+                  borderRadius:100, boxShadow:C.shadow, display:"inline-flex", alignItems:"center", gap:6
                 }}>← Назад</button>
-                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                  <div style={{ width: 56, height: 56, borderRadius: 18, background: C.greenPale,
-                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+                  <div style={{ width:56, height:56, borderRadius:18,
+                    background:catColor(SERVICES.find(s=>s.group===selectedGroup)?.cat||"")+"18",
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:28, flexShrink:0 }}>
                     {GROUP_ICONS[selectedGroup] || "📝"}
                   </div>
-                  <h1 style={{ fontSize: 22, fontWeight: 800, color: C.dark, margin: 0 }}>{selectedGroup}</h1>
+                  <div>
+                    <h1 style={{ fontSize:22, fontWeight:800, color:C.dark, margin:0 }}>{selectedGroup}</h1>
+                    <div style={{ fontSize:12, color:C.gray500, marginTop:3 }}>
+                      {SERVICES.filter(s=>s.group===selectedGroup).length} сервисов
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div style={{ marginBottom: 20 }}>
-                <h1 style={{ fontSize: isMobile ? 22 : 26, fontWeight: 800, color: C.dark, margin: 0 }}>Каталог HR-сервисов</h1>
-                <p style={{ color: C.gray500, fontSize: 14, marginTop: 6, fontWeight:500 }}>Выберите нужную услугу и подайте заявку</p>
+              <div style={{ marginBottom:16 }}>
+                <h1 style={{ fontSize:isMobile?22:26, fontWeight:800, color:C.dark, margin:0 }}>Каталог HR-сервисов</h1>
+                <p style={{ color:C.gray500, fontSize:13, marginTop:5, fontWeight:500 }}>
+                  {SERVICES.filter(s=>!s.hidden).length} сервисов · выберите нужный и подайте заявку
+                </p>
               </div>
             )}
 
             {/* Search */}
-            <div style={{ position:"relative", marginBottom:14 }}>
+            <div style={{ position:"relative", marginBottom:12 }}>
               <span style={{ position:"absolute", left:16, top:"50%", transform:"translateY(-50%)", fontSize:16, pointerEvents:"none" }}>🔍</span>
               <input value={search} onChange={e => { setSearch(e.target.value); setSelectedGroup(null); }}
-                placeholder="Поиск сервиса..."
+                placeholder="Поиск по названию, описанию или категории..."
                 style={{ width:"100%", boxSizing:"border-box", border:"none", background:C.card,
                   borderRadius:100, padding:"12px 18px 12px 44px", fontSize:14,
                   fontFamily:"inherit", color:C.dark, outline:"none", boxShadow:C.shadow }} />
-            </div>
-            {/* Category pills — horizontal scroll, no wrap */}
-            <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:8, marginBottom:18,
-              scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
-              {["Все", ...CATS].map(c => (
-                <Pill key={c} text={c} active={catFilter === c} onClick={() => { setCatFilter(c); setSelectedGroup(null); }} />
-              ))}
+              {search && <button onClick={() => setSearch("")} style={{ position:"absolute", right:16, top:"50%", transform:"translateY(-50%)",
+                background:"none", border:"none", fontSize:16, cursor:"pointer", color:C.gray500, lineHeight:1 }}>✕</button>}
             </div>
 
-            {(() => {
-              const ServiceCard = ({ s }) => s.featured ? (
-                <div style={{
-                  background: C.card, borderRadius: 20,
-                  overflow: "hidden", boxShadow: C.shadowMd,
-                  display: "flex", flexDirection: "column"
-                }}>
-                  <div style={{
-                    background: `linear-gradient(145deg, ${C.green} 0%, ${C.greenMid} 100%)`,
-                    padding: "28px 20px 22px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10
+            {/* Category pills with counts */}
+            <div style={{ display:"flex", gap:8, overflowX:"auto", paddingBottom:8, marginBottom:16,
+              scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
+              {["Все", ...CATS].map(c => {
+                const cnt = c === "Все" ? SERVICES.filter(s=>!s.hidden).length : SERVICES.filter(s=>s.cat===c&&!s.hidden).length;
+                return (
+                  <button key={c} onClick={() => { setCatFilter(c); setSelectedGroup(null); }} style={{
+                    background: catFilter===c ? (c==="Все"?C.green:catColor(c)) : C.white,
+                    color: catFilter===c ? C.white : C.gray700,
+                    border:"none", borderRadius:100, padding:"8px 16px",
+                    fontSize:13, cursor:"pointer", fontFamily:"inherit",
+                    fontWeight:catFilter===c ? 700 : 500,
+                    boxShadow:catFilter===c ? `0 2px 12px ${c==="Все"?C.green:catColor(c)}44` : "0 1px 4px rgba(0,0,0,0.08)",
+                    whiteSpace:"nowrap", flexShrink:0, display:"flex", alignItems:"center", gap:6, transition:"all .15s",
                   }}>
-                    <div style={{ fontSize: 52, lineHeight: 1 }}>{s.icon}</div>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", textAlign: "center", lineHeight: 1.3 }}>{s.title}</div>
-                  </div>
-                  <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", flex: 1 }}>
-                    <div style={{ fontSize: 13, color: C.gray500, lineHeight: 1.7, flex: 1, whiteSpace:"pre-line" }}>{s.desc}</div>
-                    <div style={{ marginTop: 12, fontSize: 12, color: C.gray500 }}>⏱ {s.sla}</div>
+                    {c}
+                    <span style={{ fontSize:11, opacity:0.8, fontWeight:700 }}>{cnt}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Life Events — only show when not searching and not in a group */}
+            {!search && !selectedGroup && catFilter==="Все" && (
+              <div style={{ marginBottom:20 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, paddingLeft:2 }}>
+                  <div>
+                    <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Жизненные ситуации</div>
+                    <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Несколько заявок за один шаг</div>
                   </div>
                 </div>
-              ) : (
-                <div style={{
-                  background: C.card, borderRadius: 20,
-                  padding: "18px 18px 16px", cursor: "pointer", transition: "box-shadow .15s, transform .15s",
-                  display: "flex", flexDirection: "column", boxShadow: C.shadow,
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = C.shadowMd; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = C.shadow; e.currentTarget.style.transform = "translateY(0)"; }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-                    <div style={{ width: 48, height: 48, borderRadius: 16, background: C.greenPale,
-                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, flexShrink: 0 }}>
-                      {s.icon}
-                    </div>
-                    <div style={{ fontSize: 10, fontWeight: 800, color: C.green, textTransform: "uppercase", letterSpacing: 0.8, lineHeight: 1.4 }}>
-                      {s.group || s.cat}
-                    </div>
+                <div style={{ display:"flex", gap:12, overflowX:"auto", paddingBottom:4, scrollbarWidth:"none", WebkitOverflowScrolling:"touch" }}>
+                  {LIFE_EVENTS.map(ev => (
+                    <button key={ev.id} onClick={() => {
+                      const sel={};
+                      ev.services.forEach(s => { if(s.rec) sel[s.serviceId]=true; });
+                      setLifeEventSelected(sel);
+                      setLifeEventModal(ev);
+                    }} style={{
+                      flexShrink:0, width:isMobile?148:170, background:C.card, borderRadius:18,
+                      padding:"16px 14px 14px", border:`1.5px solid ${ev.color}22`, cursor:"pointer",
+                      fontFamily:"inherit", textAlign:"left", boxShadow:C.shadow,
+                      transition:"box-shadow .15s, transform .15s",
+                    }}
+                      onMouseEnter={e => { e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.transform="translateY(-2px)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.transform="translateY(0)"; }}
+                    >
+                      <div style={{ width:46, height:46, borderRadius:14, background:ev.bgColor,
+                        display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:10 }}>
+                        {ev.icon}
+                      </div>
+                      <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4, lineHeight:1.3 }}>{ev.title}</div>
+                      <div style={{ fontSize:11, color:C.gray500, lineHeight:1.5, marginBottom:8 }}>{ev.desc}</div>
+                      <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+                        <span style={{ fontSize:10, fontWeight:800, color:ev.color, background:ev.color+"18", borderRadius:100, padding:"2px 8px" }}>
+                          {ev.services.length} заявки
+                        </span>
+                        <span style={{ fontSize:11, color:ev.color, fontWeight:700 }}>→</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Inside a group */}
+            {selectedGroup && (() => {
+              const grpItems = SERVICES.filter(s => s.group===selectedGroup && !s.hidden);
+              return (
+                <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(1,1fr)":"repeat(2,1fr)", gap:isMobile?10:14 }}>
+                  {grpItems.map(s => <ServiceCard key={s.id} s={s} />)}
+                </div>
+              );
+            })()}
+
+            {/* Search results */}
+            {!selectedGroup && search && (() => {
+              if (!filteredServices.length) return (
+                <div style={{ textAlign:"center", padding:"60px 20px" }}>
+                  <div style={{ fontSize:48, marginBottom:16 }}>🔍</div>
+                  <div style={{ fontSize:16, fontWeight:700, color:C.dark, marginBottom:8 }}>Ничего не найдено</div>
+                  <div style={{ fontSize:13, color:C.gray500 }}>Попробуйте другой запрос или выберите категорию</div>
+                  <button onClick={() => setSearch("")} style={{ marginTop:16, background:C.green, color:C.white,
+                    border:"none", borderRadius:100, padding:"10px 24px", fontSize:13, fontWeight:700,
+                    cursor:"pointer", fontFamily:"inherit" }}>Сбросить поиск</button>
+                </div>
+              );
+              return (
+                <div>
+                  <div style={{ fontSize:13, color:C.gray500, marginBottom:14 }}>
+                    Найдено: <b style={{ color:C.dark }}>{filteredServices.length}</b> сервисов
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: C.dark, marginBottom: 6, lineHeight: 1.3 }}>{s.title}</div>
-                  <div style={{ fontSize: 12, color: C.gray500, flex: 1, marginBottom: 14, lineHeight: 1.6 }}>{s.desc}</div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 11, color: C.gray500, fontWeight:500 }}>⏱ {s.sla}</span>
-                    <div style={{ display: "flex", gap: 6 }}>
-                      {!s.noBtn && <Btn small onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link, "_blank"); } else { setSelected(s); setPage("form"); } }}>
-                        {s.btnText || (s.isOnboarding || s.link ? "Открыть" : "Подать заявку")}
-                      </Btn>}
-                      {s.secondBtnText && <Btn small variant="ghost" onClick={() => { const sec = SERVICES.find(x => x.id === s.secondBtnServiceId); if(sec){ setSelected(sec); setPage("form"); } }}>
-                        {s.secondBtnText}
-                      </Btn>}
-                    </div>
+                  <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(1,1fr)":"repeat(2,1fr)", gap:isMobile?10:14 }}>
+                    {filteredServices.map(s => <ServiceCard key={s.id} s={s} />)}
                   </div>
                 </div>
               );
+            })()}
 
-              // Inside a group — show its services
-              if (selectedGroup) {
-                const grpItems = SERVICES.filter(s => s.group === selectedGroup);
-                return (
-                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
-                    {grpItems.map(s => <ServiceCard key={s.id} s={s} />)}
-                  </div>
-                );
-              }
-
-              // Searching — show flat results
-              if (search) {
-                return (
-                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
-                    {filteredServices.map(s => <ServiceCard key={s.id} s={s} />)}
-                  </div>
-                );
-              }
-
-              // Default — group tiles + ungrouped services
-              const groupNames = [...new Set(filteredServices.filter(s => s.group).map(s => s.group))];
-              const ungrouped = filteredServices.filter(s => !s.group);
-
+            {/* Default — group tiles + ungrouped */}
+            {!selectedGroup && !search && (() => {
+              const groupNames = [...new Set(filteredServices.filter(s=>s.group).map(s=>s.group))];
+              const ungrouped = filteredServices.filter(s=>!s.group);
               return (
-                <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
                   {groupNames.length > 0 && (
-                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(3,1fr)", gap: isMobile ? 10 : 14 }}>
-                      {groupNames.map(grp => {
-                        const count = filteredServices.filter(s => s.group === grp).length;
-                        return (
-                          <div key={grp} onClick={() => setSelectedGroup(grp)}
-                            style={{ background: C.card, borderRadius: 20,
-                              padding: isMobile ? "18px 14px" : "22px 20px", cursor: "pointer",
-                              transition: "box-shadow .15s, transform .15s",
-                              display: "flex", flexDirection: "column", gap: 12,
-                              boxShadow: C.shadow }}
-                            onMouseEnter={e => { e.currentTarget.style.boxShadow = C.shadowMd; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                            onMouseLeave={e => { e.currentTarget.style.boxShadow = C.shadow; e.currentTarget.style.transform = "translateY(0)"; }}>
-                            <div style={{ width: 56, height: 56, borderRadius: 18, background: C.greenPale,
-                              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>
-                              {GROUP_ICONS[grp] || "📝"}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: C.dark, lineHeight: 1.3, marginBottom: 4 }}>{grp}</div>
-                              <div style={{ fontSize: 12, color: C.gray500, fontWeight:500 }}>{count} сервисов</div>
-                            </div>
-                            <div style={{ fontSize: 18, color: C.green, fontWeight:700 }}>→</div>
-                          </div>
-                        );
-                      })}
+                    <div>
+                      {catFilter !== "Все" && (
+                        <div style={{ fontSize:12, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:1, marginBottom:12 }}>Разделы</div>
+                      )}
+                      <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(3,1fr)", gap:isMobile?10:14 }}>
+                        {groupNames.map(grp => {
+                          const count = filteredServices.filter(s=>s.group===grp).length;
+                          return <GroupTile key={grp} grp={grp} count={count} />;
+                        })}
+                      </div>
                     </div>
                   )}
                   {ungrouped.length > 0 && (
                     <div>
                       {groupNames.length > 0 && (
-                        <div style={{ fontSize: 13, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 12 }}>Другие сервисы</div>
+                        <div style={{ fontSize:12, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:1, marginBottom:12 }}>Отдельные сервисы</div>
                       )}
-                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(1,1fr)" : "repeat(3,1fr)", gap: isMobile ? 8 : 12 }}>
+                      <div style={{ display:"grid", gridTemplateColumns:isMobile?"repeat(1,1fr)":"repeat(2,1fr)", gap:isMobile?10:14 }}>
                         {ungrouped.map(s => <ServiceCard key={s.id} s={s} />)}
                       </div>
                     </div>
@@ -1423,7 +1576,8 @@ export default function App() {
               );
             })()}
           </div>
-        )}
+          );
+        })()}
 
         {/* ── FORM ── */}
         {page === "form" && selected && !submitted && (
