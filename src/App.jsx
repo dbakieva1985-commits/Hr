@@ -343,12 +343,23 @@ const ApprovalBar = ({ decisions, businessDir }) => (
 // ── Sidebar nav ─────────────────────────────────────────────────────────────
 const NAV = [
   { id: "catalog",   icon: "☰", label: "Каталог" },
+  { id: "my",        icon: "📋", label: "Мои заявки" },
   { id: "analytics", icon: "⊡", label: "Аналитика" },
 ];
 const PORTAL_ROLES = [
   { id: "manager",  icon: "👔", label: "Руководитель", short: "Рук-ль" },
   { id: "hr",       icon: "👩‍💼", label: "HR",           short: "HR" },
   { id: "employee", icon: "👤", label: "Сотрудник",    short: "Сотрудник" },
+];
+const COMPANIES = [
+  { id: "halyk",      name: "АО «Halyk Bank»",            sub: "Головной банк",          icon: "🏦" },
+  { id: "kaztel",     name: "АО «Казтелепорт»",           sub: "Телеком-сервисы",        icon: "📡" },
+  { id: "finservice", name: "АО «Halyk Finservice»",      sub: "Финансовые услуги",      icon: "💳" },
+  { id: "insurance",  name: "АО «Halyk-Страхование»",     sub: "Страхование",            icon: "🛡️" },
+  { id: "leasing",    name: "АО «Halyk-Leasing»",         sub: "Лизинговые продукты",    icon: "🚗" },
+  { id: "finance",    name: "АО «Halyk Finance»",         sub: "Инвестиции и рынки",     icon: "📈" },
+  { id: "digital",    name: "Digital / IT-подразделения", sub: "Цифровые сервисы банка", icon: "💻" },
+  { id: "epf",        name: "ООИУПА «ЕНПФ»",             sub: "Пенсионный фонд",        icon: "🏛" },
 ];
 
 // ── Onboarding data ─────────────────────────────────────────────────────────
@@ -653,6 +664,8 @@ const MY_TASKS = [
 export default function App() {
   const [currentRole, setCurrentRole] = useState("recruiter");
   const [portalRole, setPortalRole] = useState("employee");
+  const [company, setCompany] = useState(null);
+  const [selectedCompany, setSelectedCompany] = useState(null);
   const [obTasks, setObTasks]   = useState(OB_TASKS_INIT);
   const [obDocs,  setObDocs]    = useState(OB_DOCS_INIT);
   const [obPhase, setObPhase]   = useState("week1");
@@ -834,6 +847,92 @@ export default function App() {
     setSubmitted(false);
   }
 
+  // ── Login / Company-select screen ───────────────────────────────────────
+  if (!company) {
+    return (
+      <div style={{ minHeight:"100vh", fontFamily:"'Inter','Segoe UI',sans-serif",
+        background:`linear-gradient(160deg, ${C.green} 0%, ${C.greenDark} 100%)`,
+        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+        padding:"24px 16px",
+      }}>
+        {/* Logo block */}
+        <div style={{ textAlign:"center", marginBottom:32 }}>
+          <div style={{ width:72, height:72, borderRadius:22, background:"rgba(255,255,255,0.18)",
+            display:"flex", alignItems:"center", justifyContent:"center",
+            fontSize:38, margin:"0 auto 14px", border:"2px solid rgba(255,255,255,0.35)" }}>🏦</div>
+          <div style={{ fontSize:24, fontWeight:800, color:C.white, lineHeight:1.2 }}>HR Service Portal</div>
+          <div style={{ fontSize:13, color:"rgba(255,255,255,0.75)", marginTop:6, fontWeight:500 }}>Halyk Bank Group</div>
+        </div>
+
+        {/* Card */}
+        <div style={{ background:C.white, borderRadius:24, padding:isMobile?"24px 18px":"32px 32px",
+          maxWidth:520, width:"100%", boxShadow:"0 20px 60px rgba(0,0,0,0.25)" }}>
+          <div style={{ fontSize:16, fontWeight:700, color:C.dark, marginBottom:4 }}>Выберите вашу организацию</div>
+          <div style={{ fontSize:13, color:C.gray500, marginBottom:20 }}>Для входа в портал подтвердите вашу компанию</div>
+
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:24 }}>
+            {COMPANIES.map(co => {
+              const isActive = selectedCompany === co.id;
+              return (
+                <div key={co.id} onClick={() => setSelectedCompany(co.id)}
+                  style={{
+                    display:"flex", alignItems:"center", gap:10, padding:"12px 12px",
+                    borderRadius:14, cursor:"pointer", transition:"all .15s",
+                    border:`2px solid ${isActive ? C.green : C.gray300}`,
+                    background: isActive ? C.greenPale : C.white,
+                  }}
+                  onMouseEnter={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.green}55`; e.currentTarget.style.background=C.greenPale+"55"; }}}
+                  onMouseLeave={e => { if(!isActive){ e.currentTarget.style.border=`2px solid ${C.gray300}`; e.currentTarget.style.background=C.white; }}}
+                >
+                  <div style={{ width:36, height:36, borderRadius:10, flexShrink:0,
+                    background: isActive ? C.green : C.gray100,
+                    display:"flex", alignItems:"center", justifyContent:"center", fontSize:18,
+                    transition:"all .15s",
+                  }}>{co.icon}</div>
+                  <div style={{ minWidth:0 }}>
+                    <div style={{ fontSize:12, fontWeight:700, color:isActive?C.green:C.dark,
+                      lineHeight:1.25, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{co.name}</div>
+                    <div style={{ fontSize:10, color:C.gray500, marginTop:1 }}>{co.sub}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {selectedCompany && (
+            <div style={{ background:C.greenPale, borderRadius:12, padding:"10px 14px", marginBottom:16,
+              display:"flex", alignItems:"center", gap:10, border:`1px solid ${C.green}33` }}>
+              <span style={{ fontSize:20 }}>{COMPANIES.find(c=>c.id===selectedCompany)?.icon}</span>
+              <div>
+                <div style={{ fontSize:12, color:C.gray500, fontWeight:600 }}>Вы входите как сотрудник</div>
+                <div style={{ fontSize:14, fontWeight:700, color:C.green }}>{COMPANIES.find(c=>c.id===selectedCompany)?.name}</div>
+              </div>
+            </div>
+          )}
+
+          <button
+            onClick={() => { if(selectedCompany){ setCompany(selectedCompany); navigate("catalog"); } }}
+            disabled={!selectedCompany}
+            style={{
+              width:"100%", background: selectedCompany ? C.green : C.gray300,
+              color: selectedCompany ? C.white : C.gray500,
+              border:"none", borderRadius:100, padding:"14px 0",
+              fontSize:15, fontWeight:700, cursor: selectedCompany ? "pointer" : "default",
+              fontFamily:"inherit", transition:"all .2s",
+              boxShadow: selectedCompany ? `0 4px 16px ${C.green}55` : "none",
+            }}
+          >
+            {selectedCompany ? "Войти в портал →" : "Выберите организацию"}
+          </button>
+        </div>
+
+        <div style={{ marginTop:20, fontSize:11, color:"rgba(255,255,255,0.55)", textAlign:"center" }}>
+          HR Service Portal · Halyk Bank · {new Date().getFullYear()}
+        </div>
+      </div>
+    );
+  }
+
   // ── Layout shell ────────────────────────────────────────────────────────
   return (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Inter', 'Segoe UI', sans-serif", background: C.bg }}>
@@ -933,13 +1032,32 @@ export default function App() {
           );
         })()}
 
-        {/* User */}
-        <div style={{ padding: "12px 20px", borderTop: "1px solid #FFFFFF18" }}>
-          <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.green,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 14, color: C.white, fontWeight: 700, marginBottom: 6 }}>Ф</div>
-          <div style={{ fontSize: 12, color: C.white, fontWeight: 600 }}>Фируза</div>
-          <div style={{ fontSize: 11, color: "#FFFFFF60" }}>ДУП · HR Specialist</div>
+        {/* User + company */}
+        <div style={{ padding: "12px 16px", borderTop: "1px solid #FFFFFF18" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+            <div style={{ width:32, height:32, borderRadius:"50%", background:C.green,
+              display:"flex", alignItems:"center", justifyContent:"center",
+              fontSize:14, color:C.white, fontWeight:700, flexShrink:0 }}>Ф</div>
+            <div style={{ minWidth:0 }}>
+              <div style={{ fontSize:12, color:C.white, fontWeight:600 }}>Фируза</div>
+              <div style={{ fontSize:10, color:"#FFFFFF60" }}>HR Specialist</div>
+            </div>
+          </div>
+          {company && (() => { const co = COMPANIES.find(c=>c.id===company); return co ? (
+            <div style={{ display:"flex", alignItems:"center", gap:6, background:"rgba(255,255,255,0.08)",
+              borderRadius:8, padding:"6px 8px" }}>
+              <span style={{ fontSize:13 }}>{co.icon}</span>
+              <div style={{ minWidth:0 }}>
+                <div style={{ fontSize:10, color:C.green, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{co.name}</div>
+              </div>
+            </div>
+          ) : null; })()}
+          <button onClick={() => { setCompany(null); setSelectedCompany(null); }}
+            style={{ marginTop:8, width:"100%", background:"rgba(255,255,255,0.07)", color:"#FFFFFF60",
+              border:"none", borderRadius:8, padding:"5px 0", fontSize:10, fontWeight:600,
+              cursor:"pointer", fontFamily:"inherit", letterSpacing:0.3 }}>
+            Сменить организацию
+          </button>
         </div>
       </div>
 
@@ -966,7 +1084,7 @@ export default function App() {
         </nav>
       )}
 
-      {/* Mobile top header — clean white Revolut style */}
+      {/* Mobile top header */}
       {isMobile && (
         <div style={{ position:"fixed", top:0, left:0, right:0, height:60, background:C.white,
           display:"flex", alignItems:"center", justifyContent:"space-between",
@@ -976,23 +1094,17 @@ export default function App() {
               display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, color:C.white, fontWeight:800 }}>H</div>
             <div>
               <div style={{ fontSize:14, fontWeight:700, color:C.dark, lineHeight:1.2 }}>HR Portal</div>
-              <div style={{ fontSize:10, color:C.gray500, fontWeight:500 }}>Halyk Bank</div>
+              {company && (() => { const co = COMPANIES.find(c=>c.id===company); return co ? (
+                <div style={{ fontSize:10, color:C.green, fontWeight:600 }}>{co.icon} {co.name}</div>
+              ) : null; })()}
             </div>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <select value={currentRole} onChange={e => setCurrentRole(e.target.value)}
-              style={{ background:C.gray100, color:C.dark, border:"none",
-                borderRadius:100, padding:"6px 10px", fontSize:10, fontFamily:"inherit", cursor:"pointer", outline:"none", fontWeight:600 }}>
-              {[
-                { id:"recruiter", label:"Рекрутер ДО" },
-                { id:"do",        label:"Рук-ль ДО" },
-                { id:"business",  label:"Рук. напр. ГБ" },
-                { id:"usot",      label:"УСОТ ГБ" },
-                { id:"hr_dir",    label:"HRD ГБ" },
-                { id:"do_date",   label:"ДО (дата)" },
-                { id:"uap",       label:"УАП ГБ" },
-              ].map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
-            </select>
+            <button onClick={() => { setCompany(null); setSelectedCompany(null); }}
+              style={{ background:C.gray100, color:C.gray700, border:"none", borderRadius:100,
+                padding:"6px 10px", fontSize:10, fontFamily:"inherit", cursor:"pointer", fontWeight:600 }}>
+              Сменить
+            </button>
             <div style={{ width:34, height:34, borderRadius:"50%", background:C.greenPale,
               display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, color:C.green, fontWeight:800,
               border:`2px solid ${C.green}30` }}>Ф</div>
