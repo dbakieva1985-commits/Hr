@@ -710,8 +710,10 @@ export default function App() {
   const [approvalTab, setApprovalTab]   = useState("personal");
   const [recruitForm, setRecruitForm]   = useState({
     position: "", management: "", department: "",
-    education: "", experience: "", skills: "", comment: "",
+    requirements: "", duties: "", skills: "", comment: "",
   });
+  const [isListening,    setIsListening]    = useState(false);
+  const [voiceTranscript, setVoiceTranscript] = useState("");
   const [approvalForm, setApprovalForm] = useState({
     // Личные данные
     lastName: "", firstName: "", patronymic: "", dob: "", iin: "",
@@ -824,7 +826,8 @@ export default function App() {
       experience: [{ company: "", role: "", period: "", duties: "" }],
       relatives:  [{ lastName: "", firstName: "", patronymic: "", relation: "", address: "", workplace: "", iin: "", phone: "" }],
     });
-    setRecruitForm({ position: "", management: "", department: "", education: "", experience: "", skills: "", comment: "" });
+    setRecruitForm({ position: "", management: "", department: "", requirements: "", duties: "", skills: "", comment: "" });
+    setIsListening(false); setVoiceTranscript("");
     setSubmitted(false);
   }
 
@@ -1394,7 +1397,11 @@ export default function App() {
                   <div style={{ fontSize:isMobile?13:14, fontWeight:700, color:C.dark, lineHeight:1.3, marginBottom:3 }}>{grp}</div>
                   <div style={{ fontSize:11, color:C.gray500 }}>Нажмите для просмотра</div>
                 </div>
-                <div style={{ fontSize:13, color:cc, fontWeight:700 }}>Смотреть {count} сервисов →</div>
+                <div style={{ fontSize:13, color:cc, fontWeight:700 }}>
+                  {grp === "Вакансии Банка" ? "Смотреть вакансии →"
+                    : grp === "Реферальная программа" ? "Смотреть далее →"
+                    : `Смотреть ${count} сервисов →`}
+                </div>
               </div>
             );
           };
@@ -1460,7 +1467,6 @@ export default function App() {
                     whiteSpace:"nowrap", flexShrink:0, display:"flex", alignItems:"center", gap:6, transition:"all .15s",
                   }}>
                     {c}
-                    <span style={{ fontSize:11, opacity:0.8, fontWeight:700 }}>{cnt}</span>
                   </button>
                 );
               })}
@@ -1883,13 +1889,83 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Требования */}
+                {/* Voice input block */}
+                {(() => {
+                  const parseVoice = (text) => {
+                    const reqM    = text.match(/требования[:\s]+(.+?)(?=обязанности|навыки|$)/si);
+                    const dutiesM = text.match(/обязанности[:\s]+(.+?)(?=требования|навыки|$)/si);
+                    const skillsM = text.match(/навыки[:\s]+(.+?)(?=требования|обязанности|$)/si);
+                    return {
+                      requirements: reqM?.[1]?.trim()    || (!dutiesM && !skillsM ? text.trim() : ""),
+                      duties:       dutiesM?.[1]?.trim() || "",
+                      skills:       skillsM?.[1]?.trim() || "",
+                    };
+                  };
+                  const startVoice = () => {
+                    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    if (!SR) { alert("Голосовой ввод не поддерживается в этом браузере"); return; }
+                    const rec = new SR();
+                    rec.lang = "ru-RU"; rec.interimResults = true; rec.continuous = false;
+                    rec.onstart  = () => setIsListening(true);
+                    rec.onend    = () => setIsListening(false);
+                    rec.onerror  = () => setIsListening(false);
+                    rec.onresult = (e) => {
+                      const t = Array.from(e.results).map(r => r[0].transcript).join(" ");
+                      setVoiceTranscript(t);
+                      if (e.results[e.results.length - 1].isFinal) {
+                        const parsed = parseVoice(t);
+                        setRecruitForm(p => ({
+                          ...p,
+                          requirements: parsed.requirements || p.requirements,
+                          duties:       parsed.duties       || p.duties,
+                          skills:       parsed.skills       || p.skills,
+                        }));
+                      }
+                    };
+                    rec.start();
+                  };
+                  return (
+                    <div style={{ background: isListening ? "#FFF0F3" : C.greenPale, borderRadius: 16,
+                      padding: "16px 18px", marginBottom: 16,
+                      border: `1.5px solid ${isListening ? "#FF6B8A" : C.green}22`, transition:"all .2s" }}>
+                      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom: voiceTranscript ? 10 : 0 }}>
+                        <div>
+                          <div style={{ fontSize:13, fontWeight:700, color: isListening ? "#DC2626" : C.green }}>
+                            {isListening ? "🔴 Слушаю..." : "🎙 Голосовой ввод"}
+                          </div>
+                          <div style={{ fontSize:11, color:C.gray500, marginTop:2 }}>
+                            {isListening
+                              ? "Скажите требования, обязанности и навыки"
+                              : "Нажмите и говорите — поля заполнятся автоматически"}
+                          </div>
+                        </div>
+                        <button onClick={isListening ? undefined : startVoice}
+                          style={{ width:48, height:48, borderRadius:"50%", border:"none", cursor: isListening ? "default" : "pointer",
+                            background: isListening ? "#DC2626" : C.green, color:"#fff", fontSize:20,
+                            display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0,
+                            boxShadow: isListening ? "0 0 0 6px #DC262622" : "none",
+                            animation: isListening ? "pulse 1s infinite" : "none",
+                          }}>
+                          {isListening ? "⏹" : "🎙"}
+                        </button>
+                      </div>
+                      {voiceTranscript && (
+                        <div style={{ fontSize:12, color:C.gray700, background:C.white, borderRadius:10,
+                          padding:"10px 12px", lineHeight:1.5 }}>
+                          <b style={{ color:C.gray500 }}>Распознано:</b> {voiceTranscript}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* Требования, Обязанности, Навыки */}
                 <div style={{ background: C.white, boxShadow:"0 2px 12px #0000000D", borderRadius: 16, border:"none", padding: "20px", marginBottom: 16 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Требования к кандидату</div>
-                  <Input label="Образование" value={recruitForm.education} onChange={v => setRecruitForm(p => ({...p, education: v}))}
-                    placeholder="Высшее, финансы / IT / менеджмент" multiline />
-                  <Input label="Опыт работы" value={recruitForm.experience} onChange={v => setRecruitForm(p => ({...p, experience: v}))}
-                    placeholder="От 3 лет в банке или fintech. Опыт запуска продуктов..." multiline />
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.gray500, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Требования, Обязанности, Навыки</div>
+                  <Input label="Требования к кандидату" value={recruitForm.requirements} onChange={v => setRecruitForm(p => ({...p, requirements: v}))}
+                    placeholder="Образование, опыт работы, профессиональные качества..." multiline />
+                  <Input label="Должностные обязанности" value={recruitForm.duties} onChange={v => setRecruitForm(p => ({...p, duties: v}))}
+                    placeholder="Ключевые функции и задачи на данной должности..." multiline />
                   <Input label="Навыки и компетенции" value={recruitForm.skills} onChange={v => setRecruitForm(p => ({...p, skills: v}))}
                     placeholder="Product roadmap, Jira, работа с данными, английский B2..." multiline />
                 </div>
@@ -1905,12 +1981,6 @@ export default function App() {
               <>
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 20px" }}>Заполните заявку</h2>
                 <Input label="Подразделение" value={form.dept} onChange={v => setForm(p => ({...p, dept: v}))} placeholder="Департамент управления персоналом" />
-                {selected.docs !== "Не требуются" && (
-                  <div style={{ background: C.gray100, border: `1px solid ${C.gray300}`,
-                    borderRadius: 8, padding: "12px 14px", marginBottom: 16, fontSize: 12, color: C.gray700 }}>
-                    📎 <b>Необходимые документы:</b> {selected.docs}
-                  </div>
-                )}
                 <Input label="Комментарий (необязательно)" value={form.comment} onChange={v => setForm(p => ({...p, comment: v}))}
                   placeholder="Укажите любые дополнительные детали..." multiline />
               </>
