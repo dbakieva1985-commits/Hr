@@ -1355,7 +1355,7 @@ export default function App() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой профиль</div>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                        {["KPI","Льготы","Курсы","Сообщество","Отпуск","Заявки"].map(t => (
+                        {["KPI","Льготы","Курсы","Сообщества","Отпуск","Заявки"].map(t => (
                           <span key={t} style={{ fontSize: 10, color: C.blue, background: C.blue+"15",
                             borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
                         ))}
@@ -1684,7 +1684,7 @@ export default function App() {
               })()}
             </div>
 
-            {/* Сообщество */}
+            {/* Сообщества */}
             <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
               <div onClick={() => setShowCommunity(v=>!v)}
                 style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
@@ -1692,7 +1692,7 @@ export default function App() {
                 <div style={{ display:"flex", alignItems:"center", gap:10 }}>
                   <div style={{ fontSize:18 }}>🤝</div>
                   <div>
-                    <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Сообщество</div>
+                    <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Сообщества</div>
                     <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Клубы, команды и каналы Halyk</div>
                   </div>
                 </div>
