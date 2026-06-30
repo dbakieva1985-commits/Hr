@@ -1155,10 +1155,11 @@ export default function App() {
         {/* ── HOME ── */}
         {page === "home" && !selected && (() => {
           const WORKSPACES = [
-            { id: "employee", icon: "🏠", label: "Мой HR",               sub: "Для всех сотрудников",  desc: "Все HR-сервисы для сотрудника: справки, отпуск, обучение, льготы и документы.", roles: ["employee","worker","manager","mentor","hr"] },
-            { id: "manager",  icon: "👥", label: "Руководитель команды",  sub: "Для руководителей",    desc: "Согласования, управление командой, подбор, performance и развитие сотрудников.", roles: ["manager"] },
-            { id: "mentor",   icon: "🎓", label: "Наставник",             sub: "Для наставников",      desc: "Адаптация новичков, чек-листы, встречи 1:1 и прогресс новичка.", roles: ["mentor"] },
-            { id: "hr",       icon: "💚", label: "HR",                    sub: "Для HR-команды",       desc: "Подбор, кадровое администрирование, C&B, обучение, резерв и аналитика.", roles: ["hr"] },
+            { id: "personal",  icon: "👤", label: "Моё пространство",      sub: "Личный кабинет",        desc: "Ваши данные, документы, расчётные листки, отпуск, обучение и показатели эффективности.", roles: ["employee","worker","manager","mentor","hr"] },
+            { id: "employee",  icon: "🏠", label: "Мой HR",                sub: "Для всех сотрудников",  desc: "Все HR-сервисы для сотрудника: справки, отпуск, зарплата, обучение, льготы и документы.", roles: ["employee","worker","manager","mentor","hr"] },
+            { id: "manager",   icon: "👥", label: "Руководитель команды",  sub: "Для руководителей",    desc: "Согласования, управление командой, подбор, performance и развитие сотрудников.", roles: ["manager"] },
+            { id: "mentor",    icon: "🎓", label: "Наставник",             sub: "Для наставников",      desc: "Адаптация новичков, чек-листы, встречи 1:1 и прогресс новичка.", roles: ["mentor"] },
+            { id: "hr",        icon: "💚", label: "HR",                    sub: "Для HR-команды",       desc: "Подбор, кадровое администрирование, C&B, обучение, резерв и аналитика.", roles: ["hr"] },
           ];
           const userWorkspaces = WORKSPACES.filter(w => w.roles.includes(portalRole));
 
