@@ -1038,6 +1038,63 @@ export default function App() {
         </div>
       )}
 
+      {/* Life Event Modal */}
+      {lifeEventModal && (
+        <div onClick={() => setLifeEventModal(null)} style={{ position:"fixed", top:0, left:0, right:0, bottom:0, background:"rgba(0,0,0,0.65)", zIndex:9999, display:"flex", alignItems:"flex-end", justifyContent:"center" }}>
+          <div onClick={e=>e.stopPropagation()} style={{ background:C.white, borderRadius:"24px 24px 0 0", padding:"24px 20px 36px", width:"100%", maxWidth:480, boxShadow:"0 -8px 40px rgba(0,0,0,0.25)" }}>
+            <div style={{ width:40, height:4, background:C.gray300, borderRadius:2, margin:"0 auto 20px" }} />
+            <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16 }}>
+              <div style={{ fontSize:36 }}>{lifeEventModal.icon}</div>
+              <div>
+                <div style={{ fontSize:18, fontWeight:800, color:C.dark }}>{lifeEventModal.title}</div>
+                <div style={{ fontSize:12, color:C.gray500, marginTop:2 }}>{lifeEventModal.desc}</div>
+              </div>
+            </div>
+            <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:10 }}>Выберите заявки для подачи:</div>
+            {lifeEventModal.services.map(svc => (
+              <div key={svc.serviceId} onClick={() => setLifeEventSelected(p => ({...p, [svc.serviceId]: !p[svc.serviceId]}))}
+                style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 14px", borderRadius:12, marginBottom:8, cursor:"pointer",
+                  background: lifeEventSelected[svc.serviceId] ? lifeEventModal.color+"15" : C.bg,
+                  border: `1.5px solid ${lifeEventSelected[svc.serviceId] ? lifeEventModal.color : C.gray300}` }}>
+                <div style={{ width:22, height:22, borderRadius:6, border:`2px solid ${lifeEventSelected[svc.serviceId] ? lifeEventModal.color : C.gray300}`,
+                  background: lifeEventSelected[svc.serviceId] ? lifeEventModal.color : C.white,
+                  display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                  {lifeEventSelected[svc.serviceId] && <span style={{ color:C.white, fontSize:13, fontWeight:900 }}>✓</span>}
+                </div>
+                <div style={{ fontSize:18 }}>{svc.icon}</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:13, fontWeight:600, color:C.dark }}>{svc.label}</div>
+                  {svc.rec && <div style={{ fontSize:10, color:lifeEventModal.color, fontWeight:700, marginTop:2 }}>Рекомендуется</div>}
+                </div>
+              </div>
+            ))}
+            <div style={{ display:"flex", gap:10, marginTop:20 }}>
+              <button onClick={() => setLifeEventModal(null)}
+                style={{ flex:1, padding:"12px", border:`1.5px solid ${C.gray300}`, borderRadius:12, fontSize:14, fontWeight:600,
+                  color:C.gray500, background:C.white, cursor:"pointer", fontFamily:"inherit" }}>
+                Отмена
+              </button>
+              <button onClick={() => {
+                const selected = lifeEventModal.services.filter(s => lifeEventSelected[s.serviceId]);
+                if(!selected.length) return;
+                const newReqs = selected.map(s => ({
+                  id: Date.now()+s.serviceId, title: s.label, status:"sent",
+                  date: new Date().toLocaleDateString("ru-RU"), desc: lifeEventModal.title,
+                }));
+                setRequests(prev => [...prev, ...newReqs]);
+                setLifeEventModal(null);
+                setLifeEventSelected({});
+                navigate("my");
+              }} style={{ flex:2, padding:"12px", border:"none", borderRadius:12, fontSize:14, fontWeight:700,
+                color:C.white, background:lifeEventModal.color, cursor:"pointer", fontFamily:"inherit",
+                opacity: lifeEventModal.services.filter(s=>lifeEventSelected[s.serviceId]).length===0 ? 0.45 : 1 }}>
+                {(()=>{ const n = lifeEventModal.services.filter(s=>lifeEventSelected[s.serviceId]).length; return n>0 ? `Подать ${n} заявки` : "Выберите заявки"; })()}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar — desktop only */}
       <div style={{ width: sideW, background: C.dark, display: isMobile ? "none" : "flex", flexDirection: "column",
         position: "fixed", top: 0, left: 0, height: "100vh", zIndex: 100 }}>
@@ -1776,6 +1833,57 @@ export default function App() {
                 </div>
               )}
             </div>
+
+            {/* Mentor: Мой подопечный */}
+            {portalRole === "mentor" && (() => {
+              const done = obMentorTasks.filter(t=>t.done).length;
+              const total = obMentorTasks.length;
+              const pct = Math.round(done/total*100);
+              return (
+                <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:12, padding:isMobile?"16px":"20px",
+                    borderBottom:`1px solid ${C.gray100}` }}>
+                    <div style={{ width:44, height:44, borderRadius:12, background:C.green+"20",
+                      display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0 }}>🤝</div>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:14, fontWeight:700, color:C.dark }}>Мой подопечный</div>
+                      <div style={{ fontSize:12, color:C.gray500, marginTop:1 }}>Алия Сейткали · Senior PM · Выход: 16 июня</div>
+                    </div>
+                    <div style={{ textAlign:"right", flexShrink:0 }}>
+                      <div style={{ fontSize:20, fontWeight:800, color:C.green }}>{pct}%</div>
+                      <div style={{ fontSize:10, color:C.gray500 }}>выполнено</div>
+                    </div>
+                  </div>
+                  <div style={{ padding:isMobile?"14px 16px 16px":"14px 20px 20px" }}>
+                    <div style={{ height:6, background:C.gray100, borderRadius:3, marginBottom:14, overflow:"hidden" }}>
+                      <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${C.green},${C.greenMid})`, borderRadius:3 }} />
+                    </div>
+                    {obMentorTasks.map(task => (
+                      <div key={task.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"9px 0",
+                        borderBottom:`1px solid ${C.gray100}` }}>
+                        <div onClick={() => setObMentorTasks(prev => prev.map(t => t.id===task.id ? {...t,done:!t.done} : t))}
+                          style={{ width:22, height:22, borderRadius:6, border:`2px solid ${task.done ? C.green : C.gray300}`,
+                            background: task.done ? C.green : C.white, display:"flex", alignItems:"center",
+                            justifyContent:"center", cursor:"pointer", flexShrink:0 }}>
+                          {task.done && <span style={{ color:C.white, fontSize:13, fontWeight:900 }}>✓</span>}
+                        </div>
+                        <div style={{ fontSize:12, flex:1, lineHeight:1.4,
+                          color: task.done ? C.gray500 : C.dark,
+                          textDecoration: task.done ? "line-through" : "none" }}>
+                          {task.title}
+                        </div>
+                      </div>
+                    ))}
+                    <button onClick={() => navigate("onboarding")}
+                      style={{ marginTop:14, width:"100%", padding:"11px", border:`1.5px solid ${C.green}`,
+                        borderRadius:12, fontSize:13, fontWeight:700, color:C.green, background:C.white,
+                        cursor:"pointer", fontFamily:"inherit" }}>
+                      Открыть онбординг →
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Команда вынесена на отдельную страницу team */}
             {false && (() => {
