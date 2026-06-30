@@ -1323,6 +1323,60 @@ export default function App() {
               </div>
             </div>
 
+            {/* Мои льготы */}
+            {(() => {
+              const isManager = portalRole === "manager" || portalRole === "hr";
+              const baseBenefits = [
+                { icon: "🏥", title: "Медицинское страхование", desc: "ДМС для сотрудника и членов семьи" },
+                { icon: "🏠", title: "Субсидирование ипотеки", desc: "Поддержка при оформлении ипотечного займа" },
+                { icon: "🛡️", title: "Страхование жизни", desc: "Программа страхования жизни сотрудников" },
+                { icon: "🎖️", title: "Выслуга лет", desc: "Льготы за продолжительный стаж в компании" },
+                { icon: "💝", title: "Льготы при личных событиях", desc: "Поддержка при вступлении в брак, рождении ребёнка" },
+                { icon: "🧠", title: "Психологическая помощь", desc: "Доступ к психологическим консультациям" },
+                { icon: "💪", title: "Программы оздоровления", desc: "Компенсация фитнеса и спортивных программ" },
+                { icon: "🌴", title: "Дополнительные выходные", desc: "Доп. дни отдыха: день рождения, за достижения" },
+              ];
+              const managerBenefits = [
+                { icon: "📱", title: "Компенсация мобильной связи", desc: "Возмещение расходов на связь" },
+                { icon: "💎", title: "Бонусные программы", desc: "Расширенные бонусные программы для руководителей" },
+                { icon: "🎓", title: "Компенсация образования", desc: "Возмещение затрат на MBA и проф. развитие" },
+                { icon: "🅿️", title: "Парковочное место", desc: "Корпоративное парковочное место" },
+              ];
+              const benefits = isManager ? [...baseBenefits, ...managerBenefits] : baseBenefits;
+              return (
+                <div style={{ background: C.card, borderRadius: 20, padding: isMobile ? "16px" : "20px", boxShadow: C.shadow, marginBottom: 20 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>🛍️ Мои льготы</div>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 10px" }}>
+                      {benefits.length} льгот
+                    </span>
+                  </div>
+                  {isManager && (
+                    <div style={{ fontSize: 11, color: C.greenDark, background: C.greenPale, borderRadius: 8, padding: "6px 10px", marginBottom: 12, fontWeight: 600 }}>
+                      ⭐ Расширенный пакет руководителя
+                    </div>
+                  )}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {benefits.map((b, i) => (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0",
+                        borderBottom: i < benefits.length - 1 ? `1px solid ${C.gray300}` : "none" }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: C.greenPale,
+                          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
+                          {b.icon}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{b.title}</div>
+                          <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{b.desc}</div>
+                        </div>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: C.greenPale,
+                          borderRadius: 100, padding: "2px 8px", flexShrink: 0 }}>Активна</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* Курсы к прохождению */}
             <div style={{ fontSize: 15, fontWeight: 700, color: C.dark, marginBottom: 12 }}>📚 Обучение</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 8 }}>
