@@ -1174,53 +1174,55 @@ export default function App() {
               </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: isMobile ? 10 : 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {/* Мой HR */}
               <div onClick={() => navigate("catalog")}
-                style={{ background: C.white, borderRadius: 16, padding: isMobile ? "14px 12px" : "20px 18px", boxShadow: C.shadow,
+                style={{ background: C.white, borderRadius: 16, padding: "14px 16px", boxShadow: C.shadow,
                   cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                  display: "flex", flexDirection: "column", gap: 0 }}
+                  display: "flex", alignItems: "center", gap: 14 }}
                 onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
                 onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
               >
-                <div style={{ width: isMobile ? 40 : 48, height: isMobile ? 40 : 48, borderRadius: 12, background: C.greenPale,
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 20 : 24, marginBottom: 8 }}>🏠</div>
-                <div style={{ fontSize: isMobile ? 14 : 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Мой HR</div>
-                <div style={{ fontSize: 10, color: C.green, fontWeight: 700, marginBottom: 6 }}>Для всех сотрудников</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 10 }}>
-                  {["Кадровое","Отпуск","Зарплата","Обучение"].map(t => (
-                    <span key={t} style={{ fontSize: 9, color: C.green, background: C.greenPale,
-                      borderRadius: 100, padding: "2px 6px", fontWeight: 600 }}>{t}</span>
-                  ))}
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: C.greenPale,
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>🏠</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: C.dark, marginBottom: 2 }}>Мой HR</div>
+                  <div style={{ fontSize: 11, color: C.green, fontWeight: 600, marginBottom: 5 }}>Справки, отпуск, зарплата, обучение, льготы</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                    {["Кадровое","Отпуск","Зарплата","Обучение","C&B"].map(t => (
+                      <span key={t} style={{ fontSize: 9, color: C.green, background: C.greenPale,
+                        borderRadius: 100, padding: "2px 6px", fontWeight: 600 }}>{t}</span>
+                    ))}
+                  </div>
                 </div>
-                <div style={{ background: C.green, color: C.white, borderRadius: 100, padding: "8px 0",
-                  textAlign: "center", fontSize: isMobile ? 11 : 13, fontWeight: 700 }}>
-                  → Открыть
-                </div>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.green,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: C.white, fontSize: 16, fontWeight: 700, flexShrink: 0 }}>→</div>
               </div>
 
               {/* Мой профиль */}
               <div onClick={() => navigate("profile")}
-                style={{ background: C.white, borderRadius: 16, padding: isMobile ? "14px 12px" : "20px 18px", boxShadow: C.shadow,
+                style={{ background: C.white, borderRadius: 16, padding: "14px 16px", boxShadow: C.shadow,
                   cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                  display: "flex", flexDirection: "column", gap: 0 }}
+                  display: "flex", alignItems: "center", gap: 14 }}
                 onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.blue}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
                 onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
               >
-                <div style={{ width: isMobile ? 40 : 48, height: isMobile ? 40 : 48, borderRadius: 12, background: C.blue+"15",
-                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? 20 : 24, marginBottom: 8 }}>👤</div>
-                <div style={{ fontSize: isMobile ? 14 : 17, fontWeight: 800, color: C.dark, marginBottom: 3 }}>Мой профиль</div>
-                <div style={{ fontSize: 10, color: C.blue, fontWeight: 700, marginBottom: 6 }}>Личный кабинет</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 10 }}>
-                  {["Показатели","Отпуск","Заявки","Обучение"].map(t => (
-                    <span key={t} style={{ fontSize: 9, color: C.blue, background: C.blue+"15",
-                      borderRadius: 100, padding: "2px 6px", fontWeight: 600 }}>{t}</span>
-                  ))}
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: C.blue+"15",
+                  display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>👤</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: C.dark, marginBottom: 2 }}>Мой профиль</div>
+                  <div style={{ fontSize: 11, color: C.blue, fontWeight: 600, marginBottom: 5 }}>Показатели, дисциплина, заявки, обучение</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                    {["Показатели","Отпуск","Дисциплина","Заявки"].map(t => (
+                      <span key={t} style={{ fontSize: 9, color: C.blue, background: C.blue+"15",
+                        borderRadius: 100, padding: "2px 6px", fontWeight: 600 }}>{t}</span>
+                    ))}
+                  </div>
                 </div>
-                <div style={{ background: C.blue, color: C.white, borderRadius: 100, padding: "8px 0",
-                  textAlign: "center", fontSize: isMobile ? 11 : 13, fontWeight: 700 }}>
-                  → Открыть
-                </div>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: C.blue,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: C.white, fontSize: 16, fontWeight: 700, flexShrink: 0 }}>→</div>
               </div>
             </div>
           </div>
