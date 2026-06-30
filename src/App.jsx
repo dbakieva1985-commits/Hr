@@ -1042,7 +1042,13 @@ export default function App() {
       {lifeEventModal && (
         <div onClick={() => setLifeEventModal(null)} style={{ position:"fixed", top:0, left:0, right:0, bottom:0, background:"rgba(0,0,0,0.65)", zIndex:9999, display:"flex", alignItems:"flex-end", justifyContent:"center" }}>
           <div onClick={e=>e.stopPropagation()} style={{ background:C.white, borderRadius:"24px 24px 0 0", padding:"24px 20px 36px", width:"100%", maxWidth:480, boxShadow:"0 -8px 40px rgba(0,0,0,0.25)" }}>
-            <div style={{ width:40, height:4, background:C.gray300, borderRadius:2, margin:"0 auto 20px" }} />
+            <div style={{ width:40, height:4, background:C.gray300, borderRadius:2, margin:"0 auto 16px" }} />
+            <button onClick={() => setLifeEventModal(null)}
+              style={{ display:"flex", alignItems:"center", gap:6, background:"none", border:"none",
+                cursor:"pointer", fontFamily:"inherit", fontSize:13, fontWeight:600,
+                color:C.gray500, padding:"0 0 16px 0" }}>
+              ← Назад
+            </button>
             <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16 }}>
               <div style={{ fontSize:36 }}>{lifeEventModal.icon}</div>
               <div>
@@ -1234,7 +1240,10 @@ export default function App() {
           padding:"0 16px", zIndex:200, boxShadow:"0 1px 0 rgba(0,0,0,0.06)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             {(page === "catalog" || page === "profile" || page === "team" || page === "courses") && (
-              <button onClick={() => navigate("home")} style={{
+              <button onClick={() => {
+                if(page === "catalog" && selectedGroup) { setSelectedGroup(null); }
+                else { navigate("home"); }
+              }} style={{
                 background:"none", border:"none", cursor:"pointer", padding:"4px 6px 4px 0",
                 color:C.dark, fontSize:22, lineHeight:1, display:"flex", alignItems:"center",
               }}>←</button>
