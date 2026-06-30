@@ -1352,7 +1352,7 @@ export default function App() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Мой профиль</div>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                        {["Показатели","Отпуск","Дисциплина","Заявки"].map(t => (
+                        {["KPI","Льготы","Курсы","Сообщество","Отпуск","Заявки"].map(t => (
                           <span key={t} style={{ fontSize: 10, color: C.blue, background: C.blue+"15",
                             borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
                         ))}
