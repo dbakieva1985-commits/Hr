@@ -160,15 +160,15 @@ const SERVICES = [
 
   // ── Кадровый резерв ───────────────────────────────────────────────────────
   // ── Вакансии Банка (внутри Подбор персонала) ─────────────────────────────
-  { id: 72, cat: "Подбор персонала", group: "Вакансии Банка", icon: "👔", title: "Старший менеджер",                                                              sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
-  { id: 73, cat: "Подбор персонала", group: "Вакансии Банка", icon: "📊", title: "Старший менеджер в управление учёта казначейских операций",                    sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
-  { id: 74, cat: "Подбор персонала", group: "Вакансии Банка", icon: "📈", title: "Аналитик данных",                                                               sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
-  { id: 75, cat: "Подбор персонала", group: "Вакансии Банка", icon: "⭐", title: "Старший менеджер Управления качества сервиса",                                 sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
-  { id: 76, cat: "Подбор персонала", group: "Вакансии Банка", icon: "👤", title: "Менеджер (временная)",                                                          sla: "Актуально", desc: "Временная позиция. Место работы: г. Алматы.",             who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
-  { id: 77, cat: "Подбор персонала", group: "Вакансии Банка", icon: "🏦", title: "Главный менеджер (временная позиция) в управление учёта казначейских операций", sla: "Актуально", desc: "Временная позиция. Место работы: г. Алматы.",             who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
-  { id: 78, cat: "Подбор персонала", group: "Вакансии Банка", icon: "💳", title: "Кассир г. Байконур",                                                            sla: "Актуально", desc: "Место работы: г. Байконур / Кызылорда.",                  who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
-  { id: 79, cat: "Подбор персонала", group: "Вакансии Банка", icon: "🔒", title: "Middle SOC Analyst",                                                             sla: "Актуально", desc: "Место работы: г. Алматы. IT-безопасность.",              who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
-  { id: 80, cat: "Подбор персонала", group: "Вакансии Банка", icon: "💻", title: "Старший разработчик",                                                           sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Узнать больше", link: "https://myhalyk.kz" },
+  { id: 72, cat: "Подбор персонала", group: "Вакансии Банка", icon: "👔", title: "Старший менеджер",                                                              sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
+  { id: 73, cat: "Подбор персонала", group: "Вакансии Банка", icon: "📊", title: "Старший менеджер в управление учёта казначейских операций",                    sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
+  { id: 74, cat: "Подбор персонала", group: "Вакансии Банка", icon: "📈", title: "Аналитик данных",                                                               sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
+  { id: 75, cat: "Подбор персонала", group: "Вакансии Банка", icon: "⭐", title: "Старший менеджер Управления качества сервиса",                                 sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
+  { id: 76, cat: "Подбор персонала", group: "Вакансии Банка", icon: "👤", title: "Менеджер (временная)",                                                          sla: "Актуально", desc: "Временная позиция. Место работы: г. Алматы.",             who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
+  { id: 77, cat: "Подбор персонала", group: "Вакансии Банка", icon: "🏦", title: "Главный менеджер (временная позиция) в управление учёта казначейских операций", sla: "Актуально", desc: "Временная позиция. Место работы: г. Алматы.",             who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
+  { id: 78, cat: "Подбор персонала", group: "Вакансии Банка", icon: "💳", title: "Кассир г. Байконур",                                                            sla: "Актуально", desc: "Место работы: г. Байконур / Кызылорда.",                  who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
+  { id: 79, cat: "Подбор персонала", group: "Вакансии Банка", icon: "🔒", title: "Middle SOC Analyst",                                                             sla: "Актуально", desc: "Место работы: г. Алматы. IT-безопасность.",              who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
+  { id: 80, cat: "Подбор персонала", group: "Вакансии Банка", icon: "💻", title: "Старший разработчик",                                                           sla: "Актуально", desc: "Место работы: г. Алматы.",                                  who: "Все сотрудники", docs: "Не требуются", btnText: "Открыть", link: "https://myhalyk.kz" },
 
   // ── Реферальная программа (внутри Подбор персонала) ──────────────────────
   { id: 81, cat: "Подбор персонала", group: "Реферальная программа", icon: "🌟", title: "Реферальная программа Halyk",
@@ -1586,8 +1586,9 @@ export default function App() {
             return (
               <div style={{ background:C.card, borderRadius:12, padding:"10px 12px",
                 boxShadow:C.shadow, display:"flex", alignItems:"flex-start", gap:10,
-                borderLeft:`3px solid ${cc}22`, transition:"box-shadow .12s",
+                borderLeft:`3px solid ${cc}22`, transition:"box-shadow .12s", cursor:"pointer",
               }}
+                onClick={() => { if(s.isOnboarding){ navigate("onboarding"); } else if(s.link){ window.open(s.link,"_blank"); } else { setSelected(s); setPage("form"); } }}
                 onMouseEnter={e => e.currentTarget.style.boxShadow=C.shadowMd}
                 onMouseLeave={e => e.currentTarget.style.boxShadow=C.shadow}>
                 <div style={{ width:36, height:36, borderRadius:10, background:cc+"15",
@@ -1914,6 +1915,7 @@ export default function App() {
               </div>
             </div>
 
+            {!selected.noBtn && (<>
             {selected.isApproval ? (
               <>
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 4px" }}>Анкета кандидата</h2>
@@ -2319,6 +2321,7 @@ export default function App() {
               <Btn onClick={submitRequest} variant="primary">Отправить заявку</Btn>
               <Btn onClick={resetForm} variant="ghost">Отмена</Btn>
             </div>
+            </>)}
           </div>
         )}
 
