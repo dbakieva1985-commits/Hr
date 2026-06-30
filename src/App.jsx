@@ -691,6 +691,9 @@ export default function App() {
   const [lifeEventModal,    setLifeEventModal]    = useState(null);
   const [lifeEventSelected, setLifeEventSelected] = useState({});
   const [showBenefits,      setShowBenefits]      = useState(false);
+  const [showKpi,           setShowKpi]           = useState(false);
+  const [showCommunity,     setShowCommunity]     = useState(false);
+  const [showSport,         setShowSport]         = useState(false);
   const [expandedEmployee,  setExpandedEmployee]  = useState(null);
   const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my","team"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
@@ -1571,6 +1574,169 @@ export default function App() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* KPI */}
+            <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
+              <div onClick={() => setShowKpi(v=>!v)}
+                style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
+                  padding: isMobile ? "16px" : "20px", cursor:"pointer" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <div style={{ fontSize:18 }}>📊</div>
+                  <div>
+                    <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>KPI</div>
+                    <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Q2 2026 · Выполнение 84%</div>
+                  </div>
+                </div>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <span style={{ fontSize:16, fontWeight:900, color:C.green }}>84%</span>
+                  <span style={{ fontSize:16, color:C.gray500, display:"inline-block",
+                    transition:"transform .2s", transform: showKpi?"rotate(180deg)":"rotate(0deg)" }}>⌄</span>
+                </div>
+              </div>
+              {showKpi && (() => {
+                const kpis = [
+                  { title:"Закрытие вакансий в срок",       plan:90,  fact:88,  unit:"%",    weight:30 },
+                  { title:"Удовлетворённость сотрудников",  plan:80,  fact:82,  unit:"%",    weight:25 },
+                  { title:"Текучесть кадров (не более)",    plan:5,   fact:4.2, unit:"%",    weight:20 },
+                  { title:"Обработка заявок вовремя",       plan:95,  fact:79,  unit:"%",    weight:15 },
+                  { title:"Прохождение обучения",           plan:100, fact:91,  unit:"%",    weight:10 },
+                ];
+                const overall = Math.round(kpis.reduce((acc,k) => {
+                  const pct = Math.min(100, Math.round(k.fact/k.plan*100));
+                  return acc + pct*(k.weight/100);
+                }, 0));
+                return (
+                  <div style={{ padding: isMobile?"0 16px 16px":"0 20px 20px" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:14,
+                      background:C.green+"10", borderRadius:12, padding:"10px 14px" }}>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:11, color:C.gray500, marginBottom:4 }}>Общий результат Q2 2026</div>
+                        <div style={{ height:8, background:C.gray100, borderRadius:4, overflow:"hidden" }}>
+                          <div style={{ height:"100%", width:`${overall}%`, borderRadius:4,
+                            background:`linear-gradient(90deg,${C.green},${C.greenMid})`, transition:"width .5s" }}/>
+                        </div>
+                      </div>
+                      <div style={{ fontSize:22, fontWeight:900, color:C.green, flexShrink:0 }}>{overall}%</div>
+                    </div>
+                    {kpis.map((k,i) => {
+                      const pct = Math.min(100, Math.round(k.fact/k.plan*100));
+                      const ok  = pct >= 90;
+                      const warn= pct >= 75 && pct < 90;
+                      const col = ok ? C.green : warn ? C.orange : C.red;
+                      return (
+                        <div key={i} style={{ marginBottom:12 }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
+                            <div style={{ flex:1, fontSize:12, fontWeight:600, color:C.dark }}>{k.title}</div>
+                            <div style={{ fontSize:11, color:C.gray500, flexShrink:0 }}>
+                              {k.fact}{k.unit} / {k.plan}{k.unit}
+                            </div>
+                            <span style={{ fontSize:10, fontWeight:700, color:col, background:col+"18",
+                              borderRadius:100, padding:"2px 7px", flexShrink:0 }}>{pct}%</span>
+                          </div>
+                          <div style={{ height:5, background:C.gray100, borderRadius:3, overflow:"hidden" }}>
+                            <div style={{ height:"100%", width:`${pct}%`, background:col, borderRadius:3, transition:"width .4s" }}/>
+                          </div>
+                          <div style={{ fontSize:10, color:C.gray500, marginTop:2 }}>Вес показателя: {k.weight}%</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Сообщество */}
+            <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
+              <div onClick={() => setShowCommunity(v=>!v)}
+                style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
+                  padding: isMobile ? "16px" : "20px", cursor:"pointer" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                  <div style={{ fontSize:18 }}>🤝</div>
+                  <div>
+                    <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>Сообщество</div>
+                    <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Клубы, команды и каналы Halyk</div>
+                  </div>
+                </div>
+                <span style={{ fontSize:16, color:C.gray500, display:"inline-block",
+                  transition:"transform .2s", transform: showCommunity?"rotate(180deg)":"rotate(0deg)" }}>⌄</span>
+              </div>
+              {showCommunity && (
+                <div style={{ padding: isMobile?"0 16px 16px":"0 20px 20px" }}>
+                  {[
+                    { icon:"💬", name:"Halyk Family",    desc:"Главный Telegram-канал сотрудников Halyk Group" },
+                    { icon:"📚", name:"Книжный клуб",    desc:"Читаем и обсуждаем книги раз в месяц" },
+                    { icon:"🌱", name:"Halyk Care",       desc:"Волонтёрское движение и экопроекты Банка" },
+                    { icon:"🎨", name:"Клуб творчества",  desc:"Рисование, фото, кино — для всех желающих" },
+                  ].map(c => (
+                    <div key={c.name} style={{ display:"flex", alignItems:"center", gap:12,
+                      padding:"11px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                      <div style={{ width:38, height:38, borderRadius:10, background:C.greenPale,
+                        display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>{c.icon}</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>{c.name}</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>{c.desc}</div>
+                      </div>
+                      <button onClick={() => setJoinedComms(p => p.includes(c.name) ? p.filter(x=>x!==c.name) : [...p, c.name])}
+                        style={{ fontSize:11, fontWeight:600, whiteSpace:"nowrap", cursor:"pointer",
+                          fontFamily:"inherit", borderRadius:8, padding:"5px 12px",
+                          border:`1px solid ${C.green}`,
+                          background: joinedComms.includes(c.name) ? C.green : C.greenPale,
+                          color:      joinedComms.includes(c.name) ? C.white : C.green }}>
+                        {joinedComms.includes(c.name) ? "Вы в клубе ✓" : "Вступить"}
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* Halyk Sport Club */}
+                  <div style={{ borderRadius:12, border:`1px solid ${C.green}30`, marginTop:12, overflow:"hidden" }}>
+                    <button onClick={() => setShowSport(v=>!v)}
+                      style={{ width:"100%", display:"flex", alignItems:"center", gap:12,
+                        padding:"11px 14px", background:C.greenPale, border:"none",
+                        cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
+                      <div style={{ width:36, height:36, borderRadius:10, background:C.white,
+                        display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>🏅</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>Halyk Sport Club</div>
+                        <div style={{ fontSize:11, color:C.gray500, marginTop:1 }}>Выбери вид спорта и вступи в команду</div>
+                      </div>
+                      <span style={{ fontSize:14, color:C.green, display:"inline-block",
+                        transition:"transform .2s", transform: showSport?"rotate(180deg)":"rotate(0deg)" }}>▾</span>
+                    </button>
+                    {showSport && (
+                      <div style={{ padding:"8px 14px 12px", background:C.white }}>
+                        <div style={{ fontSize:11, color:C.gray500, marginBottom:10 }}>Отметь виды спорта, в которых хочешь участвовать:</div>
+                        {[
+                          { icon:"⚽", name:"Футбол" },{ icon:"🏐", name:"Волейбол" },
+                          { icon:"🏀", name:"Баскетбол" },{ icon:"🎾", name:"Теннис" },
+                          { icon:"🏓", name:"Настольный теннис" },{ icon:"🏸", name:"Бадминтон" },
+                          { icon:"🏊", name:"Плавание" },{ icon:"🏃", name:"Бег / Running" },
+                          { icon:"🚴", name:"Велоспорт" },{ icon:"🧘", name:"Йога" },
+                          { icon:"🥊", name:"Бокс / Единоборства" },
+                        ].map(s => {
+                          const key = "sport_"+s.name;
+                          const joined = joinedComms.includes(key);
+                          return (
+                            <div key={s.name} style={{ display:"flex", alignItems:"center", gap:10,
+                              padding:"7px 0", borderBottom:`1px solid ${C.gray100}` }}>
+                              <span style={{ fontSize:20, width:28, textAlign:"center", flexShrink:0 }}>{s.icon}</span>
+                              <span style={{ flex:1, fontSize:13, color:C.dark, fontWeight:500 }}>{s.name}</span>
+                              <button onClick={() => setJoinedComms(p => joined ? p.filter(x=>x!==key) : [...p, key])}
+                                style={{ fontSize:11, fontWeight:600, whiteSpace:"nowrap", cursor:"pointer",
+                                  fontFamily:"inherit", borderRadius:8, padding:"5px 12px",
+                                  border:`1px solid ${C.green}`,
+                                  background: joined ? C.green : C.white,
+                                  color:      joined ? C.white : C.green }}>
+                                {joined ? "Записан ✓" : "Записаться"}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Команда вынесена на отдельную страницу team */}
