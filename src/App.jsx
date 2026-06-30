@@ -1874,7 +1874,7 @@ export default function App() {
                   );
                 })()}
               </>
-            ) : selected.id === 4 ? (
+            ) : selected.id === 37 ? (
               <>
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: C.dark, margin: "0 0 6px" }}>Заявка на подбор персонала</h2>
                 <p style={{ fontSize: 13, color: C.gray500, marginBottom: 20 }}>Заполните требования — HR сформирует job description на основе ваших данных</p>
