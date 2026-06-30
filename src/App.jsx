@@ -860,16 +860,17 @@ export default function App() {
         padding:"24px 16px",
       }}>
         {/* Logo */}
-        <div style={{ textAlign:"center", marginBottom:28 }}>
-          <div style={{ width:64, height:64, borderRadius:20, background:"rgba(255,255,255,0.18)",
-            display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize:32, margin:"0 auto 12px", border:"2px solid rgba(255,255,255,0.35)" }}>🏦</div>
-          <div style={{ fontSize:22, fontWeight:800, color:C.white }}>HR Service Portal</div>
-          <div style={{ fontSize:12, color:"rgba(255,255,255,0.70)", marginTop:4 }}>Halyk Bank Group</div>
+        <div style={{ textAlign:"center", marginBottom: isMobile ? 12 : 28 }}>
+          <div style={{ width: isMobile ? 44 : 64, height: isMobile ? 44 : 64, borderRadius: isMobile ? 14 : 20,
+            background:"rgba(255,255,255,0.18)", display:"flex", alignItems:"center", justifyContent:"center",
+            fontSize: isMobile ? 22 : 32, margin:`0 auto ${isMobile ? 8 : 12}px`,
+            border:"2px solid rgba(255,255,255,0.35)" }}>🏦</div>
+          <div style={{ fontSize: isMobile ? 17 : 22, fontWeight:800, color:C.white }}>HR Service Portal</div>
+          <div style={{ fontSize:11, color:"rgba(255,255,255,0.70)", marginTop:2 }}>Halyk Bank Group</div>
         </div>
 
         {/* Card */}
-        <div style={{ background:C.white, borderRadius:24, padding:isMobile?"22px 18px":"28px 28px",
+        <div style={{ background:C.white, borderRadius:24, padding:isMobile?"16px 16px":"28px 28px",
           maxWidth:440, width:"100%", boxShadow:"0 20px 60px rgba(0,0,0,0.25)" }}>
 
             {/* ── ШАГ 1: выбор компании ── */}
@@ -904,17 +905,17 @@ export default function App() {
           {loginStep === "role" && co && (<>
             <button onClick={() => { setLoginStep("select"); setLoginRole(null); }}
               style={{ background:"none", border:"none", color:C.green, fontSize:13, fontWeight:700,
-                cursor:"pointer", fontFamily:"inherit", padding:"0 0 14px", display:"flex", alignItems:"center", gap:4 }}>
+                cursor:"pointer", fontFamily:"inherit", padding:"0 0 8px", display:"flex", alignItems:"center", gap:4 }}>
               ← Назад
             </button>
-            <div style={{ display:"flex", alignItems:"center", gap:10, background:C.greenPale,
-              borderRadius:12, padding:"10px 14px", marginBottom:16 }}>
-              <span style={{ fontSize:18 }}>{co.icon}</span>
-              <div style={{ fontSize:13, fontWeight:700, color:C.green }}>{co.name}</div>
+            <div style={{ display:"flex", alignItems:"center", gap:8, background:C.greenPale,
+              borderRadius:10, padding:"7px 12px", marginBottom:10 }}>
+              <span style={{ fontSize:16 }}>{co.icon}</span>
+              <div style={{ fontSize:12, fontWeight:700, color:C.green }}>{co.name}</div>
             </div>
-            <div style={{ fontSize:15, fontWeight:700, color:C.dark, marginBottom:3 }}>Выберите вашу роль</div>
-            <div style={{ fontSize:12, color:C.gray500, marginBottom:14 }}>Портал покажет сервисы, нужные именно вам</div>
-            <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
+            <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:2 }}>Выберите вашу роль</div>
+            <div style={{ fontSize:11, color:C.gray500, marginBottom:10 }}>Портал покажет сервисы, нужные именно вам</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:5, marginBottom:12 }}>
               {PORTAL_ROLES.map(r => {
                 const isActive = loginRole === r.id;
                 return (
@@ -950,8 +951,8 @@ export default function App() {
               disabled={!loginRole}
               style={{ width:"100%", background: loginRole ? C.green : C.gray300,
                 color: loginRole ? C.white : C.gray500,
-                border:"none", borderRadius:100, padding:"15px 0",
-                fontSize:15, fontWeight:800, cursor: loginRole ? "pointer" : "default",
+                border:"none", borderRadius:100, padding:"12px 0",
+                fontSize:14, fontWeight:800, cursor: loginRole ? "pointer" : "default",
                 fontFamily:"inherit", transition:"all .2s",
                 boxShadow: loginRole ? `0 6px 20px ${C.green}55` : "none",
               }}>
