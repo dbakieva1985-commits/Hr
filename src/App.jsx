@@ -345,8 +345,6 @@ const NAV = [
   { id: "home",      icon: "🏠", label: "Workspace" },
   { id: "profile",   icon: "👤", label: "Мой профиль" },
   { id: "catalog",   icon: "☰", label: "Мой HR" },
-  { id: "mentors",   icon: "🤝", label: "Менторы" },
-  { id: "rewards",   icon: "🏆", label: "Магазин" },
   { id: "my",        icon: "📋", label: "Мои заявки" },
   { id: "analytics", icon: "⊡", label: "Аналитика" },
 ];
@@ -1530,52 +1528,6 @@ export default function App() {
                         color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
                     </div>
                   )}
-                  {/* Каталог менторов */}
-                  <div onClick={() => navigate("mentors")}
-                    style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
-                      cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                      display: "flex", alignItems: "center", gap: 14, flex: 1 }}
-                    onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
-                    onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
-                  >
-                    <div style={{ width: 52, height: 52, borderRadius: 14, background: C.green+"15",
-                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>🧭</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Каталог менторов</div>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                        {["Наставники","Buddy","Навыки","Департаменты"].map(t => (
-                          <span key={t} style={{ fontSize: 10, color: C.green, background: C.green+"15",
-                            borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.green,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
-                  </div>
-                  {/* Магазин наград */}
-                  <div onClick={() => navigate("rewards")}
-                    style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
-                      cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
-                      display: "flex", alignItems: "center", gap: 14, flex: 1 }}
-                    onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
-                    onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
-                  >
-                    <div style={{ width: 52, height: 52, borderRadius: 14, background: C.green+"15",
-                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>🏆</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Магазин наград</div>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                        {["Коины","Мерч","Привилегии","Кадровый резерв"].map(t => (
-                          <span key={t} style={{ fontSize: 10, color: C.green, background: C.green+"15",
-                            borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.green,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
-                  </div>
                   {/* Моя команда — только руководитель/hr */}
                   {(portalRole === "manager" || portalRole === "hr") && (
                     <div onClick={() => navigate("team")}
@@ -1725,6 +1677,28 @@ export default function App() {
                 </div>
               );
             })()}
+
+            {/* Менторы и Магазин — только сотрудник */}
+            {portalRole === "worker" && (
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:20 }}>
+                {[
+                  { page:"mentors", icon:"🧭", title:"Каталог менторов", desc:"Найти наставника или стать buddy" },
+                  { page:"rewards", icon:"🏆", title:"Магазин наград",   desc:"Потратить коины на привилегии" },
+                ].map(item => (
+                  <div key={item.page} onClick={() => navigate(item.page)}
+                    style={{ background:C.white, borderRadius:16, padding:"16px 14px", boxShadow:C.shadow,
+                      cursor:"pointer", border:"2px solid transparent", transition:"all .2s" }}
+                    onMouseEnter={e=>{ e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                    onMouseLeave={e=>{ e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
+                  >
+                    <div style={{ fontSize:28, marginBottom:8 }}>{item.icon}</div>
+                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:4 }}>{item.title}</div>
+                    <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4 }}>{item.desc}</div>
+                    <div style={{ fontSize:11, color:C.green, fontWeight:700, marginTop:8 }}>Открыть →</div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Трудовая дисциплина — аккордеон */}
             <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
