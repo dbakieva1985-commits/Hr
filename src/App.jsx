@@ -123,13 +123,13 @@ const SERVICES = [
   { id: 112, cat: "Compensation & Benefits", group: "Кафетерий льгот", icon: "📱", title: "Компенсация мобильной связи",                  sla: "Справочно",   desc: "Условия компенсации расходов на мобильную связь при использовании личных устройств в рабочих целях.", who: "Любой сотрудник", docs: "Не требуются", noBtn: true },
 
   // ── Обучение и развитие ───────────────────────────────────────────────────
-  { id: 56, cat: "Обучение и развитие", icon: "🎓", title: "Портал обучения (LMS)",                 sla: "Онлайн",      desc: "Текущий портал содержит дистанционные курсы, календарь тренингов и школы. Идёт переход на новую LMS — следите за анонсами.", who: "Любой сотрудник", docs: "Не требуются", link: "http://webt1a001/home" },
-  { id: 57, cat: "Обучение и развитие", icon: "📖", title: "Каталог бесплатных образовательных курсов", sla: "Онлайн",   desc: "Подборка бесплатных внешних курсов для профессионального и личностного развития.", who: "Любой сотрудник", docs: "Не требуются" },
-  { id: 58, cat: "Обучение и развитие", icon: "🗺", title: "Система траекторий развития (ИТ)",       sla: "Онлайн",      desc: "Портал индивидуальных траекторий роста для сотрудников ИТ / Digital Data / CISO. В рамках перехода на новую LMS возможна интеграция траекторий в единый портал.", who: "Сотрудники ИТ / Digital Data / CISO", docs: "Не требуются", tag: "ИТ" },
-  { id: 59, cat: "Обучение и развитие", icon: "🌐", title: "Внешнее обучение",                      sla: "5 раб. дней", desc: "Анонсы внешних тренингов, конференций и сертификаций. Здесь — условия участия, порядок согласования и информация об отработке после обучения. Заявка подаётся через портал.", who: "Любой сотрудник", docs: "Заявка на обучение", link: "http://dao.halykbank.nb:8000/sap/bc/webdynpro/sap/ZHCM_WD_0077" },
-  { id: 60, cat: "Обучение и развитие", icon: "💼", title: "Формирование бюджета на обучение",       sla: "5 раб. дней", desc: "Руководители подают заявку на формирование годового бюджета подразделения на обучение с обоснованием и планом развития команды.", who: "Руководитель", docs: "Обоснование, план обучения", tag: "рук" },
-  { id: 61, cat: "Обучение и развитие", icon: "🎤", title: "Функциональное тренерство",              sla: "3 раб. дня",  desc: "Хотите делиться экспертизой и обучать коллег? Подайте заявку на роль функционального тренера — она поступит в Управление развития персонала (УРП).", who: "Любой сотрудник", docs: "Не требуются" },
-  { id: 62, cat: "Обучение и развитие", icon: "💡", title: "Лайфхаки от работников",                 sla: "Онлайн",      desc: "Практические кейсы и инсайты от сотрудников банка. Принцип простой: научился сам — обучи другого.", who: "Любой сотрудник", docs: "Не требуются" },
+  { id: 56, cat: "Обучение и развитие", icon: "🎓", title: "Портал обучения (LMS)",                   sla: "Онлайн",      desc: "Дистанционные курсы, календарь тренингов и корпоративные школы.", who: "Любой сотрудник", docs: "Не требуются", link: "http://webt1a001/home", btnText: "Открыть портал" },
+  { id: 57, cat: "Обучение и развитие", icon: "📖", title: "Каталог бесплатных образовательных курсов", sla: "Онлайн",   desc: "Подборка бесплатных внешних курсов для профессионального и личностного развития. Ссылка на каталог доступна в корпоративном чате.", who: "Любой сотрудник", docs: "Не требуются", noBtn: true },
+  { id: 58, cat: "Обучение и развитие", icon: "🗺", title: "Система траекторий развития (ИТ)",         sla: "Онлайн",      desc: "Персональные траектории роста для сотрудников ИТ / Digital Data / CISO. По итогам оценки вам доступны персональные рекомендации по развитию.", who: "Сотрудники ИТ / Digital Data / CISO", docs: "Не требуются", tag: "ИТ", noBtn: true },
+  { id: 59, cat: "Обучение и развитие", icon: "🌐", title: "Внешнее обучение и конференции",           sla: "5 раб. дней", desc: "Заявка на участие во внешних тренингах, конференциях и сертификациях. Уточняйте условия согласования и порядок отработки после обучения у вашего HR-менеджера. Заявка подаётся через портал.", who: "Любой сотрудник", docs: "Заявка на обучение", link: "http://dao.halykbank.nb:8000/sap/bc/webdynpro/sap/ZHCM_WD_0077", btnText: "Подать заявку" },
+  { id: 60, cat: "Обучение и развитие", icon: "💼", title: "Формирование бюджета на обучение",         sla: "5 раб. дней", desc: "Руководители подают заявку на формирование годового бюджета подразделения на обучение с обоснованием и планом развития команды.", who: "Руководитель", docs: "Обоснование, план обучения", tag: "рук" },
+  { id: 61, cat: "Обучение и развитие", icon: "🎤", title: "Функциональное тренерство",                sla: "3 раб. дня",  desc: "Функциональный тренер — специалист с экспертностью и опытом в своей профессиональной области, который делится практическими навыками и знаниями с коллегами, продолжая выполнять основные должностные обязанности. Хотите стать тренером? Подайте заявку — она поступит в Управление развития персонала (УРП).", who: "Любой сотрудник", docs: "Не требуются", btnText: "Подать заявку" },
+  { id: 62, cat: "Обучение и развитие", icon: "💡", title: "Лайфхаки от работников",                   sla: "Онлайн",      desc: "Практические кейсы и инсайты от сотрудников банка. Принцип простой: научился сам — обучи другого. Делитесь опытом и вдохновляйте коллег.", who: "Любой сотрудник", docs: "Не требуются", noBtn: true },
 
   // ── HR Analytics ──────────────────────────────────────────────────────────
   { id: 41, cat: "HR Analytics", icon: "📊", title: "Запрос HR-отчёта", sla: "2 раб. дня", desc: "Любой аналитический отчёт: текучесть, headcount, ФОТ, SLA.", who: "Руководитель / HR", docs: "Описание нужных данных и периода" },
@@ -181,8 +181,8 @@ const SERVICES = [
     who: "Все сотрудники, кроме руководителей ГБ/филиалов и ДУП", docs: "Резюме кандидата, реферальная форма", btnText: "Рекомендовать" },
 
   // ── Кадровый резерв ───────────────────────────────────────────────────────
-  { id: 69, cat: "Кадровый резерв", icon: "📋", title: "Для руководителей",                         sla: "5 раб. дней", desc: "Подайте заявку на включение сотрудника в кадровый резерв или запросите список утверждённых резервистов своего департамента.", who: "Руководитель", docs: "Профиль сотрудника, обоснование", tag: "рук", secondBtnText: "Список резервистов", secondBtnServiceId: 71 },
-  { id: 70, cat: "Кадровый резерв", icon: "🙋", title: "Для работников",                            sla: "5 раб. дней", desc: "Хотите в кадровый резерв? Подайте заявку на самовыдвижение. Резервисты получают звёздочки и коины в личном кабинете — копите и обменивайте на привилегии.", who: "Любой сотрудник", docs: "Профиль, мотивационное письмо" },
+  { id: 69, cat: "Кадровый резерв", icon: "📋", title: "Для руководителей",                         sla: "5 раб. дней", desc: "Номинируйте сотрудника в кадровый резерв или запросите список резервистов своего департамента. Определите статус: оперативный (готов без доп. обучения), перспективный (требует развития) или ключевой работник (уникальная экспертиза).", who: "Руководитель", docs: "Профиль сотрудника, обоснование", tag: "рук", secondBtnText: "Список резервистов", secondBtnServiceId: 71 },
+  { id: 70, cat: "Кадровый резерв", icon: "🙋", title: "Для работников",                            sla: "5 раб. дней", desc: "Подайте заявку на самовыдвижение в кадровый резерв. Резервисты получают ⭐ звёздочки и 🪙 коины в личном кабинете — копите и обменивайте на привилегии в Магазине наград.", who: "Любой сотрудник", docs: "Профиль, мотивационное письмо" },
   { id: 71, cat: "Кадровый резерв", icon: "👥", title: "Список резервистов по департаменту",        sla: "1 раб. день", desc: "Запрос актуального списка утверждённых резервистов своего департамента.", who: "Руководитель", docs: "Не требуются", tag: "рук", hidden: true },
 ];
 
@@ -345,6 +345,8 @@ const NAV = [
   { id: "home",      icon: "🏠", label: "Workspace" },
   { id: "profile",   icon: "👤", label: "Мой профиль" },
   { id: "catalog",   icon: "☰", label: "Мой HR" },
+  { id: "mentors",   icon: "🤝", label: "Менторы" },
+  { id: "rewards",   icon: "🏆", label: "Магазин" },
   { id: "my",        icon: "📋", label: "Мои заявки" },
   { id: "analytics", icon: "⊡", label: "Аналитика" },
 ];
@@ -763,7 +765,14 @@ export default function App() {
   const [showSport,         setShowSport]         = useState(false);
   const [hrGroups,          setHrGroups]          = useState({});
   const [expandedEmployee,  setExpandedEmployee]  = useState(null);
-  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my","team","courses","mentee"];
+  const [mDept,    setMDept]    = useState("Все");
+  const [mSkill,   setMSkill]   = useState("Все навыки");
+  const [mSearch,  setMSearch]  = useState("");
+  const [mSelected,setMSelected]= useState(null);
+  const [rCat,     setRCat]     = useState("Все");
+  const [rBought,  setRBought]  = useState({});
+  const [rMsg,     setRMsg]     = useState(null);
+  const VALID_PAGES = ["home","profile","catalog","requests","onboarding","analytics","my","team","courses","mentee","mentors","rewards"];
   const readHash = () => { const h = window.location.hash.replace(/^#/,""); return VALID_PAGES.includes(h) ? h : "home"; };
   const [page, setPage] = useState("home");
   const navigate = p => { window.location.hash = p; setPage(p); };
@@ -1304,7 +1313,7 @@ export default function App() {
           display:"flex", alignItems:"center", justifyContent:"space-between",
           padding:"0 16px", zIndex:200, boxShadow:"0 1px 0 rgba(0,0,0,0.06)" }}>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-            {(page === "catalog" || page === "profile" || page === "team" || page === "courses" || page === "mentee") && (
+            {(page === "catalog" || page === "profile" || page === "team" || page === "courses" || page === "mentee" || page === "mentors" || page === "rewards") && (
               <button onClick={() => {
                 if(page === "catalog" && selectedGroup) { setSelectedGroup(null); }
                 else { navigate("home"); }
@@ -1521,6 +1530,52 @@ export default function App() {
                         color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
                     </div>
                   )}
+                  {/* Каталог менторов */}
+                  <div onClick={() => navigate("mentors")}
+                    style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
+                      cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
+                      display: "flex", alignItems: "center", gap: 14, flex: 1 }}
+                    onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                    onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
+                  >
+                    <div style={{ width: 52, height: 52, borderRadius: 14, background: C.green+"15",
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>🧭</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Каталог менторов</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                        {["Наставники","Buddy","Навыки","Департаменты"].map(t => (
+                          <span key={t} style={{ fontSize: 10, color: C.green, background: C.green+"15",
+                            borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.green,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
+                  </div>
+                  {/* Магазин наград */}
+                  <div onClick={() => navigate("rewards")}
+                    style={{ background: C.white, borderRadius: 16, padding: "0 16px", boxShadow: C.shadow,
+                      cursor: "pointer", border: "2px solid transparent", transition: "all .2s",
+                      display: "flex", alignItems: "center", gap: 14, flex: 1 }}
+                    onMouseEnter={e => { e.currentTarget.style.border=`2px solid ${C.green}`; e.currentTarget.style.boxShadow=C.shadowMd; }}
+                    onMouseLeave={e => { e.currentTarget.style.border="2px solid transparent"; e.currentTarget.style.boxShadow=C.shadow; }}
+                  >
+                    <div style={{ width: 52, height: 52, borderRadius: 14, background: C.green+"15",
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, flexShrink: 0 }}>🏆</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 17, fontWeight: 800, color: C.dark, marginBottom: 8 }}>Магазин наград</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                        {["Коины","Мерч","Привилегии","Кадровый резерв"].map(t => (
+                          <span key={t} style={{ fontSize: 10, color: C.green, background: C.green+"15",
+                            borderRadius: 100, padding: "3px 8px", fontWeight: 600 }}>{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.green,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: C.white, fontSize: 18, fontWeight: 700, flexShrink: 0 }}>→</div>
+                  </div>
                   {/* Моя команда — только руководитель/hr */}
                   {(portalRole === "manager" || portalRole === "hr") && (
                     <div onClick={() => navigate("team")}
@@ -2590,6 +2645,37 @@ export default function App() {
                   ) : (
                     <div style={{ fontSize:15, fontWeight:800, color:C.dark }}>Все HR-сервисы</div>
                   )}
+                </div>
+              )}
+
+              {/* Кадровый резерв info strip */}
+              {!search && !selectedGroup && catFilter==="Кадровый резерв" && (
+                <div style={{ marginBottom:16 }}>
+                  <div style={{ fontSize:12, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:0.8, marginBottom:8 }}>
+                    Статусы резервистов
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+                    {[
+                      { icon:"🟢", label:"Оперативный", desc:"Готов к назначению без дополнительного обучения", color:C.green },
+                      { icon:"🔵", label:"Перспективный", desc:"Требует дополнительного развития перед назначением", color:C.blue },
+                      { icon:"⭐", label:"Ключевой работник", desc:"Уникальная экспертиза, незаменимый специалист", color:C.orange },
+                    ].map(s => (
+                      <div key={s.label} style={{ background:C.card, borderRadius:14, padding:"12px 10px",
+                        border:`1.5px solid ${s.color}22`, boxShadow:C.shadow }}>
+                        <div style={{ fontSize:20, marginBottom:6 }}>{s.icon}</div>
+                        <div style={{ fontSize:11, fontWeight:700, color:C.dark, marginBottom:4 }}>{s.label}</div>
+                        <div style={{ fontSize:10, color:C.gray500, lineHeight:1.4 }}>{s.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop:10, background:C.greenPale, borderRadius:12, padding:"10px 14px",
+                    display:"flex", alignItems:"flex-start", gap:10 }}>
+                    <span style={{ fontSize:18, flexShrink:0 }}>🪙</span>
+                    <div style={{ fontSize:12, color:C.dark }}>
+                      Включённые в резерв сотрудники получают <b>звёздочки ⭐ и коины 🪙</b> в личном кабинете.
+                      Их можно обменять на привилегии в <span onClick={() => navigate("rewards")} style={{ color:C.green, fontWeight:700, cursor:"pointer" }}>Магазине наград</span>.
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -4585,6 +4671,279 @@ export default function App() {
                   </div>
                 </>
               )}
+            </div>
+          );
+        })()}
+
+        {/* ── MENTORS CATALOG ── */}
+        {page === "mentors" && (() => {
+          const MENTORS = [
+            { id:1, name:"Айгерим Касымова",   dept:"ИТ / Digital Data",    role:"Senior Product Manager", skills:["Продукт","Agile","OKR","Roadmap"], coins:320, mentees:3, available:true,  avatar:"А" },
+            { id:2, name:"Нурлан Бекмуратов",  dept:"Финансы",              role:"Главный финансовый аналитик", skills:["Excel","Финансы","Бюджет","Риски"], coins:210, mentees:1, available:true,  avatar:"Н" },
+            { id:3, name:"Диана Жумабекова",   dept:"HR / ДУП",             role:"HR Business Partner",    skills:["HR","Рекрутинг","C&B","Онбординг"], coins:180, mentees:2, available:false, avatar:"Д" },
+            { id:4, name:"Марат Сейтжанов",    dept:"ИТ / CISO",            role:"Head of Security",       skills:["Безопасность","ISO 27001","CISO","Сети"], coins:400, mentees:0, available:true,  avatar:"М" },
+            { id:5, name:"Алия Сейткали",      dept:"Розничный бизнес",     role:"Начальник управления",   skills:["Продажи","Команда","KPI","Клиенты"], coins:150, mentees:2, available:true,  avatar:"А" },
+            { id:6, name:"Тимур Ержанов",      dept:"ИТ / Разработка",      role:"Tech Lead",              skills:["Java","Архитектура","Code Review","CI/CD"], coins:290, mentees:1, available:true,  avatar:"Т" },
+            { id:7, name:"Сауле Нурмагамбет",  dept:"Юридический",          role:"Старший юрисконсульт",   skills:["Право","Договоры","Compliance","GR"], coins:130, mentees:0, available:false, avatar:"С" },
+            { id:8, name:"Бауыржан Ахметов",   dept:"Операционный",         role:"Operations Manager",     skills:["Процессы","Lean","SLA","Управление"], coins:240, mentees:1, available:true,  avatar:"Б" },
+          ];
+          const DEPTS = ["Все", "ИТ / Digital Data", "ИТ / CISO", "ИТ / Разработка", "Финансы", "HR / ДУП", "Розничный бизнес", "Юридический", "Операционный"];
+          const ALL_SKILLS = ["Все навыки","Продукт","Agile","Финансы","HR","Безопасность","Разработка","Продажи","Право","Процессы"];
+
+          const filtered = MENTORS.filter(m => {
+            const deptOk  = mDept === "Все" || m.dept === mDept;
+            const skillOk = mSkill === "Все навыки" || m.skills.includes(mSkill);
+            const q = mSearch.toLowerCase();
+            const searchOk = !q || m.name.toLowerCase().includes(q) || m.dept.toLowerCase().includes(q) || m.skills.some(s=>s.toLowerCase().includes(q));
+            return deptOk && skillOk && searchOk;
+          });
+
+          if (mSelected) {
+            const m = mSelected;
+            return (
+              <div>
+                <button onClick={() => setMSelected(null)} style={{ background:"none", border:"none", color:C.green, fontSize:13, cursor:"pointer", marginBottom:20, padding:0, fontFamily:"inherit" }}>← Назад к каталогу</button>
+                <div style={{ background:`linear-gradient(135deg,${C.green} 0%,${C.greenDark} 100%)`, borderRadius:20, padding:"28px 24px", marginBottom:20, position:"relative", overflow:"hidden" }}>
+                  <div style={{ position:"absolute", top:-30, right:-20, width:120, height:120, borderRadius:"50%", background:"rgba(255,255,255,0.08)", pointerEvents:"none" }} />
+                  <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:12 }}>
+                    <div style={{ width:64, height:64, borderRadius:"50%", background:"rgba(255,255,255,0.2)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:26, fontWeight:800, color:C.white, flexShrink:0 }}>{m.avatar}</div>
+                    <div>
+                      <div style={{ fontSize:20, fontWeight:800, color:C.white }}>{m.name}</div>
+                      <div style={{ fontSize:12, color:"rgba(255,255,255,0.75)", marginTop:2 }}>{m.role}</div>
+                      <div style={{ fontSize:11, color:"rgba(255,255,255,0.60)", marginTop:1 }}>{m.dept}</div>
+                    </div>
+                  </div>
+                  <div style={{ display:"flex", gap:16 }}>
+                    <div><div style={{ fontSize:13, fontWeight:700, color:C.white }}>{m.coins} 🪙</div><div style={{ fontSize:10, color:"rgba(255,255,255,0.65)" }}>Коины</div></div>
+                    <div><div style={{ fontSize:13, fontWeight:700, color:C.white }}>{m.mentees}</div><div style={{ fontSize:10, color:"rgba(255,255,255,0.65)" }}>Подопечных</div></div>
+                    <div><div style={{ fontSize:13, fontWeight:700, color:m.available ? "#86EFAC" : "#FCA5A5" }}>{m.available ? "Доступен" : "Занят"}</div><div style={{ fontSize:10, color:"rgba(255,255,255,0.65)" }}>Статус</div></div>
+                  </div>
+                </div>
+                <div style={{ background:C.white, borderRadius:16, padding:"20px", boxShadow:C.shadow, marginBottom:14 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:12 }}>Области экспертизы</div>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+                    {m.skills.map(sk => <span key={sk} style={{ background:C.greenPale, color:C.green, borderRadius:100, padding:"6px 14px", fontSize:12, fontWeight:600 }}>{sk}</span>)}
+                  </div>
+                </div>
+                <div style={{ background:C.white, borderRadius:16, padding:"20px", boxShadow:C.shadow, marginBottom:14 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:C.dark, marginBottom:8 }}>Как стать менти?</div>
+                  <div style={{ fontSize:12, color:C.gray500, lineHeight:1.6 }}>
+                    Программа менторства доступна для всех сотрудников банка. Направьте запрос через HR-менеджера или обратитесь напрямую через корпоративный чат. Длительность: 3–6 месяцев. Формат: 1–2 встречи в месяц.
+                  </div>
+                </div>
+                {m.available ? (
+                  <button style={{ width:"100%", background:C.green, color:C.white, border:"none", borderRadius:14, padding:"14px", fontSize:14, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 6px 20px ${C.green}44` }}>
+                    Запросить менторство →
+                  </button>
+                ) : (
+                  <div style={{ background:C.gray100, borderRadius:14, padding:"14px", textAlign:"center", fontSize:13, color:C.gray500 }}>
+                    Ментор временно не принимает новых подопечных
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          return (
+            <div>
+              <div style={{ marginBottom:20 }}>
+                <h1 style={{ fontSize:22, fontWeight:800, color:C.dark, margin:"0 0 4px" }}>Каталог менторов</h1>
+                <p style={{ fontSize:12, color:C.gray500, margin:0 }}>Найдите наставника или станьте buddy для коллег</p>
+              </div>
+              <div style={{ position:"relative", marginBottom:14 }}>
+                <span style={{ position:"absolute", left:14, top:"50%", transform:"translateY(-50%)", fontSize:16, color:C.gray500, pointerEvents:"none" }}>🔍</span>
+                <input value={mSearch} onChange={e=>setMSearch(e.target.value)} placeholder="Поиск по имени, отделу, навыку…"
+                  style={{ width:"100%", boxSizing:"border-box", border:`1px solid ${C.gray300}`, borderRadius:14, padding:"10px 14px 10px 42px",
+                    fontSize:13, fontFamily:"inherit", color:C.dark, outline:"none", background:C.white }} />
+              </div>
+              <div style={{ display:"flex", gap:8, overflowX:"auto", marginBottom:10, paddingBottom:4 }}>
+                {DEPTS.slice(0,6).map(d => (
+                  <button key={d} onClick={()=>setMDept(d)} style={{
+                    background: mDept===d ? C.green : C.white, color: mDept===d ? C.white : C.gray700,
+                    border:"none", borderRadius:100, padding:"6px 14px", fontSize:12, cursor:"pointer",
+                    fontFamily:"inherit", fontWeight: mDept===d ? 700 : 500, whiteSpace:"nowrap", flexShrink:0,
+                    boxShadow: mDept===d ? `0 2px 10px ${C.green}44` : "0 1px 4px rgba(0,0,0,0.08)",
+                  }}>{d}</button>
+                ))}
+              </div>
+              <div style={{ display:"flex", gap:8, overflowX:"auto", marginBottom:18, paddingBottom:4 }}>
+                {ALL_SKILLS.slice(0,7).map(sk => (
+                  <button key={sk} onClick={()=>setMSkill(sk)} style={{
+                    background: mSkill===sk ? C.green+"18" : "transparent", color: mSkill===sk ? C.green : C.gray500,
+                    border: `1px solid ${mSkill===sk ? C.green : C.gray300}`, borderRadius:100, padding:"5px 12px",
+                    fontSize:11, cursor:"pointer", fontFamily:"inherit", fontWeight: mSkill===sk ? 700 : 500,
+                    whiteSpace:"nowrap", flexShrink:0,
+                  }}>{sk}</button>
+                ))}
+              </div>
+              <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>
+                Найдено: <b style={{ color:C.dark }}>{filtered.length}</b> ментора
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:12 }}>
+                {filtered.map(m => (
+                  <div key={m.id} onClick={() => setMSelected(m)}
+                    style={{ background:C.white, borderRadius:16, padding:"16px 18px", boxShadow:C.shadow,
+                      cursor:"pointer", border:"2px solid transparent", transition:"all .2s",
+                      borderTop:`3px solid ${m.available ? C.green : C.gray300}` }}
+                    onMouseEnter={e=>{ e.currentTarget.style.boxShadow=C.shadowMd; e.currentTarget.style.borderColor=`${C.green}33`; }}
+                    onMouseLeave={e=>{ e.currentTarget.style.boxShadow=C.shadow; e.currentTarget.style.borderColor="transparent"; }}
+                  >
+                    <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:12 }}>
+                      <div style={{ width:46, height:46, borderRadius:"50%", background:m.available?C.greenPale:C.gray100,
+                        display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, fontWeight:800,
+                        color:m.available?C.green:C.gray500, flexShrink:0 }}>{m.avatar}</div>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:2 }}>{m.name}</div>
+                        <div style={{ fontSize:11, color:C.gray500 }}>{m.role}</div>
+                        <div style={{ fontSize:10, color:C.green, fontWeight:600 }}>{m.dept}</div>
+                      </div>
+                      <div style={{ fontSize:10, fontWeight:700, padding:"3px 9px", borderRadius:100,
+                        background: m.available ? C.greenPale : C.gray100,
+                        color: m.available ? C.green : C.gray500 }}>
+                        {m.available ? "Доступен" : "Занят"}
+                      </div>
+                    </div>
+                    <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:12 }}>
+                      {m.skills.slice(0,3).map(sk => (
+                        <span key={sk} style={{ background:C.greenPale, color:C.green, borderRadius:100, padding:"3px 10px", fontSize:10, fontWeight:600 }}>{sk}</span>
+                      ))}
+                      {m.skills.length > 3 && <span style={{ color:C.gray500, fontSize:10, padding:"3px 0" }}>+{m.skills.length-3}</span>}
+                    </div>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                      <div style={{ fontSize:11, color:C.gray500 }}>🪙 {m.coins} · 👤 {m.mentees} подопечных</div>
+                      <span style={{ fontSize:11, color:C.green, fontWeight:700 }}>Подробнее →</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {filtered.length === 0 && (
+                <div style={{ textAlign:"center", padding:"48px 20px" }}>
+                  <div style={{ fontSize:36, marginBottom:12 }}>🔍</div>
+                  <div style={{ fontSize:15, fontWeight:700, color:C.dark, marginBottom:6 }}>Никого не нашли</div>
+                  <div style={{ fontSize:12, color:C.gray500 }}>Попробуйте другой фильтр или поисковый запрос</div>
+                </div>
+              )}
+              <div style={{ marginTop:24, background:`linear-gradient(135deg,${C.green}18 0%,${C.greenPale} 100%)`,
+                borderRadius:16, padding:"20px", border:`1px solid ${C.green}30` }}>
+                <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:6 }}>🤝 Стать ментором или buddy?</div>
+                <div style={{ fontSize:12, color:C.gray500, marginBottom:14, lineHeight:1.5 }}>
+                  Делитесь опытом и получайте коины за менторство. Зарегистрируйтесь как функциональный тренер через раздел «Обучение и развитие».
+                </div>
+                <button onClick={() => { setCatFilter("Обучение и развитие"); navigate("catalog"); }}
+                  style={{ background:C.green, color:C.white, border:"none", borderRadius:100, padding:"9px 20px", fontSize:12, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+                  Стать тренером →
+                </button>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ── REWARDS STORE ── */}
+        {page === "rewards" && (() => {
+          const userCoins = 150;
+          const ITEMS = [
+            { id:1,  icon:"☕", title:"Кофе от руководителя",      cost:50,  cat:"Привилегии", desc:"Личная благодарность и кофе-встреча с вашим руководителем",           inStock:true  },
+            { id:2,  icon:"📅", title:"Дополнительный выходной",   cost:200, cat:"Привилегии", desc:"Один дополнительный оплачиваемый выходной день по вашему желанию",     inStock:true  },
+            { id:3,  icon:"👕", title:"Фирменная футболка Halyk",  cost:80,  cat:"Мерч",       desc:"Брендированная футболка Halyk Bank. Размер уточняется при заказе.",     inStock:true  },
+            { id:4,  icon:"🎒", title:"Рюкзак Halyk",              cost:150, cat:"Мерч",       desc:"Брендированный рюкзак Halyk Bank. Высокое качество, стильный дизайн.",  inStock:false },
+            { id:5,  icon:"🧢", title:"Бейсболка Halyk",           cost:60,  cat:"Мерч",       desc:"Фирменная бейсболка с логотипом Halyk Bank.",                           inStock:true  },
+            { id:6,  icon:"🎓", title:"Внешний курс (компенс.)",   cost:500, cat:"Обучение",   desc:"Компенсация стоимости одного внешнего онлайн-курса до 30 000 ₸.",       inStock:true  },
+            { id:7,  icon:"🏋️", title:"Фитнес на 1 месяц",        cost:300, cat:"Здоровье",   desc:"Абонемент в партнёрский фитнес-клуб на один месяц.",                   inStock:true  },
+            { id:8,  icon:"🎁", title:"Подарочный сертификат",     cost:250, cat:"Привилегии", desc:"Подарочный сертификат в партнёрские магазины на сумму 15 000 ₸.",       inStock:true  },
+            { id:9,  icon:"📖", title:"Книга по вашему выбору",    cost:100, cat:"Обучение",   desc:"Приобретение книги для профессионального развития по вашему выбору.",   inStock:true  },
+            { id:10, icon:"🍕", title:"Обед с командой",            cost:120, cat:"Привилегии", desc:"Оплата командного обеда (до 5 человек) в кафе рядом с офисом.",         inStock:true  },
+          ];
+          const CATS_RW = ["Все","Привилегии","Мерч","Обучение","Здоровье"];
+          const spent = Object.entries(rBought).reduce((acc,[id,b]) => b ? acc + (ITEMS.find(i=>i.id===+id)?.cost||0) : acc, 0);
+          const balance = userCoins - spent;
+
+          const buy = (item) => {
+            if (balance < item.cost || !item.inStock || rBought[item.id]) return;
+            setRBought(p => ({...p, [item.id]: true}));
+            setRMsg(`🎉 ${item.title} успешно оформлен! HR-менеджер свяжется с вами.`);
+            setTimeout(() => setRMsg(null), 3500);
+          };
+
+          const rFiltered = ITEMS.filter(it => rCat === "Все" || it.cat === rCat);
+
+          return (
+            <div>
+              <div style={{ background:`linear-gradient(135deg,${C.green} 0%,${C.greenDark} 100%)`, borderRadius:20, padding:"24px 20px", marginBottom:20, position:"relative", overflow:"hidden" }}>
+                <div style={{ position:"absolute", top:-20, right:-10, width:100, height:100, borderRadius:"50%", background:"rgba(255,255,255,0.08)", pointerEvents:"none" }} />
+                <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)", fontWeight:600, marginBottom:4 }}>Магазин наград</div>
+                <div style={{ fontSize:24, fontWeight:800, color:C.white, marginBottom:4 }}>🪙 {balance} коинов</div>
+                <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)" }}>Ваш баланс · Потрачено: {spent} коинов</div>
+                <div style={{ marginTop:14, background:"rgba(255,255,255,0.15)", borderRadius:10, padding:"10px 14px" }}>
+                  <div style={{ fontSize:11, color:"rgba(255,255,255,0.85)", lineHeight:1.5 }}>
+                    💡 Коины начисляются за участие в кадровом резерве, менторство и активность на портале
+                  </div>
+                </div>
+              </div>
+              {rMsg && (
+                <div style={{ background:C.greenPale, border:`1px solid ${C.green}40`, borderRadius:12, padding:"12px 16px",
+                  marginBottom:14, fontSize:13, color:C.green, fontWeight:600 }}>{rMsg}</div>
+              )}
+              <div style={{ display:"flex", gap:8, overflowX:"auto", marginBottom:18, paddingBottom:4 }}>
+                {CATS_RW.map(c => (
+                  <button key={c} onClick={()=>setRCat(c)} style={{
+                    background: rCat===c ? C.green : C.white, color: rCat===c ? C.white : C.gray700,
+                    border:"none", borderRadius:100, padding:"7px 16px", fontSize:12, cursor:"pointer",
+                    fontFamily:"inherit", fontWeight: rCat===c ? 700 : 500, whiteSpace:"nowrap", flexShrink:0,
+                    boxShadow: rCat===c ? `0 2px 10px ${C.green}44` : "0 1px 4px rgba(0,0,0,0.08)",
+                  }}>{c}</button>
+                ))}
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr", gap:12 }}>
+                {rFiltered.map(item => {
+                  const canAfford = balance >= item.cost;
+                  const bought = !!rBought[item.id];
+                  return (
+                    <div key={item.id} style={{ background:C.white, borderRadius:16, padding:"16px 14px",
+                      boxShadow:C.shadow, display:"flex", flexDirection:"column", gap:8,
+                      opacity: (!item.inStock && !bought) ? 0.6 : 1,
+                      border: bought ? `2px solid ${C.green}` : "2px solid transparent" }}>
+                      <div style={{ fontSize:30, textAlign:"center" }}>{item.icon}</div>
+                      <div style={{ fontSize:12, fontWeight:700, color:C.dark, textAlign:"center", lineHeight:1.3 }}>{item.title}</div>
+                      <div style={{ fontSize:10, color:C.gray500, textAlign:"center", lineHeight:1.4, flex:1 }}>{item.desc}</div>
+                      <div style={{ background:C.greenPale, color:C.green, borderRadius:100, padding:"4px 0",
+                        fontSize:13, fontWeight:800, textAlign:"center" }}>🪙 {item.cost}</div>
+                      {!item.inStock && !bought && <div style={{ textAlign:"center", fontSize:10, color:C.gray500 }}>Нет в наличии</div>}
+                      {item.inStock && !bought && (
+                        <button onClick={() => buy(item)} style={{
+                          background: canAfford ? C.green : C.gray300,
+                          color: canAfford ? C.white : C.gray500,
+                          border:"none", borderRadius:10, padding:"9px 0", fontSize:12, fontWeight:700,
+                          cursor: canAfford ? "pointer" : "default", fontFamily:"inherit",
+                        }}>
+                          {canAfford ? "Обменять" : "Недостаточно"}
+                        </button>
+                      )}
+                      {bought && (
+                        <div style={{ background:C.greenPale, color:C.green, borderRadius:10, padding:"9px 0",
+                          fontSize:12, fontWeight:700, textAlign:"center" }}>✓ Оформлено</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div style={{ marginTop:24, background:C.white, borderRadius:16, padding:"20px", boxShadow:C.shadow }}>
+                <div style={{ fontSize:14, fontWeight:700, color:C.dark, marginBottom:14 }}>Как заработать коины?</div>
+                {[
+                  { icon:"⭐", text:"Включение в кадровый резерв", coins:"50–200 🪙" },
+                  { icon:"🤝", text:"Менторство (за каждого подопечного)", coins:"100 🪙/мес" },
+                  { icon:"🎤", text:"Функциональное тренерство", coins:"50 🪙/сессия" },
+                  { icon:"💡", text:"Публикация лайфхака",  coins:"20 🪙" },
+                  { icon:"🏆", text:"Победа в конкурсах и рейтингах", coins:"100–500 🪙" },
+                ].map((row,i,arr) => (
+                  <div key={row.text} style={{ display:"flex", alignItems:"center", gap:12,
+                    paddingBottom: i<arr.length-1 ? 12 : 0, marginBottom: i<arr.length-1 ? 12 : 0,
+                    borderBottom: i<arr.length-1 ? `1px solid ${C.gray300}` : "none" }}>
+                    <span style={{ fontSize:20, flexShrink:0 }}>{row.icon}</span>
+                    <div style={{ flex:1, fontSize:12, color:C.gray700 }}>{row.text}</div>
+                    <div style={{ fontSize:12, fontWeight:700, color:C.green, whiteSpace:"nowrap" }}>{row.coins}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           );
         })()}
