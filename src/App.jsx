@@ -1364,7 +1364,7 @@ export default function App() {
               const tag = (key, t) => HR_CAT_REQUESTS[key].filter(r=>r.tag===t).length;
               const hrCats = [
                 {
-                  key:"podborPersonala", icon:"🔍", title:"Подбор персонала", color:C.blue,
+                  key:"podborPersonala", icon:"🔍", title:"Подбор персонала", color:C.green,
                   total: HR_CAT_REQUESTS.podborPersonala.length,
                   rows:[
                     { label:"Новые",         count: tag("podborPersonala","Новая"),       accent:C.blue },
@@ -1384,7 +1384,7 @@ export default function App() {
                   ],
                 },
                 {
-                  key:"cb", icon:"💎", title:"Компенсации и льготы", color:C.orange,
+                  key:"cb", icon:"💎", title:"Компенсации и льготы", color:C.green,
                   total: HR_CAT_REQUESTS.cb.length,
                   rows:[
                     { label:"Новые",         count: tag("cb","Новая"),                   accent:C.blue },
@@ -1394,13 +1394,13 @@ export default function App() {
                   ],
                 },
                 {
-                  key:"obuchenie", icon:"📚", title:"Обучение", color:"#7C3AED",
+                  key:"obuchenie", icon:"📚", title:"Обучение", color:C.green,
                   total: HR_CAT_REQUESTS.obuchenie.length,
                   rows:[
                     { label:"Новые",         count: tag("obuchenie","Новая"),             accent:C.blue },
                     { label:"Срочные",       count: tag("obuchenie","Срочная"),           accent:C.orange },
                     { label:"Просроченные",  count: tag("obuchenie","Просрочена"),        accent:C.red },
-                    { label:"Согласование",  count: tag("obuchenie","Согласование"),      accent:"#7C3AED" },
+                    { label:"Согласование",  count: tag("obuchenie","Согласование"),      accent:C.gray500 },
                   ],
                 },
               ];
