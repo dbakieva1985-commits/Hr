@@ -689,40 +689,41 @@ const VALUES_QUIZ = [
 
 // ── Life Events (Жизненные ситуации) ────────────────────────────────────────
 const LIFE_EVENTS = [
-  { id:"baby",    icon:"🍼", title:"Родился ребёнок",     desc:"Соцотпуск, материальная помощь и документы — всё сразу",        color:"#FF6B8A", bgColor:"#FFF0F3",
+  { id:"transfer", icon:"🔄", title:"Перевод сотрудника",
+    desc:"Заявка на перевод + обходной лист. Для ИТ-блока дополнительно потребуется доступ ДКЗ.",
+    color:"#7C3AED", bgColor:"#F5F3FF",
     services:[
-      { serviceId:4,  label:"Отпуск по уходу за ребёнком",  icon:"👶", rec:true  },
-      { serviceId:23, label:"Материальная помощь",            icon:"🤝", rec:true  },
-      { serviceId:15, label:"Справка с места работы",         icon:"📄", rec:false },
+      { serviceId:1,  label:"Заявка на перевод",               icon:"🔄", rec:true  },
+      { serviceId:19, label:"Обходной лист",                   icon:"📑", rec:true  },
     ]},
-  { id:"wedding", icon:"💍", title:"Вступление в брак",   desc:"Смена персональных данных и положенные льготы",                 color:"#F59E0B", bgColor:"#FFFBEB",
+  { id:"maternity", icon:"🤰", title:"Отпуск по беременности и родам",
+    desc:"Оформление отпуска по беременности и родам, обходной лист и справка с места работы.",
+    color:"#FF6B8A", bgColor:"#FFF0F3",
     services:[
-      { serviceId:6,  label:"Изменение персональных данных", icon:"📝", rec:true  },
-      { serviceId:23, label:"Материальная помощь",            icon:"🤝", rec:true  },
-      { serviceId:15, label:"Справка с места работы",         icon:"📄", rec:false },
+      { serviceId:4,  label:"Отпуск по беременности и родам",  icon:"🤱", rec:true  },
+      { serviceId:19, label:"Обходной лист",                   icon:"📑", rec:true  },
+      { serviceId:15, label:"Справка с места работы",          icon:"📄", rec:false },
     ]},
-  { id:"loss",    icon:"🕊️", title:"Потеря близкого",     desc:"Отпуск, поддержка и все необходимые документы",                color:"#6B7280", bgColor:"#F3F4F6",
-    services:[
-      { serviceId:2,  label:"Заявка на отпуск",               icon:"🏖", rec:true  },
-      { serviceId:23, label:"Материальная помощь",            icon:"🤝", rec:true  },
-      { serviceId:15, label:"Справка с места работы",         icon:"📄", rec:false },
-    ]},
-  { id:"vacation",icon:"✈️", title:"Уходите в отпуск?",  desc:"Быстрое оформление и нужные справки за один раз",              color:"#1D5CB4", bgColor:"#EFF6FF",
-    services:[
-      { serviceId:2,  label:"Заявка на отпуск",               icon:"🏖", rec:true  },
-      { serviceId:26, label:"Расчётный листок",               icon:"🧮", rec:false },
-      { serviceId:45, label:"Справка для налоговой",          icon:"📄", rec:false },
-    ]},
-  { id:"move",    icon:"🔄", title:"Перевод / ротация",   desc:"Все документы для смены должности или подразделения",          color:"#7C3AED", bgColor:"#F5F3FF",
-    services:[
-      { serviceId:1,  label:"Перевод на другую должность",    icon:"🔄", rec:true  },
-      { serviceId:6,  label:"Обновление персональных данных", icon:"📝", rec:false },
-    ]},
-  { id:"dismiss", icon:"👋", title:"Увольнение",           desc:"Оформление всех документов при уходе из компании",             color:"#6B7280", bgColor:"#F3F4F6",
+  { id:"dismiss", icon:"👋", title:"Увольнение",
+    desc:"Заявка на увольнение и оформление обходного листа.",
+    color:"#6B7280", bgColor:"#F3F4F6",
     services:[
       { serviceId:20, label:"Заявка на увольнение",            icon:"👋", rec:true  },
       { serviceId:19, label:"Обходной лист",                   icon:"📑", rec:true  },
-      { serviceId:15, label:"Справка с места работы",          icon:"📄", rec:false },
+    ]},
+  { id:"mathelp", icon:"🤝", title:"Материальная помощь",
+    desc:"Заявка на материальную помощь и социальный отпуск.",
+    color:"#F59E0B", bgColor:"#FFFBEB",
+    services:[
+      { serviceId:23, label:"Заявка на материальную помощь",   icon:"🤝", rec:true  },
+      { serviceId:2,  label:"Заявка на отпуск (соц. отпуск)", icon:"🌴", rec:true  },
+    ]},
+  { id:"dataupdate", icon:"📝", title:"Актуализация данных",
+    desc:"Актуализация персональных данных и социальный отпуск.",
+    color:"#1D5CB4", bgColor:"#EFF6FF",
+    services:[
+      { serviceId:7,  label:"Заявка на актуализацию данных",   icon:"🔃", rec:true  },
+      { serviceId:2,  label:"Заявка на отпуск (соц. отпуск)", icon:"🌴", rec:true  },
     ]},
 ];
 
