@@ -756,6 +756,7 @@ export default function App() {
   const [lifeEventModal,    setLifeEventModal]    = useState(null);
   const [lifeEventSelected, setLifeEventSelected] = useState({});
   const [showBenefits,      setShowBenefits]      = useState(false);
+  const [expandedBenefit,   setExpandedBenefit]   = useState(-1);
   const [showDiscipline,    setShowDiscipline]    = useState(false);
   const [showCourses,       setShowCourses]       = useState(false);
   const [showKpi,           setShowKpi]           = useState(false);
@@ -1863,64 +1864,248 @@ export default function App() {
               Компенсации и льготы
             </div>
 
-            {/* Мои льготы */}
+            {/* Мои льготы — C&B */}
             {(() => {
               const isManager = portalRole === "manager" || portalRole === "hr";
               const baseBenefits = [
-                { icon: "🏥", title: "Медицинское страхование", desc: "ДМС для сотрудника и членов семьи" },
-                { icon: "🏠", title: "Субсидирование ипотеки", desc: "Поддержка при оформлении ипотечного займа" },
-                { icon: "🛡️", title: "Страхование жизни", desc: "Программа страхования жизни сотрудников" },
-                { icon: "🎖️", title: "Выслуга лет", desc: "Льготы за продолжительный стаж в компании" },
-                { icon: "💝", title: "Льготы при личных событиях", desc: "Поддержка при вступлении в брак, рождении ребёнка" },
-                { icon: "🧠", title: "Психологическая помощь", desc: "Доступ к психологическим консультациям" },
-                { icon: "💪", title: "Программы оздоровления", desc: "Компенсация фитнеса и спортивных программ" },
-                { icon: "🌴", title: "Дополнительные выходные", desc: "Доп. дни отдыха: день рождения, за достижения" },
+                {
+                  id:1, icon:"🏠", title:"Субсидирование ипотеки", type:"заявка",
+                  desc:"Субсидирование производится:\n• 40% от суммы вознаграждения, если процент по кредиту более 10%\n• 33% от суммы вознаграждения, если процент по кредиту 9%\n• 25% от суммы вознаграждения, если процент по кредиту менее 8%",
+                },
+                {
+                  id:2, icon:"🏥", title:"Медицинское страхование", type:"документы",
+                  desc:"Изучите документы, выберите ассистанс‑компанию и программу, при желании прикрепите членов семьи, заполните заявление, подпишите и направьте в ДУП.",
+                  details:[
+                    { label:"Период действия", value:"11.07.2026 – 10.07.2027" },
+                    { label:"Ассистансы", value:"ТОО «Медикер»; ТОО АК «Меди-сервис»" },
+                    { label:"Программы", value:"Standard, Classic, Elite, VIP" },
+                    { label:"Оплата", value:"Долевое: Банк / работник" },
+                    { label:"Передать", value:"Работнику ДУП (лично)" },
+                  ],
+                  docs:["Программы страхования","Исключения","Список ЛПУ","Алгоритм обращения","Заявление"],
+                },
+                {
+                  id:3, icon:"🛡️", title:"Страхование жизни", type:"заявка",
+                  btnLabel:"Заявление выгодоприобретателя",
+                  desc:"Ознакомьтесь с условиями, заполните заявление выгодоприобретателя и передайте в ДУП.",
+                  details:[
+                    { label:"Смерть", value:"100% страховой суммы" },
+                    { label:"Инвалидность I группы", value:"50% страховой суммы" },
+                    { label:"Инвалидность II группы", value:"25% страховой суммы" },
+                  ],
+                },
+                {
+                  id:4, icon:"🎖️", title:"Выслуга лет", type:"инфо",
+                  desc:"Сотрудник получает грамоту и премию за работу в Группе Халык.",
+                  details:[
+                    { label:"15 лет", value:"50% от оклада" },
+                    { label:"20 и 25 лет", value:"75% от оклада" },
+                    { label:"30 лет и более (кратно 5)", value:"100% от оклада" },
+                  ],
+                },
+                {
+                  id:5, icon:"💝", title:"Льготы при личных событиях", type:"заявка",
+                  desc:"Подайте заявку на материальную помощь и прикрепите документы, подтверждающие событие.",
+                  sub:[
+                    { label:"В связи со смертью близких (супруг, родители, дети)", value:"40 МРП" },
+                    { label:"Выход на пенсию", value:"заявка" },
+                  ],
+                },
+                {
+                  id:6, icon:"🧠", title:"Психологическая помощь", type:"заявка",
+                  desc:"Подайте заявку на консультацию — в ответном сообщении получите промокод. Перейдите на сайт психологов и запишитесь на сессию.",
+                },
+                {
+                  id:7, icon:"💎", title:"Бонусные программы / Halyk Club", type:"ссылка",
+                  desc:"Перейдите на интрасайт в раздел Halyk Club и ознакомьтесь с актуальными партнёрскими скидками и привилегиями.",
+                },
+                {
+                  id:8, icon:"💪", title:"Программы оздоровления", type:"заявка",
+                  desc:"Участвуйте в турнирах, спартакиадах и тренировках. Подайте заявку на интересующее мероприятие.",
+                  sub:[
+                    { label:"Турниры и спартакиады", value:"заявка" },
+                    { label:"Спортивные сообщества", value:"заявка" },
+                    { label:"Тренировки", value:"заявка" },
+                  ],
+                },
+                {
+                  id:9, icon:"🎓", title:"Компенсация расходов на образование", type:"инфо",
+                  desc:"Справочная информация об условиях компенсации затрат на внешнее обучение, MBA и профессиональное развитие.",
+                },
+                {
+                  id:10, icon:"🎉", title:"Социальные мероприятия и корпоративные выезды", type:"заявка",
+                  desc:"Следите за рассылками и заявляйтесь на участие в корпоративных мероприятиях.",
+                  sub:[
+                    { label:"Благотворительные мероприятия", value:"заявка" },
+                    { label:"Корпоративные выезды", value:"заявка" },
+                  ],
+                },
+                {
+                  id:11, icon:"🌴", title:"Дополнительный оплачиваемый отпуск", type:"заявка",
+                  desc:"Дополнительные оплачиваемые дни предоставляются по заявлению.",
+                  sub:[
+                    { label:"При вступлении в брак", value:"3 р.д. (не позднее 3 мес.)" },
+                    { label:"Смерть супруга/родителей/детей/братьев/сестёр", value:"3 р.д. (не позднее 3 мес.)" },
+                    { label:"Рождение ребёнка (для отца)", value:"1 р.д. (не позднее 2 мес.)" },
+                    { label:"Скрининговое исследование / постановка на учёт", value:"заявка" },
+                    { label:"Беременность до 12 недель", value:"до 3 р.д." },
+                  ],
+                },
+                {
+                  id:12, icon:"🏢", title:"Программы по улучшению условий труда", type:"ссылка",
+                  desc:"Найдите на интрасайте расположение уголков для досуга в офисах: теннисные столы, настольный футбол, массажные кресла.",
+                },
+                {
+                  id:13, icon:"🌱", title:"Эко-программы и устойчивое развитие", type:"заявка",
+                  desc:"Направьте заявку на участие в эко-акциях: субботник, эко-инициативы, уборка офиса, лекции, донорство.",
+                },
+                {
+                  id:14, icon:"✈️", title:"Поддержка при ротации", type:"заявка",
+                  desc:"Ознакомьтесь с условиями компенсации расходов при приёме/переводе в другую местность в рамках Группы «Халык».",
+                },
+                {
+                  id:15, icon:"👴", title:"Поддержка при выходе на пенсию", type:"заявка",
+                  desc:"Ознакомьтесь с условиями выхода на пенсию: выплаты, сроки отработки и прочие условия.",
+                },
+                {
+                  id:16, icon:"🤝", title:"Клубы по интересам и профессиональные сообщества", type:"заявка",
+                  desc:"Вступайте в сообщества по интересам: книги, горы, спорт (бег, футбол, баскетбол, волейбол, теннис, шахматы), английский язык, благотворительность, эко-активисты.",
+                },
+                {
+                  id:17, icon:"🤰", title:"Выплаты по беременности и родам", type:"заявка",
+                  desc:"Компенсация за потерю дохода в связи с беременностью и родами на основании листка временной нетрудоспособности, по установленным условиям.",
+                },
               ];
               const managerBenefits = [
-                { icon: "📱", title: "Компенсация мобильной связи", desc: "Возмещение расходов на связь" },
-                { icon: "💎", title: "Бонусные программы", desc: "Расширенные бонусные программы для руководителей" },
-                { icon: "🎓", title: "Компенсация образования", desc: "Возмещение затрат на MBA и проф. развитие" },
-                { icon: "🅿️", title: "Парковочное место", desc: "Корпоративное парковочное место" },
+                {
+                  id:18, icon:"📱", title:"Компенсация мобильной связи", type:"заявка",
+                  desc:"Подключение к корпоративной сети мобильной связи по установленным условиям для руководителей.",
+                  tag:"рук",
+                },
+                {
+                  id:19, icon:"🅿️", title:"Предоставление парковочных мест", type:"заявка",
+                  desc:"Всем руководителям предоставляются парковочные места. Директор распределяет места внутри подразделения. Работник вносит данные (техпаспорт, права, автомобиль) — процесс автоматизирован.",
+                  tag:"рук",
+                },
               ];
               const benefits = isManager ? [...baseBenefits, ...managerBenefits] : baseBenefits;
+
+              const typeStyle = (type) => {
+                if (type==="заявка")    return { color:C.green,    bg:C.greenPale,   label:"Заявка" };
+                if (type==="ссылка")    return { color:C.blue,     bg:C.blue+"18",   label:"Ссылка" };
+                if (type==="документы") return { color:"#7c3aed",  bg:"#7c3aed18",   label:"Документы" };
+                return                         { color:C.gray500,  bg:C.gray100,     label:"Информация" };
+              };
+
               return (
-                <div style={{ background: C.card, borderRadius: 20, boxShadow: C.shadow, marginBottom: 20, overflow: "hidden" }}>
+                <div style={{ background:C.card, borderRadius:20, boxShadow:C.shadow, marginBottom:20, overflow:"hidden" }}>
                   <div onClick={() => setShowBenefits(v => !v)}
-                    style={{ display: "flex", alignItems: "center", justifyContent: "space-between",
-                      padding: isMobile ? "16px" : "20px", cursor: "pointer" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: C.dark }}>🛍️ Мои льготы</div>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: C.green, background: C.greenPale, borderRadius: 100, padding: "3px 10px" }}>
+                    style={{ display:"flex", alignItems:"center", justifyContent:"space-between",
+                      padding: isMobile?"16px":"20px", cursor:"pointer" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                      <div style={{ fontSize:15, fontWeight:700, color:C.dark }}>🛍️ Мои льготы</div>
+                      <span style={{ fontSize:11, fontWeight:700, color:C.green, background:C.greenPale, borderRadius:100, padding:"3px 10px" }}>
                         {benefits.length} льгот
                       </span>
                     </div>
-                    <span style={{ fontSize: 18, color: C.gray500, transition: "transform .2s",
-                      transform: showBenefits ? "rotate(180deg)" : "rotate(0deg)", display: "inline-block" }}>⌄</span>
+                    <span style={{ fontSize:18, color:C.gray500, transition:"transform .2s",
+                      transform:showBenefits?"rotate(180deg)":"rotate(0deg)", display:"inline-block" }}>⌄</span>
                   </div>
+
                   {showBenefits && (
-                    <div style={{ padding: isMobile ? "0 16px 16px" : "0 20px 20px" }}>
+                    <div style={{ padding: isMobile?"0 16px 16px":"0 20px 20px" }}>
                       {isManager && (
-                        <div style={{ fontSize: 11, color: C.greenDark, background: C.greenPale, borderRadius: 8, padding: "6px 10px", marginBottom: 12, fontWeight: 600 }}>
-                          ⭐ Расширенный пакет руководителя
+                        <div style={{ fontSize:11, color:C.greenDark, background:C.greenPale, borderRadius:8,
+                          padding:"6px 10px", marginBottom:12, fontWeight:600 }}>
+                          ⭐ Включён расширенный пакет руководителя
                         </div>
                       )}
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        {benefits.map((b, i) => (
-                          <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0",
-                            borderBottom: i < benefits.length - 1 ? `1px solid ${C.gray300}` : "none" }}>
-                            <div style={{ width: 36, height: 36, borderRadius: 10, background: C.greenPale,
-                              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-                              {b.icon}
+                      {benefits.map((b, i) => {
+                        const ts = typeStyle(b.type);
+                        const isOpen = expandedBenefit === b.id;
+                        return (
+                          <div key={b.id} style={{ borderBottom: i < benefits.length-1 ? `1px solid ${C.gray100}` : "none" }}>
+                            <div onClick={() => setExpandedBenefit(isOpen ? -1 : b.id)}
+                              style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 0", cursor:"pointer" }}>
+                              <div style={{ width:36, height:36, borderRadius:10, background:C.greenPale,
+                                display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>
+                                {b.icon}
+                              </div>
+                              <div style={{ flex:1, minWidth:0 }}>
+                                <div style={{ fontSize:13, fontWeight:700, color:C.dark }}>{b.title}</div>
+                                {b.tag && <span style={{ fontSize:9, fontWeight:700, color:C.orange, background:C.orange+"18",
+                                  borderRadius:100, padding:"1px 6px", marginTop:2, display:"inline-block" }}>для руководителей</span>}
+                              </div>
+                              <span style={{ fontSize:10, fontWeight:700, color:ts.color, background:ts.bg,
+                                borderRadius:100, padding:"2px 8px", flexShrink:0, whiteSpace:"nowrap" }}>{ts.label}</span>
+                              <span style={{ fontSize:13, color:C.gray500, flexShrink:0,
+                                transition:"transform .2s", transform:isOpen?"rotate(180deg)":"rotate(0deg)", display:"inline-block" }}>⌄</span>
                             </div>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: 13, fontWeight: 700, color: C.dark }}>{b.title}</div>
-                              <div style={{ fontSize: 11, color: C.gray500, marginTop: 2 }}>{b.desc}</div>
-                            </div>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: C.greenPale,
-                              borderRadius: 100, padding: "2px 8px", flexShrink: 0 }}>Активна</span>
+
+                            {isOpen && (
+                              <div style={{ paddingBottom:14, paddingLeft:48 }}>
+                                {/* Description */}
+                                <div style={{ fontSize:12, color:C.dark, lineHeight:1.6, marginBottom:10,
+                                  whiteSpace:"pre-line" }}>{b.desc}</div>
+
+                                {/* Details table */}
+                                {b.details && (
+                                  <div style={{ background:C.gray100, borderRadius:10, padding:"10px 12px", marginBottom:10 }}>
+                                    {b.details.map((d,di) => (
+                                      <div key={di} style={{ display:"flex", gap:8, marginBottom: di<b.details.length-1?6:0 }}>
+                                        <span style={{ fontSize:11, color:C.gray500, fontWeight:600, flexShrink:0, minWidth:100 }}>{d.label}:</span>
+                                        <span style={{ fontSize:11, color:C.dark, fontWeight:500 }}>{d.value}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Document badges */}
+                                {b.docs && (
+                                  <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:10 }}>
+                                    {b.docs.map((doc,di) => (
+                                      <span key={di} style={{ fontSize:10, fontWeight:600, color:"#7c3aed",
+                                        background:"#7c3aed18", borderRadius:100, padding:"3px 10px", cursor:"pointer" }}>
+                                        📄 {doc}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Sub-items list */}
+                                {b.sub && (
+                                  <div style={{ display:"flex", flexDirection:"column", gap:4, marginBottom:10 }}>
+                                    {b.sub.map((s,si) => (
+                                      <div key={si} style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
+                                        background:C.gray100, borderRadius:8, padding:"7px 10px", gap:8 }}>
+                                        <span style={{ fontSize:11, color:C.dark, flex:1 }}>{s.label}</span>
+                                        <span style={{ fontSize:11, fontWeight:700, color:C.green, flexShrink:0 }}>{s.value}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Action button */}
+                                {b.type === "заявка" && (
+                                  <button onClick={() => { setPage("my"); window.location.hash="my"; }}
+                                    style={{ fontSize:12, fontWeight:700, color:C.white, background:C.green,
+                                      border:"none", borderRadius:10, padding:"8px 16px", cursor:"pointer",
+                                      fontFamily:"inherit" }}>
+                                    {b.btnLabel || "Подать заявку"}
+                                  </button>
+                                )}
+                                {b.type === "ссылка" && (
+                                  <button style={{ fontSize:12, fontWeight:700, color:C.blue, background:C.blue+"18",
+                                    border:"none", borderRadius:10, padding:"8px 16px", cursor:"pointer",
+                                    fontFamily:"inherit" }}>
+                                    🔗 Открыть ссылку
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </div>
-                        ))}
-                      </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
