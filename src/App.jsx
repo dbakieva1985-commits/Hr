@@ -2877,31 +2877,28 @@ export default function App() {
             );
           };
 
-          // ── compact group tile ────────────────────────────────────────
+          // ── square group tile — 2-column grid on all screen sizes ───────
           const GroupTile = ({ grp, count }) => {
             const cc = C.green;
-            const linkText = grp === "Вакансии Банка" ? "Смотреть вакансии →"
-              : grp === "Реферальная программа" ? "Смотреть далее →"
-              : "Открыть →";
             return (
               <div onClick={() => setSelectedGroup(grp)}
-                style={{ background:C.card, borderRadius:12, padding:"9px 12px",
-                  cursor:"pointer", transition:"box-shadow .12s",
-                  display:"flex", alignItems:"center", gap:10, boxShadow:C.shadow,
-                  borderLeft:`3px solid ${cc}`,
+                style={{ background:C.card, borderRadius:14, padding:"14px 12px 12px",
+                  cursor:"pointer", transition:"box-shadow .12s", boxShadow:C.shadow,
+                  display:"flex", flexDirection:"column", alignItems:"flex-start", gap:8,
+                  borderTop:`3px solid ${cc}`,
                 }}
                 onMouseEnter={e => e.currentTarget.style.boxShadow=C.shadowMd}
                 onMouseLeave={e => e.currentTarget.style.boxShadow=C.shadow}>
-                <div style={{ width:32, height:32, borderRadius:9, background:cc+"15",
-                  display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>
+                <div style={{ width:36, height:36, borderRadius:10, background:cc+"15",
+                  display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>
                   {GROUP_ICONS[grp] || "📝"}
                 </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:12, fontWeight:700, color:C.dark, lineHeight:1.3 }}>{grp}</div>
-                  <div style={{ fontSize:10, color:cc, fontWeight:600 }}>{linkText}</div>
+                <div style={{ fontSize:12, fontWeight:700, color:C.dark, lineHeight:1.3, flex:1 }}>{grp}</div>
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", width:"100%" }}>
+                  <span style={{ fontSize:10, color:cc, fontWeight:600 }}>Открыть →</span>
+                  <span style={{ fontSize:11, fontWeight:800, color:cc, background:cc+"15",
+                    borderRadius:100, padding:"1px 7px" }}>{count}</span>
                 </div>
-                <span style={{ fontSize:11, fontWeight:800, color:cc, background:cc+"15",
-                  borderRadius:100, padding:"2px 8px", flexShrink:0 }}>{count}</span>
               </div>
             );
           };
@@ -3154,7 +3151,7 @@ export default function App() {
                 return (
                   <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
                     {groupNames.length > 0 && (
-                      <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:10 }}>
+                      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
                         {groupNames.map(grp => {
                           const count = filteredServices.filter(s=>s.group===grp).length;
                           return <GroupTile key={grp} grp={grp} count={count} />;
