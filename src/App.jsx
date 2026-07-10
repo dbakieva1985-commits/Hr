@@ -2825,6 +2825,58 @@ export default function App() {
             );
           };
 
+          // ── list row for inside-section and search ────────────────
+          const ServiceListRow = ({ s }) => {
+            const ti = tagInfo(s);
+            const cc = C.green;
+            const handleClick = () => {
+              if(s.isOnboarding){ navigate("onboarding"); }
+              else if(s.link){ window.open(s.link,"_blank"); }
+              else { setSelected(s); setPage("form"); }
+            };
+            return (
+              <div style={{ background:C.card, borderRadius:14, padding:"12px 16px",
+                display:"flex", alignItems:"center", gap:14, boxShadow:C.shadow,
+                cursor:"pointer", borderLeft:`3px solid ${cc}`, transition:"box-shadow .12s" }}
+                onClick={handleClick}
+                onMouseEnter={e => e.currentTarget.style.boxShadow=C.shadowMd}
+                onMouseLeave={e => e.currentTarget.style.boxShadow=C.shadow}>
+                <div style={{ width:40, height:40, borderRadius:11, background:cc+"15",
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  fontSize:20, flexShrink:0 }}>
+                  {s.icon}
+                </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3, flexWrap:"wrap" }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:C.dark, lineHeight:1.3 }}>{s.title}</div>
+                    {ti && <span style={{ fontSize:9, fontWeight:700, color:ti.color, background:ti.color+"18",
+                      borderRadius:100, padding:"1px 6px", flexShrink:0 }}>{ti.label}</span>}
+                  </div>
+                  <div style={{ fontSize:11, color:C.gray500, lineHeight:1.4,
+                    overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+                    {s.desc}
+                  </div>
+                </div>
+                <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
+                  <span style={{ fontSize:10, fontWeight:600, whiteSpace:"nowrap",
+                    color: s.sla==="Онлайн"||s.sla==="Справочно"||s.sla==="Актуально" ? cc : C.gray500 }}>
+                    ⏱ {s.sla}
+                  </span>
+                  {!s.noBtn ? (
+                    <button onClick={e => { e.stopPropagation(); handleClick(); }}
+                      style={{ fontSize:11, fontWeight:700, color:C.white, background:cc,
+                        border:"none", borderRadius:8, padding:"6px 14px", cursor:"pointer",
+                        fontFamily:"inherit", whiteSpace:"nowrap" }}>
+                      {s.btnText || (s.isOnboarding||s.link ? "Открыть" : "Заявка")}
+                    </button>
+                  ) : (
+                    <span style={{ fontSize:10, color:C.gray500, fontWeight:600, whiteSpace:"nowrap" }}>Справка</span>
+                  )}
+                </div>
+              </div>
+            );
+          };
+
           // ── compact group tile ────────────────────────────────────────
           const GroupTile = ({ grp, count }) => {
             const cc = C.green;
@@ -3061,17 +3113,17 @@ export default function App() {
                 </div>
               )}
 
-              {/* Inside a group */}
+              {/* Inside a group — list view */}
               {!search && selectedGroup && (() => {
                 const grpItems = SERVICES.filter(s => s.group===selectedGroup && !s.hidden);
                 return (
-                  <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:10 }}>
-                    {grpItems.map(s => <ServiceCard key={s.id} s={s} />)}
+                  <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                    {grpItems.map(s => <ServiceListRow key={s.id} s={s} />)}
                   </div>
                 );
               })()}
 
-              {/* Search results */}
+              {/* Search results — list view */}
               {search && (() => {
                 if (!filteredServices.length) return (
                   <div style={{ textAlign:"center", padding:"40px 10px" }}>
@@ -3085,11 +3137,11 @@ export default function App() {
                 );
                 return (
                   <div>
-                    <div style={{ fontSize:12, color:C.gray500, marginBottom:12 }}>
+                    <div style={{ fontSize:12, color:C.gray500, marginBottom:10 }}>
                       Найдено: <b style={{ color:C.dark }}>{filteredServices.length}</b> сервисов
                     </div>
-                    <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:10 }}>
-                      {filteredServices.map(s => <ServiceCard key={s.id} s={s} />)}
+                    <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                      {filteredServices.map(s => <ServiceListRow key={s.id} s={s} />)}
                     </div>
                   </div>
                 );
@@ -3114,8 +3166,8 @@ export default function App() {
                         {groupNames.length > 0 && (
                           <div style={{ fontSize:11, fontWeight:700, color:C.gray500, textTransform:"uppercase", letterSpacing:0.8, marginBottom:10 }}>Сервисы</div>
                         )}
-                        <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:10 }}>
-                          {ungrouped.map(s => <ServiceCard key={s.id} s={s} />)}
+                        <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                          {ungrouped.map(s => <ServiceListRow key={s.id} s={s} />)}
                         </div>
                       </div>
                     )}
