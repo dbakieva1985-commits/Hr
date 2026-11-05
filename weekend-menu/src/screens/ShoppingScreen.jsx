@@ -19,7 +19,7 @@ function useWakeLock(on) {
   }, [on]);
 }
 
-export function ShoppingScreen({ sat, planId, openDish }) {
+export function ShoppingScreen({ sat, planId, openDish, onBack }) {
   const { missing, lines } = useShoppingList(planId);
   const [shopMode, setShopMode] = useState(() => localStorage.getItem('shopMode') === '1');
   const [showHome, setShowHome] = useState(false);
@@ -38,6 +38,8 @@ export function ShoppingScreen({ sat, planId, openDish }) {
   return (
     <>
       <Header
+        onBack={onBack}
+        backLabel="Меню"
         title={`Покупки · ${weekendShort(sat)}`}
         subtitle={lines.length ? (left ? `Осталось купить: ${left}` : 'Всё куплено 🎉') : 'Список пуст'}
         right={

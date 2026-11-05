@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   addDishToPlan, addIngredient, db, deleteDish, getOrCreatePlan, removeIngredient, removePlanItem, toggleFavorite, updateDish, updateIngredient,
 } from '../db.js';
@@ -8,7 +8,7 @@ import { weekendShort } from '../lib/week.js';
 import { toMap, useProducts, usePlanItems } from '../hooks.js';
 import { AISLES, CATEGORIES, TO_TASTE, UNITS } from '../lib/constants.js';
 import { formatAmount, formatQty, parseIngredient } from '../lib/parse.js';
-import { Button, Chip, IconButton, inputCls } from '../components/ui.jsx';
+import { BackButton, Button, Chip, IconButton, inputCls, useBackClose } from '../components/ui.jsx';
 
 const labelCls = 'mb-1.5 block text-xs font-semibold tracking-wide text-stone-500 uppercase dark:text-stone-400';
 
@@ -34,6 +34,8 @@ export function DishCard({ dishId, planId, sat, onClose }) {
     if (dish) { setName(dish.name); setNote(dish.note ?? ''); }
   }, [dish?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (dish === null) onClose(); }, [dish, onClose]);
+  const backRef = useRef(onClose);
+  useBackClose(true, () => backRef.current());
   useEffect(() => {
     if (!saved) return;
     const t = setTimeout(() => setSaved(''), 2000);
@@ -68,6 +70,7 @@ export function DishCard({ dishId, planId, sat, onClose }) {
     if (parsed) await addIngredient(dish.id, parsed);
     onClose();
   };
+  backRef.current = saveAndClose;
 
   const submitIngredient = async (e) => {
     e.preventDefault();
@@ -81,7 +84,7 @@ export function DishCard({ dishId, planId, sat, onClose }) {
     <div className="fixed inset-0 z-30 overflow-y-auto bg-stone-50 dark:bg-stone-950">
       <div className="mx-auto max-w-lg pb-28">
         <header className="sticky top-0 z-10 flex items-center gap-1 border-b border-stone-200 bg-stone-50/95 px-2 pt-[max(env(safe-area-inset-top),8px)] pb-2 backdrop-blur dark:border-stone-800 dark:bg-stone-950/95">
-          <IconButton label="Назад" onClick={saveAndClose} className="text-xl">←</IconButton>
+          <BackButton onClick={saveAndClose} />
           <h1 className="min-w-0 flex-1 truncate px-1 text-lg font-semibold">Изменить блюдо</h1>
           <span aria-live="polite" className="text-xs text-emerald-700 dark:text-emerald-400">{saved}</span>
           <IconButton

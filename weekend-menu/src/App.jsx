@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useBackClose } from './components/ui.jsx';
 import { ensureActivePlan, getOrCreatePlan, seedWeek } from './db.js';
 import { SEEDS } from './lib/seed.js';
 import { nearestSaturday } from './lib/week.js';
@@ -55,13 +56,10 @@ export default function App() {
   const [tab, setTab] = useState(tabFromHash);
   const [dishId, setDishId] = useState(null);
   const closeDish = useCallback(() => setDishId(null), []);
+  const goMenu = useCallback(() => setTab('menu'), []);
+  useBackClose(tab !== 'menu', goMenu); // phone Back from another tab returns to the menu
 
   useEffect(() => { history.replaceState(null, '', `#${tab}`); window.scrollTo(0, 0); }, [tab]);
-  useEffect(() => {
-    const onHash = () => setTab(tabFromHash());
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
-  }, []);
 
   if (!planId) return null;
   const openWeekend = (s) => { setSat(s); setTab('menu'); };
@@ -70,9 +68,9 @@ export default function App() {
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col">
       <main className="flex-1 pb-20">
         {tab === 'menu' && <MenuScreen sat={sat} setSat={setSat} planId={planId} openDish={setDishId} goShopping={() => setTab('shop')} />}
-        {tab === 'shop' && <ShoppingScreen sat={sat} planId={planId} openDish={setDishId} />}
-        {tab === 'dishes' && <DishesScreen sat={sat} planId={planId} openDish={setDishId} />}
-        {tab === 'calendar' && <CalendarScreen openWeekend={openWeekend} openDish={setDishId} />}
+        {tab === 'shop' && <ShoppingScreen sat={sat} planId={planId} openDish={setDishId} onBack={goMenu} />}
+        {tab === 'dishes' && <DishesScreen sat={sat} planId={planId} openDish={setDishId} onBack={goMenu} />}
+        {tab === 'calendar' && <CalendarScreen openWeekend={openWeekend} openDish={setDishId} onBack={goMenu} />}
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-stone-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur dark:border-stone-800 dark:bg-stone-900/95">

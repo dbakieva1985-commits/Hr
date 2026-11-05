@@ -5,7 +5,7 @@ import {
 } from '../db.js';
 import { weekendShort } from '../lib/week.js';
 import { WeekendPicker } from './WeekendPicker.jsx';
-import { Button, Sheet } from './ui.jsx';
+import { Button, Sheet, useBackClose } from './ui.jsx';
 
 const DAYS = [['sat', 'Суббота'], ['sun', 'Воскресенье'], [null, 'Не важно']];
 
@@ -19,8 +19,11 @@ export function DishActions({ dishId, itemId, onClose, openDish, onAdded }) {
   const [picking, setPicking] = useState(null); // 'add' | 'move'
   const [done, setDone] = useState('');
 
-  if (!dishId || !dish) return null;
   const close = () => { setDone(''); setPicking(null); onClose(); };
+  // One Back layer for the whole sheet; the weekend picker stacks its own layer on top.
+  useBackClose(!!dishId, close);
+
+  if (!dishId || !dish) return null;
 
   const pick = async (sat) => {
     const planId = await getOrCreatePlan(sat);
@@ -38,7 +41,7 @@ export function DishActions({ dishId, itemId, onClose, openDish, onAdded }) {
 
   return (
     <>
-      <Sheet open={!picking} onClose={close} title={dish.name}>
+      <Sheet open={!picking} onClose={close} title={dish.name} backLayer={false}>
         <div className="space-y-4">
           {item && (
             <>

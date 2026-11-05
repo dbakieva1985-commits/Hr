@@ -11,7 +11,7 @@ import { Button, Header } from '../components/ui.jsx';
 const AHEAD = 8;
 
 /** All weekends: the coming two months first, then every past weekend that had a menu. */
-export function CalendarScreen({ openWeekend, openDish }) {
+export function CalendarScreen({ openWeekend, openDish, onBack }) {
   const fileRef = useRef(null);
   const [msg, setMsg] = useState('');
   const [pending, setPending] = useState(null);
@@ -124,7 +124,7 @@ export function CalendarScreen({ openWeekend, openDish }) {
 
   return (
     <>
-      <Header title="Календарь" subtitle="Нажмите на выходные, чтобы спланировать" />
+      <Header onBack={onBack} backLabel="Меню" title="Календарь" subtitle="Нажмите на выходные, чтобы спланировать" />
       <section className="px-4">
         <ul>{data.upcoming.map((w, i) => renderWeek(w, i === 0 || monthTitle(w.sat) !== monthTitle(data.upcoming[i - 1].sat)))}</ul>
       </section>

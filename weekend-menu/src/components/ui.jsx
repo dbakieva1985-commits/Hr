@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { pushLayer } from '../lib/back.js';
 
 export function Button({ variant = 'primary', className = '', ...props }) {
   const styles = {
@@ -47,9 +48,22 @@ export function Chip({ active, className = '', ...props }) {
 export const inputCls =
   'w-full min-h-11 rounded-xl border border-stone-300 bg-white px-3 text-base text-stone-900 placeholder:text-stone-400 focus:border-emerald-600 focus:outline-none dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100';
 
-export function Header({ title, subtitle, right }) {
+export function BackButton({ onClick, label = 'Назад' }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="-ml-2 inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg px-2 text-base font-medium text-emerald-700 active:bg-stone-200 dark:text-emerald-400 dark:active:bg-stone-800"
+    >
+      <span aria-hidden className="text-xl leading-none">←</span> {label}
+    </button>
+  );
+}
+
+export function Header({ title, subtitle, right, onBack, backLabel }) {
   return (
     <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-stone-200 bg-stone-50/95 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3 backdrop-blur dark:border-stone-800 dark:bg-stone-950/95">
+      {onBack && <BackButton onClick={onBack} label={backLabel} />}
       <div className="min-w-0 flex-1">
         <h1 className="truncate text-xl font-semibold">{title}</h1>
         {subtitle && <div className="text-sm text-stone-500 dark:text-stone-400">{subtitle}</div>}
@@ -59,7 +73,9 @@ export function Header({ title, subtitle, right }) {
   );
 }
 
-export function Sheet({ open, onClose, title, children }) {
+/** Bottom sheet. `backLayer={false}` when the caller manages the Back layer itself (nested sheets). */
+export function Sheet({ open, onClose, title, children, backLayer = true }) {
+  useBackClose(open && backLayer, onClose);
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -75,7 +91,16 @@ export function Sheet({ open, onClose, title, children }) {
         className="max-h-[85dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white p-4 pb-[max(env(safe-area-inset-bottom),16px)] shadow-xl sm:rounded-2xl dark:bg-stone-900"
         onClick={(e) => e.stopPropagation()}
       >
-        {title && <h2 className="mb-3 text-lg font-semibold">{title}</h2>}
+        <div className="mb-3 flex items-start gap-2">
+          <h2 className="min-w-0 flex-1 text-lg font-semibold">{title}</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="-mt-1 -mr-2 inline-flex min-h-10 shrink-0 items-center rounded-lg px-3 text-sm font-medium text-stone-600 active:bg-stone-200 dark:text-stone-300 dark:active:bg-stone-800"
+          >
+            Закрыть
+          </button>
+        </div>
         {children}
       </div>
     </div>
@@ -118,4 +143,15 @@ export function SwipeRow({ onSwipeLeft, hint = 'Есть дома', children }) 
 
 export function Empty({ children }) {
   return <div className="px-6 py-10 text-center text-stone-500 dark:text-stone-400">{children}</div>;
+}
+
+/** While `open`, the system Back button calls onClose. */
+export function useBackClose(open, onClose) {
+  const ref = useRef(onClose);
+  ref.current = onClose;
+  useEffect(() => {
+    if (!open) return;
+    const release = pushLayer(() => ref.current());
+    return release;
+  }, [open]);
 }

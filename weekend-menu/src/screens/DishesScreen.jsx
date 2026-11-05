@@ -6,7 +6,7 @@ import { normalizeName } from '../lib/parse.js';
 import { daysBetween, weekendShort } from '../lib/week.js';
 import { Button, Chip, Empty, Header, IconButton, inputCls } from '../components/ui.jsx';
 
-export function DishesScreen({ sat, planId, openDish }) {
+export function DishesScreen({ sat, planId, openDish, onBack }) {
   const dishes = useDishes();
   const ingredients = useIngredients();
   const items = usePlanItems(planId);
@@ -33,7 +33,7 @@ export function DishesScreen({ sat, planId, openDish }) {
 
   return (
     <>
-      <Header title="Блюда" subtitle={`${dishes.length} в библиотеке · «В меню» добавляет на ${weekendShort(sat)}`} />
+      <Header onBack={onBack} backLabel="Меню" title="Блюда" subtitle={`${dishes.length} в библиотеке · «В меню» добавляет на ${weekendShort(sat)}`} />
       <div className="space-y-3 px-4 pt-3">
         <input className={inputCls} type="search" placeholder="Поиск блюда" value={q} onChange={(e) => setQ(e.target.value)} />
         <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
