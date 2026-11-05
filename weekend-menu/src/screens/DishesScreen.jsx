@@ -4,7 +4,7 @@ import { useDishes, useIngredients, usePlanItems } from '../hooks.js';
 import { CATEGORIES, LONG_AGO_DAYS } from '../lib/constants.js';
 import { normalizeName } from '../lib/parse.js';
 import { daysBetween, weekendShort } from '../lib/week.js';
-import { Button, Chip, Empty, Header, inputCls } from '../components/ui.jsx';
+import { Button, Chip, Empty, Header, IconButton, inputCls } from '../components/ui.jsx';
 
 export function DishesScreen({ sat, planId, openDish }) {
   const dishes = useDishes();
@@ -69,6 +69,7 @@ export function DishesScreen({ sat, planId, openDish }) {
                   {longAgo && <span className="text-sky-600 dark:text-sky-400">давно не готовила</span>}
                 </div>
               </button>
+              <IconButton label={`Изменить ${d.name}`} onClick={() => openDish(d.id)}>✎</IconButton>
               {inPlan.has(d.id) ? (
                 <span className="px-2 text-sm text-emerald-600">в меню ✓</span>
               ) : (

@@ -93,7 +93,16 @@ export async function addIngredient(dishId, { name, qty, unit, note = '' }) {
   await db.dishes.update(dishId, { is_draft: 0 });
 }
 
-export async function updateIngredient(id, patch) {
+/** Edit an ingredient; `name` re-points it to another (possibly new) product, so a typo fix never renames other dishes' products. */
+export async function updateIngredient(id, { name, aisle, ...patch }) {
+  if (name != null && name.trim()) {
+    const product = await getOrCreateProduct(name);
+    patch.product_id = product.id;
+    if (aisle) await db.products.update(product.id, { aisle });
+  } else if (aisle) {
+    const ing = await db.dishIngredients.get(id);
+    if (ing) await db.products.update(ing.product_id, { aisle });
+  }
   return db.dishIngredients.update(id, patch);
 }
 

@@ -71,7 +71,7 @@ export function DishActions({ dishId, itemId, onClose, openDish, onAdded }) {
               <Button variant="secondary" onClick={() => setPicking('add')}>Добавить на выходные…</Button>
             )}
             {item && <Button variant="secondary" onClick={() => setPicking('add')}>Ещё и на другие выходные…</Button>}
-            <Button variant="secondary" onClick={() => { close(); openDish(dish.id); }}>Ингредиенты и заметка</Button>
+            <Button variant="secondary" onClick={() => { close(); openDish(dish.id); }}>✎ Изменить блюдо: название, ингредиенты</Button>
             {item && (
               <div className="grid grid-cols-2 gap-2">
                 <Button variant="ghost" onClick={() => moveItem(item.plan_id, item.id, -1)}>▲ Выше</Button>

@@ -128,3 +128,25 @@ describe('seed: menu 14–15 Nov', () => {
     expect((await db.weekPlans.get(plan.id)).status).toBe('active');
   });
 });
+
+describe('editing a dish', () => {
+  it('renaming an ingredient re-points it without touching other dishes', async () => {
+    const { addIngredient, updateIngredient, updateDish } = await import('../src/db.js');
+    const plan = await ensureActivePlan(new Date(2026, 10, 4));
+    const a = await quickAdd(plan, 'Лагман');
+    const b = await quickAdd(plan, 'Плов');
+    await addIngredient(a.id, { name: 'Говядна', qty: 1, unit: 'кг' }); // typo
+    await addIngredient(b.id, { name: 'Говядна', qty: 0.5, unit: 'кг' });
+    const ing = await db.dishIngredients.where('dish_id').equals(a.id).first();
+    await updateIngredient(ing.id, { name: 'Говядина', qty: 0.8, unit: 'кг', aisle: 'Мясо и птица' });
+    const fixed = await db.dishIngredients.get(ing.id);
+    expect((await db.products.get(fixed.product_id)).name).toBe('Говядина');
+    expect(fixed.qty).toBe(0.8);
+    const other = await db.dishIngredients.where('dish_id').equals(b.id).first();
+    expect((await db.products.get(other.product_id)).name).toBe('Говядна');
+
+    await updateDish(a.id, { name: 'лагман по-уйгурски' });
+    expect((await db.dishes.get(a.id)).name).toBe('Лагман по-уйгурски');
+    await expect(updateDish(a.id, { name: 'Плов' })).rejects.toThrow();
+  });
+});

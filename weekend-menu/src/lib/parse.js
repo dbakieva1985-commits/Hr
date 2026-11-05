@@ -86,8 +86,25 @@ export function formatQty(qty) {
   return String(Math.round(qty * 1000) / 1000).replace('.', ',');
 }
 
+// Countable units that change their ending: 1 пачка, 2 пачки, 5 пачек.
+const UNIT_FORMS = {
+  'пачка': ['пачка', 'пачки', 'пачек'],
+  'пакет': ['пакет', 'пакета', 'пакетов'],
+  'банка': ['банка', 'банки', 'банок'],
+};
+
+function unitFor(qty, unit) {
+  const forms = UNIT_FORMS[unit];
+  if (!forms || qty == null) return unit;
+  if (!Number.isInteger(qty)) return forms[1]; // 1,5 пачки
+  const m10 = qty % 10, m100 = qty % 100;
+  if (m10 === 1 && m100 !== 11) return forms[0];
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return forms[1];
+  return forms[2];
+}
+
 export function formatAmount(qty, unit) {
   if (unit === TO_TASTE) return TO_TASTE;
   if (qty == null) return unit && unit !== 'шт' ? unit : '';
-  return `${formatQty(qty)} ${unit}`;
+  return `${formatQty(qty)} ${unitFor(qty, unit)}`;
 }

@@ -17,3 +17,14 @@ describe('parseIngredient', () => {
 
   it('empty input', () => expect(parseIngredient('  ')).toBeNull());
 });
+
+import { formatAmount } from '../src/lib/parse.js';
+describe('formatAmount', () => {
+  it('declines countable units', () => {
+    expect(formatAmount(1, 'пачка')).toBe('1 пачка');
+    expect(formatAmount(2, 'пачка')).toBe('2 пачки');
+    expect(formatAmount(5, 'банка')).toBe('5 банок');
+    expect(formatAmount(1.5, 'пакет')).toBe('1,5 пакета');
+    expect(formatAmount(0.8, 'кг')).toBe('0,8 кг');
+  });
+});
