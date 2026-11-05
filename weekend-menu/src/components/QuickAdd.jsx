@@ -10,7 +10,11 @@ export function QuickAdd({ open, onClose, planId, dishes, inPlan }) {
 
   const suggestions = useMemo(() => {
     const list = dishes.filter((d) => !inPlan.has(d.id));
-    if (!key) return list.sort((a, b) => (b.last_cooked_at ?? '').localeCompare(a.last_cooked_at ?? '')).slice(0, 8);
+    if (!key) {
+      return list
+        .sort((a, b) => (b.favorite ?? 0) - (a.favorite ?? 0) || (b.last_cooked_at ?? '').localeCompare(a.last_cooked_at ?? '') || a.name.localeCompare(b.name, 'ru'))
+        .slice(0, 10);
+    }
     return list
       .filter((d) => d.key.includes(key))
       .sort((a, b) => a.key.indexOf(key) - b.key.indexOf(key) || a.name.localeCompare(b.name, 'ru'))
@@ -50,6 +54,7 @@ export function QuickAdd({ open, onClose, planId, dishes, inPlan }) {
         {suggestions.map((d) => (
           <li key={d.id}>
             <button type="button" className="flex min-h-12 w-full items-center gap-2 text-left" onClick={() => add(d.name)}>
+              {d.favorite ? <span className="text-amber-500">★</span> : null}
               {d.name}
               {d.category && <span className="text-xs text-stone-500">{d.category}</span>}
               {d.is_draft ? <span className="ml-auto text-xs text-amber-600">без ингредиентов</span> : null}

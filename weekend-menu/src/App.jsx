@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ensureActivePlan, seedWeek } from './db.js';
+import { ensureActivePlan, getOrCreatePlan, seedWeek } from './db.js';
 import { LAST_MENU } from './lib/seed.js';
+import { nearestSaturday } from './lib/week.js';
+import { CalendarScreen } from './screens/CalendarScreen.jsx';
 import { DishCard } from './screens/DishCard.jsx';
 import { DishesScreen } from './screens/DishesScreen.jsx';
-import { HistoryScreen } from './screens/HistoryScreen.jsx';
 import { MenuScreen } from './screens/MenuScreen.jsx';
 import { ShoppingScreen } from './screens/ShoppingScreen.jsx';
 
@@ -11,7 +12,7 @@ const TABS = [
   { id: 'menu', label: 'Меню', icon: '🍽' },
   { id: 'shop', label: 'Покупки', icon: '🛒' },
   { id: 'dishes', label: 'Блюда', icon: '📖' },
-  { id: 'history', label: 'История', icon: '🕘' },
+  { id: 'calendar', label: 'Календарь', icon: '📅' },
 ];
 
 function tabFromHash() {
@@ -19,21 +20,38 @@ function tabFromHash() {
   return TABS.some((t) => t.id === h) ? h : 'menu';
 }
 
-function useActivePlan() {
+/** Keeps the nearest weekend active (F1) and tracks which weekend the user is looking at. */
+function useWeekend() {
+  const [sat, setSat] = useState(() => nearestSaturday());
   const [planId, setPlanId] = useState(null);
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
-    const refresh = () => ensureActivePlan().then(setPlanId);
+    let cur = nearestSaturday();
+    const refresh = () => ensureActivePlan().then(() => {
+      const now = nearestSaturday();
+      if (now !== cur) { setSat((s) => (s === cur ? now : s)); cur = now; } // week rolled over
+      setReady(true);
+    });
     seedWeek(LAST_MENU).catch(() => {}).finally(refresh);
     const t = setInterval(refresh, 60_000);
     const onVis = () => document.visibilityState === 'visible' && refresh();
     document.addEventListener('visibilitychange', onVis);
     return () => { clearInterval(t); document.removeEventListener('visibilitychange', onVis); };
   }, []);
-  return planId;
+
+  useEffect(() => {
+    if (!ready) return;
+    let alive = true;
+    getOrCreatePlan(sat).then((id) => alive && setPlanId(id));
+    return () => { alive = false; };
+  }, [sat, ready]);
+
+  return { sat, setSat, planId: ready ? planId : null };
 }
 
 export default function App() {
-  const planId = useActivePlan();
+  const { sat, setSat, planId } = useWeekend();
   const [tab, setTab] = useState(tabFromHash);
   const [dishId, setDishId] = useState(null);
   const closeDish = useCallback(() => setDishId(null), []);
@@ -46,14 +64,15 @@ export default function App() {
   }, []);
 
   if (!planId) return null;
+  const openWeekend = (s) => { setSat(s); setTab('menu'); };
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col">
       <main className="flex-1 pb-20">
-        {tab === 'menu' && <MenuScreen planId={planId} openDish={setDishId} goShopping={() => setTab('shop')} />}
-        {tab === 'shop' && <ShoppingScreen planId={planId} openDish={setDishId} />}
-        {tab === 'dishes' && <DishesScreen planId={planId} openDish={setDishId} />}
-        {tab === 'history' && <HistoryScreen planId={planId} openDish={setDishId} goMenu={() => setTab('menu')} />}
+        {tab === 'menu' && <MenuScreen sat={sat} setSat={setSat} planId={planId} openDish={setDishId} goShopping={() => setTab('shop')} />}
+        {tab === 'shop' && <ShoppingScreen sat={sat} planId={planId} openDish={setDishId} />}
+        {tab === 'dishes' && <DishesScreen sat={sat} planId={planId} openDish={setDishId} />}
+        {tab === 'calendar' && <CalendarScreen openWeekend={openWeekend} openDish={setDishId} />}
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-stone-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur dark:border-stone-800 dark:bg-stone-900/95">
@@ -76,7 +95,7 @@ export default function App() {
         </ul>
       </nav>
 
-      {dishId != null && <DishCard dishId={dishId} planId={planId} onClose={closeDish} />}
+      {dishId != null && <DishCard dishId={dishId} planId={planId} sat={sat} onClose={closeDish} />}
     </div>
   );
 }

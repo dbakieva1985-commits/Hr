@@ -19,3 +19,18 @@ describe('week', () => {
     expect(weekendTitle('2026-10-31')).toBe('Выходные 31 октября – 1 ноября');
   });
 });
+
+import { addWeeks, relativeLabel, weekendShort, weekendStatus } from '../src/lib/week.js';
+describe('calendar helpers', () => {
+  const now = new Date(2026, 10, 5);
+  it('addWeeks / labels', () => {
+    expect(addWeeks('2026-11-07', 4)).toBe('2026-12-05');
+    expect(weekendShort('2026-10-31')).toBe('31 окт – 1 ноя');
+    expect(weekendShort('2026-11-14')).toBe('14–15 ноя');
+    expect(relativeLabel('2026-11-07', now)).toBe('эти выходные');
+    expect(relativeLabel('2026-11-14', now)).toBe('следующие');
+    expect(relativeLabel('2026-11-28', now)).toBe('через 3 недели');
+    expect(weekendStatus('2026-10-31', now)).toBe('past');
+    expect(weekendStatus('2026-11-21', now)).toBe('future');
+  });
+});

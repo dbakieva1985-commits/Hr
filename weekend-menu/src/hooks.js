@@ -33,3 +33,13 @@ export function useShoppingList(planId) {
     return buildShoppingList({ planItems, dishes: toMap(dishes), ingredients, products: toMap(products), overrides });
   }, [planId], { missing: [], lines: [] });
 }
+
+/** sat_date → { plan, count } for every plan. */
+export function usePlansIndex() {
+  return useLiveQuery(async () => {
+    const [plans, items] = await Promise.all([db.weekPlans.toArray(), db.planItems.toArray()]);
+    const counts = new Map();
+    for (const i of items) counts.set(i.plan_id, (counts.get(i.plan_id) ?? 0) + 1);
+    return new Map(plans.map((p) => [p.sat_date, { plan: p, count: counts.get(p.id) ?? 0 }]));
+  }, [], new Map());
+}

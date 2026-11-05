@@ -85,3 +85,30 @@ describe('seed: last menu (31 Oct – 1 Nov)', () => {
     expect(await repeatWeek(past.id, current)).toBe(0);
   });
 });
+
+describe('calendar', () => {
+  it('plans future weekends, moves dishes, keeps statuses on rollover', async () => {
+    const { getOrCreatePlan, moveToPlan, toggleFavorite, previousPlanWithItems } = await import('../src/db.js');
+    const now = new Date(2026, 10, 5);
+    const cur = await ensureActivePlan(now);
+    const next = await getOrCreatePlan('2026-11-14', now);
+    const later = await getOrCreatePlan('2026-11-21', now);
+    expect((await db.weekPlans.get(next)).status).toBe('planned');
+
+    const d = await quickAdd(next, 'Плов');
+    await toggleFavorite(d.id);
+    expect((await db.dishes.get(d.id)).favorite).toBe(1);
+    const item = await db.planItems.where('plan_id').equals(next).first();
+    await moveToPlan(item, later);
+    expect(await db.planItems.where('plan_id').equals(later).count()).toBe(1);
+    expect(await db.planItems.where('plan_id').equals(next).count()).toBe(0);
+    expect((await previousPlanWithItems('2026-11-28')).id).toBe(later);
+
+    // next Monday: current closes, 14 Nov becomes active, 21 Nov stays planned
+    const active = await ensureActivePlan(new Date(2026, 10, 9, 9));
+    expect(active).toBe(next);
+    expect((await db.weekPlans.get(cur)).status).toBe('closed');
+    expect((await db.weekPlans.get(next)).status).toBe('active');
+    expect((await db.weekPlans.get(later)).status).toBe('planned');
+  });
+});

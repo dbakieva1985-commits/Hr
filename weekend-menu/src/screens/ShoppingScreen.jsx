@@ -4,6 +4,7 @@ import { useShoppingList } from '../hooks.js';
 import { AISLES } from '../lib/constants.js';
 import { formatAmount, parseIngredient } from '../lib/parse.js';
 import { groupByAisle, sourcesText } from '../lib/shopping.js';
+import { weekendShort } from '../lib/week.js';
 import { Button, Empty, Header, IconButton, Sheet, SwipeRow, inputCls } from '../components/ui.jsx';
 
 function useWakeLock(on) {
@@ -18,7 +19,7 @@ function useWakeLock(on) {
   }, [on]);
 }
 
-export function ShoppingScreen({ planId, openDish }) {
+export function ShoppingScreen({ sat, planId, openDish }) {
   const { missing, lines } = useShoppingList(planId);
   const [shopMode, setShopMode] = useState(() => localStorage.getItem('shopMode') === '1');
   const [showHome, setShowHome] = useState(false);
@@ -37,8 +38,8 @@ export function ShoppingScreen({ planId, openDish }) {
   return (
     <>
       <Header
-        title="Покупки"
-        subtitle={lines.length ? (left ? `Осталось купить: ${left}` : 'Всё куплено 🎉') : null}
+        title={`Покупки · ${weekendShort(sat)}`}
+        subtitle={lines.length ? (left ? `Осталось купить: ${left}` : 'Всё куплено 🎉') : 'Список пуст'}
         right={
           <Button variant={shopMode ? 'primary' : 'secondary'} className="px-3 text-sm" onClick={() => setShopMode((s) => !s)}>
             🛒 {shopMode ? 'В магазине' : 'Магазин'}
@@ -62,7 +63,7 @@ export function ShoppingScreen({ planId, openDish }) {
         </ul>
       )}
 
-      {lines.length === 0 && <Empty>Добавьте блюда с ингредиентами в меню — список соберётся сам.</Empty>}
+      {lines.length === 0 && <Empty>Добавьте блюда с ингредиентами в меню этих выходных — список соберётся сам.</Empty>}
 
       {groups.map(({ aisle, lines: ls }) => (
         <section key={aisle} className="mt-4">

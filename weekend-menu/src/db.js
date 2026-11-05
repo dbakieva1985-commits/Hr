@@ -23,8 +23,8 @@ const now = () => new Date().toISOString();
 /** Close finished weekends and make sure the active plan for the nearest weekend exists. */
 export async function ensureActivePlan(at = new Date()) {
   return db.transaction('rw', db.weekPlans, async () => {
-    const actives = await db.weekPlans.where('status').equals('active').toArray();
-    for (const p of actives) {
+    const open = await db.weekPlans.where('status').anyOf('active', 'planned').toArray();
+    for (const p of open) {
       if (isWeekendOver(p.sat_date, at)) {
         await db.weekPlans.update(p.id, { status: 'closed', closed_at: at.toISOString() });
       }
@@ -36,6 +36,16 @@ export async function ensureActivePlan(at = new Date()) {
       return existing.id;
     }
     return db.weekPlans.add({ sat_date: sat, status: 'active', created_at: at.toISOString() });
+  });
+}
+
+/** Plan for any weekend (calendar). Future weekends are 'planned' until they become the nearest one. */
+export async function getOrCreatePlan(sat, at = new Date()) {
+  const status = isWeekendOver(sat, at) ? 'closed' : sat === nearestSaturday(at) ? 'active' : 'planned';
+  return db.transaction('rw', db.weekPlans, async () => {
+    const existing = await db.weekPlans.where('sat_date').equals(sat).first();
+    if (existing) return existing.id;
+    return db.weekPlans.add({ sat_date: sat, status, created_at: at.toISOString() });
   });
 }
 
@@ -108,6 +118,27 @@ export async function quickAdd(planId, name) {
   const dish = await findOrCreateDish(name);
   await addDishToPlan(planId, dish.id);
   return dish;
+}
+
+export async function toggleFavorite(dishId) {
+  const dish = await db.dishes.get(dishId);
+  if (dish) await db.dishes.update(dishId, { favorite: dish.favorite ? 0 : 1 });
+}
+
+/** U10: move a dish to another weekend. */
+export async function moveToPlan(item, toPlanId) {
+  if (item.plan_id === toPlanId) return;
+  await db.transaction('rw', db.planItems, async () => {
+    await addDishToPlan(toPlanId, item.dish_id, item.day);
+    await db.planItems.delete(item.id);
+  });
+}
+
+/** The most recent earlier weekend that had dishes (for «как в прошлый раз»). */
+export async function previousPlanWithItems(sat) {
+  const plans = (await db.weekPlans.toArray()).filter((p) => p.sat_date < sat).sort((a, b) => b.sat_date.localeCompare(a.sat_date));
+  for (const p of plans) if ((await db.planItems.where('plan_id').equals(p.id).count()) > 0) return p;
+  return null;
 }
 
 export const setItemDay = (id, day) => db.planItems.update(id, { day });

@@ -1,14 +1,16 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  addDishToPlan, addIngredient, db, deleteDish, removeIngredient, removePlanItem, updateDish, updateIngredient,
+  addDishToPlan, addIngredient, db, deleteDish, getOrCreatePlan, removeIngredient, removePlanItem, toggleFavorite, updateDish, updateIngredient,
 } from '../db.js';
+import { WeekendPicker } from '../components/WeekendPicker.jsx';
+import { weekendShort } from '../lib/week.js';
 import { toMap, useProducts, usePlanItems } from '../hooks.js';
 import { CATEGORIES, TO_TASTE, UNITS } from '../lib/constants.js';
 import { formatAmount, formatQty, parseIngredient } from '../lib/parse.js';
 import { Button, Chip, IconButton, inputCls } from '../components/ui.jsx';
 
-export function DishCard({ dishId, planId, onClose }) {
+export function DishCard({ dishId, planId, sat, onClose }) {
   const dish = useLiveQuery(async () => (await db.dishes.get(dishId)) ?? null, [dishId]);
   const ingredients = useLiveQuery(() => db.dishIngredients.where('dish_id').equals(dishId).toArray(), [dishId], []);
   const products = useProducts();
@@ -22,6 +24,8 @@ export function DishCard({ dishId, planId, onClose }) {
   const [editId, setEditId] = useState(null);
   const [nameError, setNameError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [picking, setPicking] = useState(false);
+  const [added, setAdded] = useState('');
 
   useEffect(() => {
     if (dish) { setName(dish.name); setNote(dish.note ?? ''); }
@@ -58,6 +62,13 @@ export function DishCard({ dishId, planId, onClose }) {
             onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
             aria-label="Название блюда"
           />
+          <IconButton
+            label={dish.favorite ? 'Убрать из любимых' : 'В любимые'}
+            className={`text-2xl ${dish.favorite ? 'text-amber-500' : ''}`}
+            onClick={() => toggleFavorite(dish.id)}
+          >
+            {dish.favorite ? '★' : '☆'}
+          </IconButton>
         </header>
 
         <div className="space-y-5 px-4 pt-4">
@@ -121,12 +132,14 @@ export function DishCard({ dishId, planId, onClose }) {
 
           <div className="flex flex-wrap gap-2">
             {planItem ? (
-              <Button variant="secondary" className="flex-1" onClick={() => removePlanItem(planItem.id)}>Убрать из меню</Button>
+              <Button variant="secondary" className="flex-1" onClick={() => removePlanItem(planItem.id)}>Убрать из меню {weekendShort(sat)}</Button>
             ) : (
-              <Button className="flex-1" onClick={() => addDishToPlan(planId, dish.id)}>В меню выходных</Button>
+              <Button className="flex-1" onClick={() => addDishToPlan(planId, dish.id)}>В меню {weekendShort(sat)}</Button>
             )}
+            <Button variant="secondary" onClick={() => setPicking(true)}>На другие…</Button>
             <Button variant="danger" onClick={() => setConfirmDelete(true)}>Удалить</Button>
           </div>
+          {added && <p className="text-sm text-emerald-700 dark:text-emerald-400">{added}</p>}
           {confirmDelete && (
             <div className="flex flex-wrap items-center gap-2 rounded-xl bg-red-50 p-3 text-sm dark:bg-red-950">
               <span className="flex-1">Удалить «{dish.name}» из библиотеки и меню?</span>
@@ -136,6 +149,16 @@ export function DishCard({ dishId, planId, onClose }) {
           )}
         </div>
       </div>
+      <WeekendPicker
+        open={picking}
+        onClose={() => setPicking(false)}
+        title={`«${dish.name}» на выходные…`}
+        onPick={async (s) => {
+          const ok = await addDishToPlan(await getOrCreatePlan(s), dish.id);
+          setPicking(false);
+          setAdded(ok ? `Добавлено на ${weekendShort(s)}` : `Уже есть в меню ${weekendShort(s)}`);
+        }}
+      />
     </div>
   );
 }
