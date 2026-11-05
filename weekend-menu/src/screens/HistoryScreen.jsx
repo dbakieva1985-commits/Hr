@@ -8,6 +8,7 @@ import { Button, Empty, Header } from '../components/ui.jsx';
 export function HistoryScreen({ openDish }) {
   const fileRef = useRef(null);
   const [msg, setMsg] = useState('');
+  const [pending, setPending] = useState(null);
   const weeks = useLiveQuery(async () => {
     const [plans, items, dishes] = await Promise.all([
       db.weekPlans.where('status').equals('closed').toArray(),
@@ -42,9 +43,18 @@ export function HistoryScreen({ openDish }) {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    if (!confirm('Заменить все данные приложения данными из файла?')) return;
     try {
-      await importAll(JSON.parse(await file.text()));
+      setPending(JSON.parse(await file.text()));
+      setMsg('');
+    } catch {
+      setMsg('Файл не читается как JSON');
+    }
+  };
+
+  const applyImport = async () => {
+    try {
+      await importAll(pending);
+      setPending(null);
       setMsg('Данные восстановлены');
       location.reload();
     } catch (err) {
@@ -89,6 +99,13 @@ export function HistoryScreen({ openDish }) {
           <Button variant="secondary" className="flex-1" onClick={() => fileRef.current?.click()}>Импорт</Button>
           <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={doImport} />
         </div>
+        {pending && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 rounded-lg bg-amber-100 p-2 text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+            <span className="flex-1">Заменить все текущие данные данными из файла?</span>
+            <Button variant="ghost" onClick={() => setPending(null)}>Отмена</Button>
+            <Button onClick={applyImport}>Заменить</Button>
+          </div>
+        )}
         {msg && <p className="mt-2 text-stone-600 dark:text-stone-300">{msg}</p>}
       </section>
     </>

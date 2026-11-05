@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]) *) { @slot; }
+  }
+  &:where([data-theme="dark"] *) { @slot; }
+}
+
 :root {
   color-scheme: light dark;
   -webkit-tap-highlight-color: transparent;

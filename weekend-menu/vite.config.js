@@ -3,11 +3,14 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // `--mode artifact`: a standalone preview build (relative paths, no service worker)
+  base: mode === 'artifact' ? './' : '/',
+  build: mode === 'artifact' ? { outDir: 'dist-artifact', assetsInlineLimit: 100000 } : {},
   plugins: [
     react(),
     tailwindcss(),
-    VitePWA({
+    mode !== 'artifact' && VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
@@ -30,4 +33,4 @@ export default defineConfig({
     }),
   ],
   test: { environment: 'node', include: ['tests/**/*.test.js'] },
-});
+}));

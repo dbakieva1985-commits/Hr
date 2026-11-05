@@ -20,6 +20,8 @@ export function DishCard({ dishId, planId, onClose }) {
   const [note, setNote] = useState('');
   const [line, setLine] = useState('');
   const [editId, setEditId] = useState(null);
+  const [nameError, setNameError] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     if (dish) { setName(dish.name); setNote(dish.note ?? ''); }
@@ -38,8 +40,9 @@ export function DishCard({ dishId, planId, onClose }) {
 
   const saveName = async () => {
     const n = name.trim();
+    setNameError('');
     if (!n || n === dish.name) return setName(dish.name);
-    try { await updateDish(dish.id, { name: n }); } catch { alert('Блюдо с таким названием уже есть'); setName(dish.name); }
+    try { await updateDish(dish.id, { name: n }); } catch { setNameError(`«${n}» уже есть в библиотеке`); setName(dish.name); }
   };
 
   return (
@@ -58,6 +61,7 @@ export function DishCard({ dishId, planId, onClose }) {
         </header>
 
         <div className="space-y-5 px-4 pt-4">
+          {nameError && <p className="text-sm text-red-600 dark:text-red-400">{nameError}</p>}
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((c) => (
               <Chip key={c} active={dish.category === c} onClick={() => updateDish(dish.id, { category: dish.category === c ? null : c })}>{c}</Chip>
@@ -121,13 +125,15 @@ export function DishCard({ dishId, planId, onClose }) {
             ) : (
               <Button className="flex-1" onClick={() => addDishToPlan(planId, dish.id)}>В меню выходных</Button>
             )}
-            <Button
-              variant="danger"
-              onClick={async () => { if (confirm(`Удалить «${dish.name}» из библиотеки?`)) { await deleteDish(dish.id); onClose(); } }}
-            >
-              Удалить
-            </Button>
+            <Button variant="danger" onClick={() => setConfirmDelete(true)}>Удалить</Button>
           </div>
+          {confirmDelete && (
+            <div className="flex flex-wrap items-center gap-2 rounded-xl bg-red-50 p-3 text-sm dark:bg-red-950">
+              <span className="flex-1">Удалить «{dish.name}» из библиотеки и меню?</span>
+              <Button variant="ghost" onClick={() => setConfirmDelete(false)}>Отмена</Button>
+              <Button className="bg-red-600 active:bg-red-700" onClick={async () => { await deleteDish(dish.id); onClose(); }}>Удалить</Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
