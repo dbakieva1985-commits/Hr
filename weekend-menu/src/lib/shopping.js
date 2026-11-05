@@ -141,7 +141,11 @@ export function shoppingText(title, lines) {
   const out = [`🛒 ${title}`];
   for (const { aisle, lines: ls } of groupByAisle(toBuy)) {
     out.push('', aisle.toUpperCase());
-    for (const l of ls) out.push(`▫️ ${l.name}${l.amount ? ` — ${l.amount}` : ''}`);
+    for (const l of ls) {
+      // One dish: «(для: Борщ)»; several: «(для: Суп 2, Салат 2)» so the split is visible.
+      const why = l.sources.length === 1 ? ` (для: ${l.sources[0].dish})` : l.sources.length ? ` (для: ${sourcesText(l.sources)})` : '';
+      out.push(`▫️ ${l.name}${l.amount ? ` — ${l.amount}` : ''}${why}`);
+    }
   }
   if (toBuy.length === 0) out.push('', 'Всё куплено ✅');
   if (bought.length) out.push('', `Уже куплено: ${bought.map((l) => l.name).join(', ')}`);

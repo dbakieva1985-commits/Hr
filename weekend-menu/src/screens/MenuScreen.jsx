@@ -7,6 +7,8 @@ import { toMap, useDishes, useIngredients, usePlanItems, usePlansIndex, useProdu
 import { formatAmount } from '../lib/parse.js';
 import { addWeeks, nearestSaturday, relativeLabel, weekendShort, weekendStatus, weekendTitle } from '../lib/week.js';
 import { DishActions } from '../components/DishActions.jsx';
+import { ShareButton } from '../components/ShareButton.jsx';
+import { menuText } from '../lib/menuText.js';
 import { QuickAdd } from '../components/QuickAdd.jsx';
 import { WeekendPicker } from '../components/WeekendPicker.jsx';
 import { Button, Chip, Empty, IconButton } from '../components/ui.jsx';
@@ -192,6 +194,19 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
       {emptyCount > 0 && (
         <div className="mx-4 mt-3 rounded-xl bg-amber-100 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
           {emptyCount} {plural(emptyCount, 'блюдо', 'блюда', 'блюд')} без ингредиентов — нажмите ✎, чтобы дописать
+        </div>
+      )}
+
+      {items.length > 0 && (
+        <div className="mx-4 mt-3">
+          <ShareButton
+            label="📤 Отправить меню с продуктами"
+            getText={() => menuText(
+              weekendTitle(sat).replace('Выходные ', ''),
+              items.map((i) => ({ ...i, dish: dishMap.get(i.dish_id) })).filter((i) => i.dish),
+              ingByDish, productMap, atHome,
+            )}
+          />
         </div>
       )}
 

@@ -95,13 +95,37 @@ import { shoppingText } from '../src/lib/shopping.js';
 describe('shoppingText', () => {
   it('lists what is left by aisle', () => {
     const lines = [
-      { name: 'Свекла', amount: '2 шт', aisle: 'Овощи и фрукты', bought: false, haveAtHome: false },
-      { name: 'Лимон', amount: '1 шт', aisle: 'Овощи и фрукты', bought: false, haveAtHome: true },
-      { name: 'Грудка', amount: '4 шт', aisle: 'Мясо и птица', bought: true, haveAtHome: false },
-      { name: 'Соль', amount: 'по вкусу', aisle: 'Бакалея', bought: false, haveAtHome: false },
+      { name: 'Свекла', amount: '2 шт', aisle: 'Овощи и фрукты', bought: false, haveAtHome: false, sources: [{ dish: 'Борщ', amount: '2' }] },
+      { name: 'Лимон', amount: '1 шт', aisle: 'Овощи и фрукты', bought: false, haveAtHome: true, sources: [] },
+      { name: 'Грудка', amount: '4 шт', aisle: 'Мясо и птица', bought: true, haveAtHome: false, sources: [] },
+      { name: 'Соль', amount: 'по вкусу', aisle: 'Бакалея', bought: false, haveAtHome: false, sources: [] },
     ];
     expect(shoppingText('Покупки на 14–15 ноября', lines)).toBe(
-      '🛒 Покупки на 14–15 ноября\n\nОВОЩИ И ФРУКТЫ\n▫️ Свекла — 2 шт\n\nБАКАЛЕЯ\n▫️ Соль — по вкусу\n\nУже куплено: Грудка',
+      '🛒 Покупки на 14–15 ноября\n\nОВОЩИ И ФРУКТЫ\n▫️ Свекла — 2 шт (для: Борщ)\n\nБАКАЛЕЯ\n▫️ Соль — по вкусу\n\nУже куплено: Грудка',
     );
+  });
+});
+
+import { menuText } from '../src/lib/menuText.js';
+describe('menuText', () => {
+  it('lists each dish with its products', () => {
+    const items = [
+      { dish: { id: 1, name: 'Суп' }, day: 'sat' },
+      { dish: { id: 4, name: 'Салат Мадика' }, day: 'sat' },
+      { dish: { id: 5, name: 'Курица' }, day: null },
+    ];
+    const ing = new Map([
+      [1, [{ product_id: 1, qty: 2, unit: 'шт' }, { product_id: 5, qty: 1, unit: 'шт' }]],
+      [4, [{ product_id: 1, qty: 2, unit: 'шт' }]],
+    ]);
+    const text = menuText('14–15 ноября', items, ing, products, new Set([5]));
+    expect(text).toBe([
+      '🍽 Меню на 14–15 ноября', '',
+      'СУББОТА',
+      '🔸 *Суп*', '    ▫️ Копчёная грудка 2 шт', '    ▫️ Лимон 1 шт — есть дома 🏠',
+      '🔸 *Салат Мадика*', '    ▫️ Копчёная грудка 2 шт', '',
+      'В ЛЮБОЙ ДЕНЬ',
+      '🔸 *Курица*', '    продукты не указаны',
+    ].join('\n'));
   });
 });
