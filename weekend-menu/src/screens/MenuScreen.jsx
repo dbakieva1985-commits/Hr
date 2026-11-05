@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { addDishToPlan, getOrCreatePlan, previousPlanWithItems, repeatWeek, setCooked, setItemDay } from '../db.js';
+import { addDishToPlan, db, getOrCreatePlan, previousPlanWithItems, removePlanItem, repeatWeek, setCooked, setItemDay } from '../db.js';
 import { toMap, useDishes, useIngredients, usePlanItems, usePlansIndex } from '../hooks.js';
 import { addWeeks, nearestSaturday, relativeLabel, weekendShort, weekendStatus, weekendTitle } from '../lib/week.js';
 import { DishActions } from '../components/DishActions.jsx';
 import { QuickAdd } from '../components/QuickAdd.jsx';
 import { WeekendPicker } from '../components/WeekendPicker.jsx';
-import { Button, Chip, Empty } from '../components/ui.jsx';
+import { Button, Chip, Empty, IconButton } from '../components/ui.jsx';
 
 const SECTIONS = [
   { day: 'sat', title: 'Суббота' },
@@ -78,7 +78,7 @@ function FavoritesRow({ dishes, inPlan, planId }) {
   if (favs.length === 0) {
     return (
       <p className="mx-4 mt-3 rounded-xl bg-stone-100 px-3 py-2 text-sm text-stone-600 dark:bg-stone-900 dark:text-stone-400">
-        ☆ Отметьте любимые блюда звёздочкой (нажмите на блюдо) — они будут здесь, чтобы добавлять их одним касанием.
+        ☆ Любимые блюда появятся здесь — отметьте звёздочкой в «Блюдах».
       </p>
     );
   }
@@ -114,6 +114,22 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
   const [action, setAction] = useState(null); // { dishId, itemId }
   const [repeating, setRepeating] = useState(false);
   const [prevPlan, setPrevPlan] = useState(null);
+  const [removed, setRemoved] = useState(null); // { item, name } for «Вернуть»
+
+  useEffect(() => {
+    if (!removed) return;
+    const t = setTimeout(() => setRemoved(null), 6000);
+    return () => clearTimeout(t);
+  }, [removed]);
+
+  const remove = async (item, name) => {
+    await removePlanItem(item.id);
+    setRemoved({ item, name });
+  };
+  const undoRemove = async () => {
+    await db.planItems.put(removed.item);
+    setRemoved(null);
+  };
 
   const dishMap = useMemo(() => toMap(dishes), [dishes]);
   const withIngredients = useMemo(() => new Set(ingredients.map((i) => i.dish_id)), [ingredients]);
@@ -137,7 +153,7 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
       <header className="sticky top-0 z-10 border-b border-stone-200 bg-stone-50/95 pt-[max(env(safe-area-inset-top),8px)] backdrop-blur dark:border-stone-800 dark:bg-stone-950/95">
         <WeekStrip sat={sat} setSat={setSat} index={index} />
         <div className="flex items-baseline gap-2 px-4 pb-2">
-          <h1 className="min-w-0 flex-1 truncate text-xl font-semibold">{weekendTitle(sat)}</h1>
+          <h1 className="min-w-0 flex-1 truncate text-xl font-semibold">{weekendTitle(sat).replace('Выходные ', '')}</h1>
           <span className="shrink-0 text-sm text-stone-500">{relativeLabel(sat)}</span>
         </div>
       </header>
@@ -153,7 +169,7 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
 
       {emptyCount > 0 && (
         <div className="mx-4 mt-3 rounded-xl bg-amber-100 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-          {emptyCount} {plural(emptyCount, 'блюдо', 'блюда', 'блюд')} без ингредиентов — нажмите на блюдо → «Ингредиенты»
+          {emptyCount} {plural(emptyCount, 'блюдо', 'блюда', 'блюд')} без ингредиентов — нажмите ✎, чтобы дописать
         </div>
       )}
 
@@ -174,10 +190,11 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
 
       {SECTIONS.map(({ day, title }) => {
         const list = items.filter((i) => i.day === day);
-        if (list.length === 0 && (day === null || items.length === 0)) return null;
+        const anyDay = items.some((i) => i.day);
+        if (list.length === 0 && (day === null || !anyDay)) return null; // no empty day blocks until days are used
         return (
           <section key={title} className="mt-4">
-            <h2 className="px-4 pb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase dark:text-stone-400">{title}</h2>
+            {anyDay && <h2 className="px-4 pb-1 text-xs font-semibold tracking-wide text-stone-500 uppercase dark:text-stone-400">{title}</h2>}
             {list.length === 0 && <div className="px-4 py-2 text-sm text-stone-400">—</div>}
             <ul className="divide-y divide-stone-200 dark:divide-stone-800">
               {list.map((item) => {
@@ -185,7 +202,7 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
                 if (!dish) return null;
                 const noIngr = !withIngredients.has(dish.id);
                 return (
-                  <li key={item.id} className="flex items-center gap-1 py-1 pr-2 pl-2">
+                  <li key={item.id} className="flex items-start gap-1 py-2 pr-1 pl-2">
                     <label className="flex size-11 shrink-0 items-center justify-center" title="Приготовлено">
                       <input
                         type="checkbox"
@@ -195,17 +212,21 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
                         aria-label={`${dish.name}: приготовлено`}
                       />
                     </label>
-                    <button type="button" className="min-w-0 flex-1 py-2 text-left" onClick={() => setAction({ dishId: dish.id, itemId: item.id })}>
-                      <div className={`truncate text-base ${item.cooked ? 'text-stone-400 line-through' : ''}`}>
-                        {dish.favorite ? <span className="text-amber-500">★ </span> : null}
-                        {dish.name}
+                    <div className="min-w-0 flex-1">
+                      <button type="button" className="block w-full pt-2.5 text-left" onClick={() => setAction({ dishId: dish.id, itemId: item.id })}>
+                        <span className={`block text-base leading-snug ${item.cooked ? 'text-stone-400 line-through' : ''}`}>
+                          {dish.favorite ? <span className="text-amber-500">★ </span> : null}
+                          {dish.name}
+                        </span>
+                        {noIngr && <span className="block text-xs text-amber-600 dark:text-amber-400">ингредиенты не заполнены</span>}
+                      </button>
+                      <div className="mt-2 flex items-center gap-1.5">
+                        <Chip active={item.day === 'sat'} onClick={() => setItemDay(item.id, item.day === 'sat' ? null : 'sat')}>Сб</Chip>
+                        <Chip active={item.day === 'sun'} onClick={() => setItemDay(item.id, item.day === 'sun' ? null : 'sun')}>Вс</Chip>
                       </div>
-                      {noIngr && <div className="text-xs text-amber-600 dark:text-amber-400">ингредиенты не заполнены</div>}
-                    </button>
-                    <div className="flex gap-1">
-                      <Chip active={item.day === 'sat'} onClick={() => setItemDay(item.id, item.day === 'sat' ? null : 'sat')}>Сб</Chip>
-                      <Chip active={item.day === 'sun'} onClick={() => setItemDay(item.id, item.day === 'sun' ? null : 'sun')}>Вс</Chip>
                     </div>
+                    <IconButton label={`Изменить ${dish.name}`} className="text-lg" onClick={() => openDish(dish.id)}>✎</IconButton>
+                    <IconButton label={`Убрать ${dish.name} из меню`} onClick={() => remove(item, dish.name)}>✕</IconButton>
                   </li>
                 );
               })}
@@ -215,9 +236,18 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
       })}
 
       <div className="sticky bottom-16 mt-6 flex gap-2 bg-gradient-to-t from-stone-50 from-70% px-4 pt-4 pb-3 dark:from-stone-950">
-        <Button variant="secondary" className="flex-1" onClick={() => setAdding(true)}>＋ Блюдо</Button>
-        <Button className="flex-1" disabled={items.length === 0} onClick={goShopping}>Собрать список</Button>
+        <Button variant="secondary" className="flex-1 whitespace-nowrap px-3" onClick={() => setAdding(true)}>＋ Блюдо</Button>
+        <Button className="flex-1 whitespace-nowrap px-3" disabled={items.length === 0} onClick={goShopping}>Собрать список</Button>
       </div>
+
+      {removed && (
+        <div role="status" className="fixed inset-x-0 bottom-20 z-30 mx-auto flex max-w-lg items-center gap-3 px-4">
+          <div className="flex flex-1 items-center gap-3 rounded-xl bg-stone-900 px-4 py-2 text-sm text-white shadow-lg dark:bg-stone-100 dark:text-stone-900">
+            <span className="min-w-0 flex-1 truncate">«{removed.name}» убрано из меню</span>
+            <button type="button" className="min-h-9 font-semibold text-emerald-300 dark:text-emerald-700" onClick={undoRemove}>Вернуть</button>
+          </div>
+        </div>
+      )}
 
       <QuickAdd open={adding} onClose={() => setAdding(false)} planId={planId} dishes={dishes} inPlan={inPlan} />
       <DishActions dishId={action?.dishId} itemId={action?.itemId} onClose={() => setAction(null)} openDish={openDish} />
