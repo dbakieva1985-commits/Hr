@@ -14,6 +14,7 @@ db.version(1).stores({
   planItems: '++id, plan_id, dish_id, [plan_id+order]',
   shoppingOverrides: '++id, plan_id, product_id, [plan_id+product_id]',
 });
+db.version(2).stores({ meta: 'key' });
 
 const now = () => new Date().toISOString();
 
@@ -156,9 +157,52 @@ export async function addManualLine(planId, { name, amount }) {
 export const patchOverride = (id, patch) => db.shoppingOverrides.update(id, patch);
 export const deleteOverride = (id) => db.shoppingOverrides.delete(id);
 
+/** U12: put every dish of a past week into the active plan. Returns how many were added. */
+export async function repeatWeek(fromPlanId, toPlanId) {
+  const items = (await db.planItems.where('plan_id').equals(fromPlanId).toArray()).sort((a, b) => a.order - b.order);
+  let added = 0;
+  for (const i of items) if (await addDishToPlan(toPlanId, i.dish_id, i.day)) added += 1;
+  return added;
+}
+
+// ---------- Starter data ----------
+
+/**
+ * Load a past week once (dishes + ingredients into the library, the menu into history,
+ * extra purchases as manual list lines). Idempotent: guarded by a meta flag and by sat_date.
+ */
+export async function seedWeek(seed) {
+  const flag = `seed:${seed.id}`;
+  return db.transaction('rw', [db.meta, db.products, db.dishes, db.dishIngredients, db.weekPlans, db.planItems, db.shoppingOverrides], async () => {
+    if (await db.meta.get(flag)) return false;
+    const plan = await db.weekPlans.where('sat_date').equals(seed.sat_date).first();
+    const planId = plan?.id ?? (await db.weekPlans.add({ sat_date: seed.sat_date, status: seed.status, created_at: now() }));
+    for (const d of seed.dishes) {
+      const dish = await findOrCreateDish(d.name);
+      const patch = {};
+      if (d.category && !dish.category) patch.category = d.category;
+      if (d.note && !dish.note) patch.note = d.note;
+      if (Object.keys(patch).length) await db.dishes.update(dish.id, patch);
+      if ((await db.dishIngredients.where('dish_id').equals(dish.id).count()) === 0) {
+        for (const ing of d.ingredients ?? []) await addIngredient(dish.id, ing);
+      }
+      await addDishToPlan(planId, dish.id, d.day ?? null);
+    }
+    for (const extra of seed.extras ?? []) {
+      const product = await getOrCreateProduct(extra.name);
+      await db.shoppingOverrides.add({
+        plan_id: planId, product_id: product.id, free_text: product.name,
+        qty_override: extra.amount, have_at_home: 0, bought: seed.status === 'closed' ? 1 : 0, is_manual: 1,
+      });
+    }
+    await db.meta.put({ key: flag, at: now() });
+    return true;
+  });
+}
+
 // ---------- Backup ----------
 
-const TABLES = ['products', 'dishes', 'dishIngredients', 'weekPlans', 'planItems', 'shoppingOverrides'];
+const TABLES = ['products', 'dishes', 'dishIngredients', 'weekPlans', 'planItems', 'shoppingOverrides', 'meta'];
 
 export async function exportAll() {
   const data = {};

@@ -1,21 +1,26 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useRef, useState } from 'react';
-import { db, exportAll, importAll } from '../db.js';
+import { db, exportAll, importAll, repeatWeek } from '../db.js';
 import { toMap } from '../hooks.js';
+import { buildShoppingList, groupByAisle, sourcesText } from '../lib/shopping.js';
 import { weekendTitle } from '../lib/week.js';
 import { Button, Empty, Header } from '../components/ui.jsx';
 
-export function HistoryScreen({ openDish }) {
+export function HistoryScreen({ planId, openDish, goMenu }) {
   const fileRef = useRef(null);
   const [msg, setMsg] = useState('');
   const [pending, setPending] = useState(null);
   const weeks = useLiveQuery(async () => {
-    const [plans, items, dishes] = await Promise.all([
+    const [plans, items, dishes, ingredients, products, overrides] = await Promise.all([
       db.weekPlans.where('status').equals('closed').toArray(),
       db.planItems.toArray(),
       db.dishes.toArray(),
+      db.dishIngredients.toArray(),
+      db.products.toArray(),
+      db.shoppingOverrides.toArray(),
     ]);
     const dishMap = toMap(dishes);
+    const productMap = toMap(products);
     return plans
       .sort((a, b) => b.sat_date.localeCompare(a.sat_date))
       .map((p) => ({
@@ -25,6 +30,13 @@ export function HistoryScreen({ openDish }) {
           .sort((a, b) => a.order - b.order)
           .map((i) => ({ ...i, dish: dishMap.get(i.dish_id) }))
           .filter((i) => i.dish),
+        list: buildShoppingList({
+          planItems: items.filter((i) => i.plan_id === p.id),
+          dishes: dishMap,
+          ingredients,
+          products: productMap,
+          overrides: overrides.filter((o) => o.plan_id === p.id),
+        }),
       }));
   }, [], []);
 
@@ -73,7 +85,7 @@ export function HistoryScreen({ openDish }) {
             <li key={w.id} className="rounded-xl border border-stone-200 p-3 dark:border-stone-800">
               <div className="flex items-baseline justify-between gap-2">
                 <h2 className="font-semibold">{weekendTitle(w.sat_date)}</h2>
-                <span className="text-xs text-stone-500">приготовлено {cooked} из {w.items.length}</span>
+                {cooked > 0 && <span className="text-xs text-stone-500">приготовлено {cooked} из {w.items.length}</span>}
               </div>
               <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-sm">
                 {w.items.map((i) => (
@@ -86,6 +98,20 @@ export function HistoryScreen({ openDish }) {
                 ))}
                 {w.items.length === 0 && <li className="text-stone-400">меню было пустым</li>}
               </ul>
+              <WeekList list={w.list} />
+              {w.items.length > 0 && (
+                <Button
+                  variant="secondary"
+                  className="mt-3 w-full text-sm"
+                  onClick={async () => {
+                    const n = await repeatWeek(w.id, planId);
+                    setMsg(n ? `Добавлено в меню этих выходных: ${n}` : 'Все эти блюда уже в меню');
+                    if (n) goMenu();
+                  }}
+                >
+                  Повторить это меню
+                </Button>
+              )}
             </li>
           );
         })}
@@ -109,5 +135,40 @@ export function HistoryScreen({ openDish }) {
         {msg && <p className="mt-2 text-stone-600 dark:text-stone-300">{msg}</p>}
       </section>
     </>
+  );
+}
+
+function WeekList({ list }) {
+  const [open, setOpen] = useState(false);
+  const lines = list.lines.filter((l) => !l.haveAtHome);
+  if (lines.length === 0 && list.missing.length === 0) return null;
+  return (
+    <div className="mt-2 border-t border-stone-200 pt-2 dark:border-stone-800">
+      <button type="button" className="min-h-9 text-sm text-emerald-700 dark:text-emerald-400" onClick={() => setOpen((o) => !o)}>
+        {open ? '▾' : '▸'} Покупки ({lines.length})
+      </button>
+      {open && (
+        <div className="space-y-2 pb-1 text-sm">
+          {groupByAisle(lines).map(({ aisle, lines: ls }) => (
+            <div key={aisle}>
+              <div className="text-xs text-stone-500 uppercase">{aisle}</div>
+              <ul>
+                {ls.map((l) => (
+                  <li key={l.key}>
+                    {l.name}{l.amount && <span className="text-stone-500"> — {l.amount}</span>}
+                    {l.sources.length > 0 && <span className="text-xs text-stone-500"> ({sourcesText(l.sources)})</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          {list.missing.length > 0 && (
+            <p className="text-xs text-amber-700 dark:text-amber-400">
+              Без ингредиентов: {list.missing.map((m) => m.name).join(', ')}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

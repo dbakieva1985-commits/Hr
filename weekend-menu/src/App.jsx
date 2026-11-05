@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ensureActivePlan } from './db.js';
+import { ensureActivePlan, seedWeek } from './db.js';
+import { LAST_MENU } from './lib/seed.js';
 import { DishCard } from './screens/DishCard.jsx';
 import { DishesScreen } from './screens/DishesScreen.jsx';
 import { HistoryScreen } from './screens/HistoryScreen.jsx';
@@ -22,7 +23,7 @@ function useActivePlan() {
   const [planId, setPlanId] = useState(null);
   useEffect(() => {
     const refresh = () => ensureActivePlan().then(setPlanId);
-    refresh();
+    seedWeek(LAST_MENU).catch(() => {}).finally(refresh);
     const t = setInterval(refresh, 60_000);
     const onVis = () => document.visibilityState === 'visible' && refresh();
     document.addEventListener('visibilitychange', onVis);
@@ -52,7 +53,7 @@ export default function App() {
         {tab === 'menu' && <MenuScreen planId={planId} openDish={setDishId} goShopping={() => setTab('shop')} />}
         {tab === 'shop' && <ShoppingScreen planId={planId} openDish={setDishId} />}
         {tab === 'dishes' && <DishesScreen planId={planId} openDish={setDishId} />}
-        {tab === 'history' && <HistoryScreen openDish={setDishId} />}
+        {tab === 'history' && <HistoryScreen planId={planId} openDish={setDishId} goMenu={() => setTab('menu')} />}
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-stone-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur dark:border-stone-800 dark:bg-stone-900/95">

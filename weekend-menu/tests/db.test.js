@@ -47,3 +47,41 @@ describe('db', () => {
     expect(await db.products.count()).toBe(1);
   });
 });
+
+describe('seed: last menu (31 Oct – 1 Nov)', () => {
+  it('loads once into history and the library, list matches the notes', async () => {
+    const { seedWeek, repeatWeek } = await import('../src/db.js');
+    const { LAST_MENU } = await import('../src/lib/seed.js');
+    const { buildShoppingList, sourcesText } = await import('../src/lib/shopping.js');
+
+    await Promise.all([seedWeek(LAST_MENU), seedWeek(LAST_MENU)]); // concurrent, like StrictMode
+    expect(await seedWeek(LAST_MENU)).toBe(false);
+    expect(await db.dishes.count()).toBe(7);
+
+    const past = await db.weekPlans.where('sat_date').equals('2026-10-31').first();
+    expect(past.status).toBe('closed');
+    const toMap = (a) => new Map(a.map((x) => [x.id, x]));
+    const list = buildShoppingList({
+      planItems: await db.planItems.where('plan_id').equals(past.id).toArray(),
+      dishes: toMap(await db.dishes.toArray()),
+      ingredients: await db.dishIngredients.toArray(),
+      products: toMap(await db.products.toArray()),
+      overrides: await db.shoppingOverrides.where('plan_id').equals(past.id).toArray(),
+    });
+    const l = (n) => list.lines.find((x) => x.name === n);
+    expect(l('Копчёная грудка').amount).toBe('4 шт');
+    expect(sourcesText(l('Копчёная грудка').sources)).toBe('Суп 2, Салат Мадика 2');
+    expect(l('Картофель').amount).toBe('5 кг');
+    expect(l('Перец болгарский')).toMatchObject({ amount: '1 пакет', aisle: 'Овощи и фрукты' });
+    expect(l('Гранат').amount).toBe('1 шт');
+    expect(l('Огурцы').amount).toBe('1 кг');
+    expect(list.missing.map((m) => m.name)).toEqual(['Курица запечённая', 'Стейк с сыром и помидором']);
+    expect(list.lines).toHaveLength(11);
+
+    // ensureActivePlan must not reopen the seeded past week, and «repeat» copies the menu over
+    const current = await ensureActivePlan(new Date(2026, 10, 5));
+    expect((await db.weekPlans.get(past.id)).status).toBe('closed');
+    expect(await repeatWeek(past.id, current)).toBe(7);
+    expect(await repeatWeek(past.id, current)).toBe(0);
+  });
+});
