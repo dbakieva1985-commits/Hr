@@ -112,3 +112,19 @@ describe('calendar', () => {
     expect((await db.weekPlans.get(later)).status).toBe('planned');
   });
 });
+
+describe('seed: menu 14–15 Nov', () => {
+  it('adds the planned weekend; it becomes active when its week comes', async () => {
+    const { seedWeek } = await import('../src/db.js');
+    const { SEEDS } = await import('../src/lib/seed.js');
+    for (const s of SEEDS) await seedWeek(s);
+    await ensureActivePlan(new Date(2026, 10, 5));
+    const plan = await db.weekPlans.where('sat_date').equals('2026-11-14').first();
+    expect(plan.status).toBe('planned');
+    const items = await db.planItems.where('plan_id').equals(plan.id).toArray();
+    expect(items).toHaveLength(7);
+    expect(await db.dishes.count()).toBe(14);
+    await ensureActivePlan(new Date(2026, 10, 10));
+    expect((await db.weekPlans.get(plan.id)).status).toBe('active');
+  });
+});

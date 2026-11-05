@@ -50,3 +50,22 @@ export const LAST_MENU = {
     { name: 'Огурцы', amount: '1 кг' },
   ],
 };
+
+// Planned menu for 14–15 Nov 2026. Ingredients not given yet — the dishes show up as reminders to fill in.
+export const MENU_NOV_14 = {
+  id: 'weekend-2026-11-14',
+  sat_date: '2026-11-14',
+  status: 'planned',
+  dishes: [
+    { name: 'Лагман', category: 'горячее' },
+    { name: 'Самса с брынзой и шпинатом', category: 'закуска' },
+    { name: 'Самса с курицей и луком', category: 'закуска' },
+    { name: 'Суп куриный', category: 'суп' },
+    { name: 'Стейк курицы с грибами и рисом', category: 'горячее' },
+    { name: 'Рыба жареная', category: 'горячее' },
+    { name: 'Печень с луком и перцем', category: 'горячее' },
+  ],
+};
+
+/** Applied once each, in order, on app start. */
+export const SEEDS = [LAST_MENU, MENU_NOV_14];

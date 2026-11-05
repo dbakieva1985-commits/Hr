@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ensureActivePlan, getOrCreatePlan, seedWeek } from './db.js';
-import { LAST_MENU } from './lib/seed.js';
+import { SEEDS } from './lib/seed.js';
 import { nearestSaturday } from './lib/week.js';
 import { CalendarScreen } from './screens/CalendarScreen.jsx';
 import { DishCard } from './screens/DishCard.jsx';
@@ -33,7 +33,7 @@ function useWeekend() {
       if (now !== cur) { setSat((s) => (s === cur ? now : s)); cur = now; } // week rolled over
       setReady(true);
     });
-    seedWeek(LAST_MENU).catch(() => {}).finally(refresh);
+    (async () => { for (const seed of SEEDS) await seedWeek(seed); })().catch(() => {}).finally(refresh);
     const t = setInterval(refresh, 60_000);
     const onVis = () => document.visibilityState === 'visible' && refresh();
     document.addEventListener('visibilitychange', onVis);
