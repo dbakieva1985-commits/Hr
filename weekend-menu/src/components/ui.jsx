@@ -48,22 +48,23 @@ export function Chip({ active, className = '', ...props }) {
 export const inputCls =
   'w-full min-h-11 rounded-xl border border-stone-300 bg-white px-3 text-base text-stone-900 placeholder:text-stone-400 focus:border-emerald-600 focus:outline-none dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100';
 
-export function BackButton({ onClick, label = 'Назад' }) {
+export function BackButton({ onClick, label = 'Назад', ariaLabel }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      aria-label={ariaLabel ?? label}
       className="-ml-2 inline-flex min-h-11 shrink-0 items-center gap-1 rounded-lg px-2 text-base font-medium text-emerald-700 active:bg-stone-200 dark:text-emerald-400 dark:active:bg-stone-800"
     >
-      <span aria-hidden className="text-xl leading-none">←</span> {label}
+      <span aria-hidden className="text-xl leading-none">←</span>{label && <span aria-hidden> {label}</span>}
     </button>
   );
 }
 
-export function Header({ title, subtitle, right, onBack, backLabel }) {
+export function Header({ title, subtitle, right, onBack, backLabel = 'Меню' }) {
   return (
     <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-stone-200 bg-stone-50/95 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3 backdrop-blur dark:border-stone-800 dark:bg-stone-950/95">
-      {onBack && <BackButton onClick={onBack} label={backLabel} />}
+      {onBack && <BackButton onClick={onBack} label={backLabel} ariaLabel="Назад в меню" />}
       <div className="min-w-0 flex-1">
         <h1 className="truncate text-xl font-semibold">{title}</h1>
         {subtitle && <div className="text-sm text-stone-500 dark:text-stone-400">{subtitle}</div>}

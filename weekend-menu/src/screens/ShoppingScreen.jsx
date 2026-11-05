@@ -22,7 +22,7 @@ function useWakeLock(on) {
 export function ShoppingScreen({ sat, planId, openDish, onBack }) {
   const { missing, lines } = useShoppingList(planId);
   const [shopMode, setShopMode] = useState(() => localStorage.getItem('shopMode') === '1');
-  const [showHome, setShowHome] = useState(false);
+  const [showHome, setShowHome] = useState(true);
   const [editing, setEditing] = useState(null);
   const [adding, setAdding] = useState(false);
   useWakeLock(shopMode);
@@ -58,11 +58,11 @@ export function ShoppingScreen({ sat, planId, openDish, onBack }) {
     <>
       <Header
         onBack={onBack}
-        backLabel="Меню"
-        title={`Покупки · ${weekendShort(sat)}`}
-        subtitle={lines.length ? (left ? `Осталось купить: ${left}` : 'Всё куплено 🎉') : 'Список пуст'}
+        backLabel=""
+        title="Покупки"
+        subtitle={`${weekendShort(sat)} · ${lines.length ? (left ? `осталось ${left}` : 'всё куплено 🎉') : 'список пуст'}`}
         right={
-          <Button variant={shopMode ? 'primary' : 'secondary'} className="px-3 text-sm" onClick={() => setShopMode((s) => !s)}>
+          <Button variant={shopMode ? 'primary' : 'secondary'} className="shrink-0 px-3 text-sm whitespace-nowrap" onClick={() => setShopMode((s) => !s)}>
             🛒 {shopMode ? 'В магазине' : 'Магазин'}
           </Button>
         }
@@ -70,7 +70,7 @@ export function ShoppingScreen({ sat, planId, openDish, onBack }) {
 
       {lines.length > 0 && (
         <div className="mx-4 mt-3">
-          <Button variant="secondary" className="w-full" onClick={share}>📤 Отправить список (WhatsApp, Telegram)</Button>
+          <Button variant="secondary" className="w-full" onClick={share}>📤 Отправить список</Button>
           {shareMsg && <p role="status" className="mt-1 text-center text-sm text-emerald-700 dark:text-emerald-400">{shareMsg}</p>}
         </div>
       )}
@@ -124,6 +124,16 @@ export function ShoppingScreen({ sat, planId, openDish, onBack }) {
                         )}
                       </span>
                     </button>
+                    {!line.bought && (
+                      <button
+                        type="button"
+                        onClick={() => patch(line, { have_at_home: 1, bought: 0 })}
+                        aria-label={`${line.name}: есть дома`}
+                        className="mr-1 inline-flex min-h-10 shrink-0 items-center gap-1 rounded-full border border-stone-300 px-2.5 text-xs text-stone-600 active:bg-stone-200 dark:border-stone-700 dark:text-stone-300 dark:active:bg-stone-800"
+                      >
+                        🏠 есть
+                      </button>
+                    )}
                     {!shopMode && <IconButton label="Изменить" onClick={() => setEditing(line)}>✎</IconButton>}
                   </div>
                 </SwipeRow>
@@ -142,14 +152,14 @@ export function ShoppingScreen({ sat, planId, openDish, onBack }) {
       {atHome.length > 0 && (
         <section className="mt-6 mb-4">
           <button type="button" className="flex min-h-11 w-full items-center px-4 text-sm text-stone-500" onClick={() => setShowHome((s) => !s)}>
-            {showHome ? '▾' : '▸'} Есть дома ({atHome.length})
+            {showHome ? '▾' : '▸'} 🏠 Есть дома — не покупать ({atHome.length})
           </button>
           {showHome && (
             <ul className="divide-y divide-stone-200 dark:divide-stone-800">
               {atHome.map((line) => (
                 <li key={line.key} className="flex items-center px-4 py-1 text-stone-500">
-                  <span className="flex-1">{line.name}{line.amount && ` — ${line.amount}`}</span>
-                  <Button variant="ghost" className="text-sm" onClick={() => patch(line, { have_at_home: 0 })}>Вернуть</Button>
+                  <span className="flex-1 line-through">{line.name}{line.amount && ` — ${line.amount}`}</span>
+                  <Button variant="ghost" className="text-sm" onClick={() => patch(line, { have_at_home: 0 })}>Купить всё-таки</Button>
                 </li>
               ))}
             </ul>

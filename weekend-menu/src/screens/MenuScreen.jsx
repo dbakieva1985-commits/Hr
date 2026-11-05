@@ -1,6 +1,10 @@
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { addDishToPlan, db, getOrCreatePlan, previousPlanWithItems, removePlanItem, repeatWeek, setCooked, setItemDay } from '../db.js';
-import { toMap, useDishes, useIngredients, usePlanItems, usePlansIndex } from '../hooks.js';
+import {
+  addDishToPlan, db, getOrCreatePlan, patchProductLine, previousPlanWithItems, removePlanItem, repeatWeek, setCooked, setItemDay,
+} from '../db.js';
+import { toMap, useDishes, useIngredients, usePlanItems, usePlansIndex, useProducts } from '../hooks.js';
+import { formatAmount } from '../lib/parse.js';
 import { addWeeks, nearestSaturday, relativeLabel, weekendShort, weekendStatus, weekendTitle } from '../lib/week.js';
 import { DishActions } from '../components/DishActions.jsx';
 import { QuickAdd } from '../components/QuickAdd.jsx';
@@ -109,6 +113,24 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
   const items = usePlanItems(planId);
   const dishes = useDishes();
   const ingredients = useIngredients();
+  const products = useProducts();
+  const productMap = useMemo(() => toMap(products), [products]);
+  const atHome = useLiveQuery(
+    async () => new Set(
+      (await db.shoppingOverrides.where('plan_id').equals(planId).toArray())
+        .filter((o) => !o.is_manual && o.have_at_home).map((o) => o.product_id),
+    ),
+    [planId],
+    new Set(),
+  );
+  const ingByDish = useMemo(() => {
+    const m = new Map();
+    for (const i of ingredients) {
+      if (!m.has(i.dish_id)) m.set(i.dish_id, []);
+      m.get(i.dish_id).push(i);
+    }
+    return m;
+  }, [ingredients]);
   const index = usePlansIndex();
   const [adding, setAdding] = useState(false);
   const [action, setAction] = useState(null); // { dishId, itemId }
@@ -173,6 +195,12 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
         </div>
       )}
 
+      {items.some((i) => ingByDish.has(i.dish_id)) && (
+        <p className="mx-4 mt-3 text-sm text-stone-500 dark:text-stone-400">
+          Под блюдом — что купить. Есть дома? Нажмите на продукт 🏠
+        </p>
+      )}
+
       {items.length === 0 && (
         <Empty>
           <p>На эти выходные пока ничего нет.</p>
@@ -202,31 +230,60 @@ export function MenuScreen({ sat, setSat, planId, openDish, goShopping }) {
                 if (!dish) return null;
                 const noIngr = !withIngredients.has(dish.id);
                 return (
-                  <li key={item.id} className="flex items-start gap-1 py-2 pr-1 pl-2">
-                    <label className="flex size-11 shrink-0 items-center justify-center" title="Приготовлено">
-                      <input
-                        type="checkbox"
-                        className="size-5 accent-emerald-600"
-                        checked={!!item.cooked}
-                        onChange={(e) => setCooked(item, e.target.checked)}
-                        aria-label={`${dish.name}: приготовлено`}
-                      />
-                    </label>
-                    <div className="min-w-0 flex-1">
-                      <button type="button" className="block w-full pt-2.5 text-left" onClick={() => setAction({ dishId: dish.id, itemId: item.id })}>
+                  <li key={item.id} className="py-2 pr-1 pl-2">
+                    <div className="flex items-start gap-1">
+                      <label className="flex size-11 shrink-0 items-center justify-center" title="Приготовлено">
+                        <input
+                          type="checkbox"
+                          className="size-5 accent-emerald-600"
+                          checked={!!item.cooked}
+                          onChange={(e) => setCooked(item, e.target.checked)}
+                          aria-label={`${dish.name}: приготовлено`}
+                        />
+                      </label>
+                      <button type="button" className="min-w-0 flex-1 pt-2.5 text-left" onClick={() => setAction({ dishId: dish.id, itemId: item.id })}>
                         <span className={`block text-base leading-snug ${item.cooked ? 'text-stone-400 line-through' : ''}`}>
                           {dish.favorite ? <span className="text-amber-500">★ </span> : null}
                           {dish.name}
                         </span>
-                        {noIngr && <span className="block text-xs text-amber-600 dark:text-amber-400">ингредиенты не заполнены</span>}
+                        {noIngr && <span className="block text-xs text-amber-600 dark:text-amber-400">ингредиенты не заполнены — нажмите ✎</span>}
                       </button>
+                      <IconButton label={`Изменить ${dish.name}`} className="text-lg" onClick={() => openDish(dish.id)}>✎</IconButton>
+                      <IconButton label={`Убрать ${dish.name} из меню`} onClick={() => remove(item, dish.name)}>✕</IconButton>
+                    </div>
+                    <div className="pr-3 pl-12">
+                      {!noIngr && (
+                        <ul className="mt-1 flex flex-wrap gap-1" aria-label={`Что купить для «${dish.name}»`}>
+                          {(ingByDish.get(dish.id) ?? []).map((ing) => {
+                            const home = atHome.has(ing.product_id);
+                            const amount = formatAmount(ing.qty, ing.unit);
+                            const name = productMap.get(ing.product_id)?.name ?? '…';
+                            return (
+                              <li key={ing.id}>
+                                <button
+                                  type="button"
+                                  onClick={() => patchProductLine(planId, ing.product_id, { have_at_home: home ? 0 : 1, bought: 0 })}
+                                  aria-pressed={home}
+                                  title={home ? 'Есть дома — нажмите, чтобы купить' : 'Нажмите, если есть дома'}
+                                  className={`min-h-7 rounded-full px-2 py-0.5 text-left text-[13px] leading-tight ${
+                                    home
+                                      ? 'bg-transparent text-stone-400 line-through ring-1 ring-stone-200 dark:ring-stone-800'
+                                      : 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-200'
+                                  }`}
+                                >
+                                  {home && <span className="no-underline">🏠 </span>}
+                                  {name}{amount && <span className="text-stone-500 dark:text-stone-400"> {amount}</span>}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
                       <div className="mt-2 flex items-center gap-1.5">
                         <Chip active={item.day === 'sat'} onClick={() => setItemDay(item.id, item.day === 'sat' ? null : 'sat')}>Сб</Chip>
                         <Chip active={item.day === 'sun'} onClick={() => setItemDay(item.id, item.day === 'sun' ? null : 'sun')}>Вс</Chip>
                       </div>
                     </div>
-                    <IconButton label={`Изменить ${dish.name}`} className="text-lg" onClick={() => openDish(dish.id)}>✎</IconButton>
-                    <IconButton label={`Убрать ${dish.name} из меню`} onClick={() => remove(item, dish.name)}>✕</IconButton>
                   </li>
                 );
               })}
