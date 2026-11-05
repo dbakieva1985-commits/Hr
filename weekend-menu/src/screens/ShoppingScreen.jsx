@@ -3,8 +3,8 @@ import { addManualLine, deleteOverride, patchOverride, patchProductLine, setProd
 import { useShoppingList } from '../hooks.js';
 import { AISLES } from '../lib/constants.js';
 import { formatAmount, parseIngredient } from '../lib/parse.js';
-import { groupByAisle, sourcesText } from '../lib/shopping.js';
-import { weekendShort } from '../lib/week.js';
+import { groupByAisle, shoppingText, sourcesText } from '../lib/shopping.js';
+import { weekendShort, weekendTitle } from '../lib/week.js';
 import { Button, Empty, Header, IconButton, Sheet, SwipeRow, inputCls } from '../components/ui.jsx';
 
 function useWakeLock(on) {
@@ -32,6 +32,25 @@ export function ShoppingScreen({ sat, planId, openDish, onBack }) {
   const atHome = lines.filter((l) => l.haveAtHome);
   const groups = useMemo(() => groupByAisle(toBuy), [toBuy]);
   const left = toBuy.filter((l) => !l.bought).length;
+  const [shared, setShared] = useState(null); // text shown for manual copy when the clipboard is refused
+  const [shareMsg, setShareMsg] = useState('');
+
+  const share = async () => {
+    const text = shoppingText(`Покупки на ${weekendTitle(sat).replace('Выходные ', '')}`, lines);
+    setShareMsg('');
+    try {
+      if (navigator.share && window.matchMedia?.('(display-mode: standalone)').matches) {
+        await navigator.share({ text });
+        return;
+      }
+    } catch { /* fall through to copy */ }
+    try {
+      await navigator.clipboard.writeText(text);
+      setShareMsg('Список скопирован — вставьте его в WhatsApp или Telegram');
+    } catch {
+      setShared(text);
+    }
+  };
 
   const patch = (line, p) => (line.isManual ? patchOverride(line.override.id, p) : patchProductLine(planId, line.productId, p));
 
@@ -48,6 +67,13 @@ export function ShoppingScreen({ sat, planId, openDish, onBack }) {
           </Button>
         }
       />
+
+      {lines.length > 0 && (
+        <div className="mx-4 mt-3">
+          <Button variant="secondary" className="w-full" onClick={share}>📤 Отправить список (WhatsApp, Telegram)</Button>
+          {shareMsg && <p role="status" className="mt-1 text-center text-sm text-emerald-700 dark:text-emerald-400">{shareMsg}</p>}
+        </div>
+      )}
 
       {missing.length > 0 && (
         <ul className="mx-4 mt-3 space-y-1">
@@ -131,6 +157,17 @@ export function ShoppingScreen({ sat, planId, openDish, onBack }) {
         </section>
       )}
       <div className="h-6" />
+
+      <Sheet open={shared != null} onClose={() => setShared(null)} title="Скопируйте список">
+        <p className="mb-2 text-sm text-stone-500">Нажмите на текст, выберите «Выделить всё» → «Копировать» и вставьте в WhatsApp или Telegram.</p>
+        <textarea
+          readOnly
+          value={shared ?? ''}
+          onFocus={(e) => e.target.select()}
+          className={`${inputCls} min-h-64 py-2 font-mono text-sm`}
+          aria-label="Список покупок текстом"
+        />
+      </Sheet>
 
       <EditLine line={editing} onClose={() => setEditing(null)} patch={patch} />
       <AddManual open={adding} onClose={() => setAdding(false)} planId={planId} />

@@ -133,3 +133,17 @@ export function groupByAisle(lines) {
   }
   return [...groups].filter(([, ls]) => ls.length > 0).map(([aisle, ls]) => ({ aisle, lines: ls }));
 }
+
+/** Plain-text list for WhatsApp / Telegram: what is still to buy, by aisle. */
+export function shoppingText(title, lines) {
+  const toBuy = lines.filter((l) => !l.haveAtHome && !l.bought);
+  const bought = lines.filter((l) => !l.haveAtHome && l.bought);
+  const out = [`🛒 ${title}`];
+  for (const { aisle, lines: ls } of groupByAisle(toBuy)) {
+    out.push('', aisle.toUpperCase());
+    for (const l of ls) out.push(`▫️ ${l.name}${l.amount ? ` — ${l.amount}` : ''}`);
+  }
+  if (toBuy.length === 0) out.push('', 'Всё куплено ✅');
+  if (bought.length) out.push('', `Уже куплено: ${bought.map((l) => l.name).join(', ')}`);
+  return out.join('\n');
+}

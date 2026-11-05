@@ -90,3 +90,18 @@ describe('combineAmounts', () => {
     expect(combineAmounts([{ qty: 1, unit: 'шт' }, { qty: null, unit: 'по вкусу' }])).toBe('1 шт + по вкусу');
   });
 });
+
+import { shoppingText } from '../src/lib/shopping.js';
+describe('shoppingText', () => {
+  it('lists what is left by aisle', () => {
+    const lines = [
+      { name: 'Свекла', amount: '2 шт', aisle: 'Овощи и фрукты', bought: false, haveAtHome: false },
+      { name: 'Лимон', amount: '1 шт', aisle: 'Овощи и фрукты', bought: false, haveAtHome: true },
+      { name: 'Грудка', amount: '4 шт', aisle: 'Мясо и птица', bought: true, haveAtHome: false },
+      { name: 'Соль', amount: 'по вкусу', aisle: 'Бакалея', bought: false, haveAtHome: false },
+    ];
+    expect(shoppingText('Покупки на 14–15 ноября', lines)).toBe(
+      '🛒 Покупки на 14–15 ноября\n\nОВОЩИ И ФРУКТЫ\n▫️ Свекла — 2 шт\n\nБАКАЛЕЯ\n▫️ Соль — по вкусу\n\nУже куплено: Грудка',
+    );
+  });
+});
