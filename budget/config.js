@@ -1,15 +1,11 @@
-// Настройки Firebase — вставить из Project settings → Your apps → Web app
+// Настройки Firebase проекта family-budget-a92be (это не пароль, их можно хранить в коде)
 window.FIREBASE_CONFIG = {
-  apiKey: "ВСТАВИТЬ",
-  authDomain: "ВСТАВИТЬ",
-  projectId: "ВСТАВИТЬ",
-  appId: "ВСТАВИТЬ"
-};
-
-// Кто есть кто: почта → как подписывать записи
-window.PEOPLE = {
-  // "почта_жены@gmail.com": "Фируза",
-  // "почта_мужа@gmail.com": "Муж"
+  apiKey: "AIzaSyBG0AT-UwKxaBJ5XJfCikNmcikBTOVQXK8",
+  authDomain: "family-budget-a92be.firebaseapp.com",
+  projectId: "family-budget-a92be",
+  storageBucket: "family-budget-a92be.firebasestorage.app",
+  messagingSenderId: "662840017279",
+  appId: "1:662840017279:web:75165fd0d361af08895a4a"
 };
 
 // Стартовые постоянные платежи — записываются один раз, если база пустая
@@ -37,4 +33,10 @@ window.SEED = [
   { id: "ex-fuel-husband", kind: "expense", title: "Бензин (муж)", amount: 23000, day: null, category: "Транспорт", payer: "Муж" },
   { id: "ex-groceries", kind: "expense", title: "Продукты по списку", amount: 0, weekly: { weekday: 5 }, day: null,
     dayNote: "список от жены", category: "Продукты", payer: "Муж" }
+];
+
+// Разовые траты, перенесённые из первой версии
+window.SEED_ENTRIES = [
+  { id: "6un4zlrh64h7t74myejn", month: "2026-11", kind: "expense", amount: 15000, title: "Торт, сладкое",
+    category: "Продукты", date: "2026-11-08", by: "Фируза", createdAt: 1794135592916 }
 ];

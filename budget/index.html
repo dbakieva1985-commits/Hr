@@ -122,14 +122,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 <body>
 
 <div class="login" id="login" hidden>
-  <form id="loginForm" class="loginbox">
+  <div class="loginbox">
     <h1>Семейный бюджет</h1>
-    <p class="fact">Войдите своей почтой и паролем. Телефон запомнит вход.</p>
-    <label class="field">Почта<input id="lEmail" type="email" autocomplete="username" required></label>
-    <label class="field">Пароль<input id="lPass" type="password" autocomplete="current-password" required></label>
-    <div class="err" id="lErr" role="alert"></div>
-    <button class="btn pri" type="submit">Войти</button>
-  </form>
+    <p class="fact" id="lText">Кто пользуется этим телефоном? Так будет видно, кто внёс трату.</p>
+    <div id="lBtns" style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn pri" type="button" data-me="Фируза">Я Фируза</button>
+      <button class="btn pri" type="button" data-me="Муж">Я муж</button>
+    </div>
+  </div>
 </div>
 <div class="wrap" id="app">
   <div class="top">
@@ -190,19 +190,24 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 <button class="fab" id="fab">+ Трата</button>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="config.js"></script>
 <script>
 (function(){
 const PEOPLE=window.PEOPLE||{};
+const FAMILY=(()=>{let k=new URLSearchParams(location.search).get("f");
+  try{if(k)localStorage.setItem("budget.f",k);else k=localStorage.getItem("budget.f")}catch(_){}
+  return k&&/^[A-Za-z0-9]{24,}$/.test(k)?k:null})();
+const col=p=>S.db.collection("families/"+FAMILY+"/"+p);
+const docp=p=>S.db.doc("families/"+FAMILY+"/"+p);
 let started=false;
 function showLogin(){$("login").hidden=false}
 function hideLogin(){$("login").hidden=true}
 async function seed(){
   if(seed.done)return;seed.done=true;
   const b=S.db.batch();
-  (window.SEED||[]).forEach(r=>{const {id,...rest}=r;b.set(S.db.collection("recurring").doc(id),rest)});
+  (window.SEED||[]).forEach(r=>{const {id,...rest}=r;b.set(col("recurring").doc(id),rest)});
+  (window.SEED_ENTRIES||[]).forEach(r=>{const {id,...rest}=r;b.set(col("entries").doc(id),rest)});
   try{await b.commit()}catch(_){}
 }
 const MONTHS=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
@@ -308,7 +313,7 @@ async function renderOne(){
   const all=S.entries.slice().sort((a,b)=>(a.date||"").localeCompare(b.date||"")||(a.createdAt||0)-(b.createdAt||0));
   let ps={};
   const ids=[...new Set(all.map(e=>e.by).filter(Boolean))];
-  ids.forEach(id=>{ps[id]={isMe:id===S.uid,name:PEOPLE[id]||id.split("@")[0]}});
+  ids.forEach(id=>{ps[id]={isMe:id===S.uid,name:PEOPLE[id]||id}});
   fillOne($("oneList"),all.filter(e=>e.kind!=="income"),"Разовых трат в этом месяце пока нет. Нажмите «+ Трата», чтобы добавить.",ps);
   fillOne($("oneInList"),all.filter(e=>e.kind==="income"),"Разовых поступлений пока нет. Нажмите «+ Доход», чтобы добавить.",ps);
 }
@@ -339,13 +344,13 @@ function renderCats(exp,oneOut){
 
 /* ---------- writes ---------- */
 async function guard(fn){
-  if(!S.db||!S.uid){setStatus("Сначала войдите.");return false}
+  if(!S.db||!FAMILY){setStatus("Откройте бюджет по своей семейной ссылке.");return false}
   try{await fn();return true}catch(e){
-    if(e&&e.code==="permission-denied"){setStatus("Этот аккаунт не может вносить изменения.")}
+    if(e&&e.code==="permission-denied"){setStatus("Нет доступа: откройте бюджет по семейной ссылке целиком.")}
     else setStatus("Не сохранилось: "+((e&&e.message)||"ошибка связи")+". Попробуйте ещё раз.");
     return false}
 }
-function markRef(it){return S.db.doc("marks/"+ym+"__"+it.key)}
+function markRef(it){return docp("marks/"+ym+"__"+it.key)}
 async function toggle(it){
   const mk=S.marks[it.key]||{};
   const body={month:ym,recId:it.key,done:!mk.done,by:S.uid||null};
@@ -388,13 +393,13 @@ function openEntry(e,kind){
   sheet(isNew?"Разовая запись":"Изменить запись",
     h("div",{style:"display:flex;flex-direction:column;gap:12px"},k.el,field("Сумма, ₸",amt),field("Название",tt),h("div",{class:"two"},field("Категория",cat.el),field("Дата",dt))),
     err=>[
-      isNew?h("span"):h("button",{class:"btn del",text:"Удалить",onclick:async()=>{if(await guard(()=>S.db.doc("entries/"+e.id).delete()))closeSheet()}}),
+      isNew?h("span"):h("button",{class:"btn del",text:"Удалить",onclick:async()=>{if(await guard(()=>docp("entries/"+e.id).delete()))closeSheet()}}),
       h("div",{style:"display:flex;gap:8px"},h("button",{class:"btn",text:"Отмена",onclick:closeSheet}),
         h("button",{class:"btn pri",text:"Сохранить",onclick:async()=>{
           const a=parseAmt(amt.value);if(!(a>0)){err.textContent="Введите сумму больше нуля.";return}
           const d=dt.value&&dt.value.startsWith(ym)?dt.value:dflt;
           const body={month:ym,kind:k.get(),amount:a,title:tt.value.trim()||cat.el.value,category:cat.el.value,date:d,by:isNew?(S.uid||null):(e.by||null),createdAt:e.createdAt||Date.now()};
-          const ok=await guard(()=>isNew?S.db.collection("entries").add(body):S.db.doc("entries/"+e.id).set(body));
+          const ok=await guard(()=>isNew?col("entries").add(body):docp("entries/"+e.id).set(body));
           if(ok)closeSheet()}}))
     ])
 }
@@ -441,7 +446,7 @@ function openRec(it,kind){
   sheet(isNew?"Новый постоянный платёж":r.title,body,err=>[
     isNew?h("span"):h("button",{class:"btn del",text:"Удалить шаблон",onclick:async(ev)=>{
       const b=ev.currentTarget;if(b.dataset.c!=="1"){b.dataset.c="1";b.textContent="Точно удалить?";return}
-      if(await guard(()=>S.db.doc("recurring/"+r.id).delete()))closeSheet()}}),
+      if(await guard(()=>docp("recurring/"+r.id).delete()))closeSheet()}}),
     h("div",{style:"display:flex;gap:8px"},h("button",{class:"btn",text:"Отмена",onclick:closeSheet}),
       h("button",{class:"btn pri",text:"Сохранить шаблон",onclick:async()=>{
         const t=tt.value.trim();if(!t){err.textContent="Введите название.";return}
@@ -452,7 +457,7 @@ function openRec(it,kind){
         if(seas.checked){const a=parseAmt(sm.value),c=parseAmt(wn.value);if(!(a>=0&&c>=0)){err.textContent="Введите обе суммы по сезонам.";return}
           b.seasonal={summer:a,winter:c,winterMonths:WINTER};b.amount=null}
         else{const a=parseAmt(amt.value);if(!(a>=0)){err.textContent="Введите сумму.";return}b.amount=a;b.seasonal=null}
-        const ok=await guard(()=>isNew?S.db.collection("recurring").add(b):S.db.doc("recurring/"+r.id).set(b));
+        const ok=await guard(()=>isNew?col("recurring").add(b):docp("recurring/"+r.id).set(b));
         if(ok)closeSheet()}}))
   ])
 }
@@ -463,10 +468,10 @@ function armTimer(){clearTimeout(timer);timer=setTimeout(()=>{
 function maybeReady(){if(S.loaded.rec&&S.loaded.m&&S.loaded.e){clearTimeout(timer);if(S.canWrite)setStatus("")}}
 function subMonth(){
   unsubs.forEach(u=>u());unsubs=[];S.marks={};S.entries=[];S.loaded.m=S.loaded.e=false;armTimer();render();
-  unsubs.push(S.db.collection("marks").where("month","==",ym).onSnapshot({includeMetadataChanges:true},s=>{
+  unsubs.push(col("marks").where("month","==",ym).onSnapshot({includeMetadataChanges:true},s=>{
     const m={};s.docs.forEach(d=>{const v=d.data();m[v.recId]=v});S.marks=m;if(!s.metadata.fromCache)S.loaded.m=true;maybeReady();render()},
     e=>{S.loaded.m=true;setStatus("Отметки не загрузились. Обновите страницу.")}));
-  unsubs.push(S.db.collection("entries").where("month","==",ym).onSnapshot({includeMetadataChanges:true},s=>{
+  unsubs.push(col("entries").where("month","==",ym).onSnapshot({includeMetadataChanges:true},s=>{
     S.entries=s.docs.map(d=>Object.assign({id:d.id},d.data()));if(!s.metadata.fromCache)S.loaded.e=true;maybeReady();render()},
     e=>{S.loaded.e=true;setStatus("Разовые траты не загрузились. Обновите страницу.")}));
 }
@@ -489,25 +494,24 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 render();
 
 (async()=>{
+  if(!FAMILY){$("login").hidden=false;$("lBtns").hidden=true;$("lText").textContent="Откройте бюджет по семейной ссылке, которую вам прислали. Без неё данные не видны.";return}
   firebase.initializeApp(FIREBASE_CONFIG);
-  const auth=firebase.auth();
   S.db=firebase.firestore();
   try{await S.db.enablePersistence({synchronizeTabs:true})}catch(_){}
-  auth.onAuthStateChanged(u=>{
-    if(!u){showLogin();return}
-    hideLogin();S.uid=u.email;$("who").textContent=(PEOPLE[u.email]||u.email)+" · Выйти";
+  let me=null;try{me=localStorage.getItem("budget.me")}catch(_){}
+  const start=()=>{
+    S.uid=me;$("who").textContent=me+" · сменить";
     if(started)return;started=true;armTimer();
-    S.db.collection("recurring").onSnapshot({includeMetadataChanges:true},s=>{
+    col("recurring").onSnapshot({includeMetadataChanges:true},s=>{
       S.recurring=s.docs.map(d=>Object.assign({id:d.id},d.data()));
       if(!s.metadata.fromCache){S.loaded.rec=true;if(s.empty)seed()}
       maybeReady();render()},
-      e=>{S.loaded.rec=true;setStatus(e.code==="permission-denied"?"Этот аккаунт не допущен к бюджету.":"Постоянные платежи не загрузились. Обновите страницу.")});
+      e=>{S.loaded.rec=true;setStatus(e.code==="permission-denied"?"Нет доступа: откройте бюджет по семейной ссылке целиком.":"Постоянные платежи не загрузились. Обновите страницу.")});
     subMonth();
-  });
-  $("who").onclick=()=>auth.signOut().then(()=>location.reload());
-  $("loginForm").addEventListener("submit",async ev=>{ev.preventDefault();
-    const em=$("lEmail").value.trim(),pw=$("lPass").value;$("lErr").textContent="";
-    try{await auth.signInWithEmailAndPassword(em,pw)}catch(e){$("lErr").textContent="Не получилось войти: проверьте почту и пароль."}});
+  };
+  document.querySelectorAll("[data-me]").forEach(b=>b.onclick=()=>{me=b.dataset.me;try{localStorage.setItem("budget.me",me)}catch(_){}$("login").hidden=true;start()});
+  $("who").onclick=()=>{$("login").hidden=false};
+  if(me)start();else $("login").hidden=false;
 })();
 })();
 </script>
