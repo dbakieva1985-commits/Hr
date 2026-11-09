@@ -57,8 +57,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .amt u{text-decoration:none;font-size:12px;color:var(--muted);margin-left:4px}
 .amt.need{color:var(--accent);background:var(--sunk);padding:6px 10px;font-size:13px;opacity:1!important}
 .stat{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:transparent;border-radius:99px;padding:4px 10px 4px 6px;font-size:13px;font-weight:600;color:var(--muted)}
-.stat i{width:16px;height:16px;border-radius:50%;border:2px solid var(--muted)}
-.stat svg{width:16px;height:16px}
+.stat i{width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);display:inline-flex;align-items:center;justify-content:center;flex:none;background:var(--surface)}
+.stat i svg{width:13px;height:13px}
+.stat.on i{border-color:var(--accent-ink);background:var(--accent-ink);color:var(--accent)}
 .stat.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .row.done .stat{opacity:1}
 .ro .stat{pointer-events:none}
@@ -298,7 +299,8 @@ function recRow(it){
   if(st==="soon")meta.push(h("span",{class:"pill",text:"скоро"}));
   const isInc=r.kind==="income";
   const st2=h("button",{class:"stat"+(done?" on":""),"aria-pressed":String(done),onclick:()=>toggle(it)});
-  st2.innerHTML=done?CHECK+"<span>"+(isInc?"Получено":"Оплачено")+"</span>":"<i></i><span>"+(isInc?"Получено?":"Оплатить")+"</span>";
+  st2.innerHTML="<i>"+(done?CHECK:"")+"</i><span>"+(isInc?"Получено":"Оплачено")+"</span>";
+  st2.setAttribute("aria-label",(isInc?"Получено: ":"Оплачено: ")+r.title);
   const noSum=it.weekly&&!(mk&&typeof mk.amount==="number")&&!planAmount(r);
   const amtBtn=noSum
     ?h("button",{class:"amt need",onclick:()=>openRec(it),text:"+ Вписать сумму"})
