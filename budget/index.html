@@ -126,7 +126,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <h1>Семейный бюджет</h1>
     <p class="fact" id="lText">Кто пользуется этим телефоном? Так будет видно, кто внёс трату.</p>
     <div id="lBtns" style="display:flex;flex-direction:column;gap:8px">
-      <button class="btn pri" type="button" data-me="Фируза">Я Фируза</button>
+      <button class="btn pri" type="button" data-me="Жена">Я жена</button>
       <button class="btn pri" type="button" data-me="Муж">Я муж</button>
     </div>
   </div>
@@ -313,7 +313,7 @@ async function renderOne(){
   const all=S.entries.slice().sort((a,b)=>(a.date||"").localeCompare(b.date||"")||(a.createdAt||0)-(b.createdAt||0));
   let ps={};
   const ids=[...new Set(all.map(e=>e.by).filter(Boolean))];
-  ids.forEach(id=>{ps[id]={isMe:id===S.uid,name:PEOPLE[id]||id}});
+  ids.forEach(id=>{ps[id]={isMe:id===S.uid,name:id==="Фируза"?"Жена":(PEOPLE[id]||id)}});
   fillOne($("oneList"),all.filter(e=>e.kind!=="income"),"Разовых трат в этом месяце пока нет. Нажмите «+ Трата», чтобы добавить.",ps);
   fillOne($("oneInList"),all.filter(e=>e.kind==="income"),"Разовых поступлений пока нет. Нажмите «+ Доход», чтобы добавить.",ps);
 }
@@ -499,6 +499,7 @@ render();
   S.db=firebase.firestore();
   try{await S.db.enablePersistence({synchronizeTabs:true})}catch(_){}
   let me=null;try{me=localStorage.getItem("budget.me")}catch(_){}
+  if(me==="Фируза"){me="Жена";try{localStorage.setItem("budget.me",me)}catch(_){}}
   const start=()=>{
     S.uid=me;$("who").textContent=me+" · сменить";
     if(started)return;started=true;armTimer();

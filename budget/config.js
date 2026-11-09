@@ -38,5 +38,5 @@ window.SEED = [
 // Разовые траты, перенесённые из первой версии
 window.SEED_ENTRIES = [
   { id: "6un4zlrh64h7t74myejn", month: "2026-11", kind: "expense", amount: 15000, title: "Торт, сладкое",
-    category: "Продукты", date: "2026-11-08", by: "Фируза", createdAt: 1794135592916 }
+    category: "Продукты", date: "2026-11-08", by: "Жена", createdAt: 1794135592916 }
 ];
